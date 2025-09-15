@@ -3,6 +3,7 @@ import 'package:linkedin/features/auth/presentation/screens/OnboardingScreen1.da
 
 import 'features/auth/presentation/screens/OnboardingScreen2.dart';
 import 'features/auth/presentation/screens/OnboardingScreen3.dart';
+
 void main() {
   runApp(const MyApp());
 }
