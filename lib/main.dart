@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
+
 import 'package:linkedin/features/auth/presentation/screens/OnboardingScreen1.dart';
 
 import 'features/auth/presentation/screens/OnboardingScreen2.dart';
 import 'features/auth/presentation/screens/OnboardingScreen3.dart';
+import 'package:linkedin/features/auth/presentation/screens/set_new_password_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,6 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+
       debugShowCheckedModeBanner: false,
       home: OnboardingScreen1(),
       routes: {
