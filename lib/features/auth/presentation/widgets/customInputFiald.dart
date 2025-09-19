@@ -30,7 +30,7 @@ class CustomInputField extends StatelessWidget {
         Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         
 
-        // FormField so validator runs with the parent Form and we can show error below the box
+        // FormField so validator 
         FormField<String>(
           initialValue: controller.text,
           validator: validator,
@@ -44,7 +44,7 @@ class CustomInputField extends StatelessWidget {
                     controller: controller,
                     keyboardType: keyboardType,
                     obscureText: obscureText,
-                    onChanged: (v) => field.didChange(v), // keep FormField value in sync
+                    onChanged: (v) => field.didChange(v), 
                     decoration: InputDecoration(
                       hintText: hint,
                       border: InputBorder.none,
@@ -59,7 +59,7 @@ class CustomInputField extends StatelessWidget {
                   ),
                 ),
 
-                // error message under the box
+                // error message 
                 if (field.errorText != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 6, left: 6),
