@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:linkedin/features/auth/presentation/screens/create_account/createAcount_screen.dart';
 
 class OnboardingScreen3 extends StatelessWidget {
   const OnboardingScreen3({super.key});
@@ -86,7 +87,11 @@ class OnboardingScreen3 extends StatelessWidget {
                       padding: const EdgeInsets.all(20),
                     ),
                     onPressed: () {
-                      Navigator.pushNamed(context, '/login_screen.dart');
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const CreateAccountScreen(),
+                        ),
+                      );
                     },
                     child: Text(
                       "Get Started",

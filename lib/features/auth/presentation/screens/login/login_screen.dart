@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:linkedin/features/auth/presentation/screens/create_account_screen.dart';
+import 'package:linkedin/features/auth/presentation/screens/login/widget/login_form.dart';
 import 'package:linkedin/features/auth/presentation/widgets/header.dart';
 
-
-class CreateAccountScreen extends StatelessWidget {
-  const CreateAccountScreen({super.key});
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,12 +14,12 @@ class CreateAccountScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children:[
-              Header(),
+              Header(title: "Login",),
 
               /// Form area
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
-                child: CreateAccountForm(),
+                child: LoginForm(),
               ),
             ],
           ),
