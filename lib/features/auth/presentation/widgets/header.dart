@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 
 class Header extends StatelessWidget {
-  const Header({super.key});
+  const Header({super.key, required this.title});
+  final String title;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,10 +25,10 @@ class Header extends StatelessWidget {
           BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(2, 3))
         ],
       ),
-      child: const Padding(
+      child:  Padding(
         padding: EdgeInsets.only(left: 20, top:60),
         child: Text(
-          "Create Account",
+          title,
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
         ),
       ),

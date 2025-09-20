@@ -39,7 +39,6 @@ class PasswordResetScreen extends StatelessWidget {
             ),
             const SizedBox(height: 40),
 //
-            // زرار Confirm Button
             AuthButton(
               text: "Confirm",
               backgroundColor: Colors.teal,

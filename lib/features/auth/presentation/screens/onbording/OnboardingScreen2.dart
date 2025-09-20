@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:linkedin/features/auth/presentation/screens/onbording/OnboardingScreen3.dart';
 
-class OnboardingScreen1 extends StatelessWidget {
-  const OnboardingScreen1({super.key});
+class OnboardingScreen2 extends StatelessWidget {
+  const OnboardingScreen2({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +11,7 @@ class OnboardingScreen1 extends StatelessWidget {
         children: [
           Positioned.fill(
             child: Image.asset(
-              'assets/onboarding_screen1.jpg',
+              'assets/onboarding_screen2.jpg',
               fit: BoxFit.cover,
             ),
           ),
@@ -28,7 +29,7 @@ class OnboardingScreen1 extends StatelessWidget {
               children: [
                 Row(
                   children: List.generate(3, (index) {
-                    final isActive = index == 0; // first page active
+                    final isActive = index == 1;
                     return AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
                       margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -65,19 +66,26 @@ class OnboardingScreen1 extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Welcome to',
+                  'Never Miss Important Updates',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 28,
+                    fontSize: 32,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Student hub app',
-                  style: TextStyle(color: Colors.white70, fontSize: 18),
+                const SizedBox(height: 50),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushReplacementNamed(
+                      context,
+                      '/OnboardingScreen1.dart',
+                    );
+                  },
+                  child: const Text(
+                    'Prev',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
                 ),
-                const SizedBox(height: 30),
 
                 Align(
                   alignment: Alignment.centerRight,
@@ -88,8 +96,11 @@ class OnboardingScreen1 extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                     ),
                     onPressed: () {
-                      // Go to next onboarding page
-                      Navigator.pushNamed(context, '/OnboardingScreen2.dart');
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const OnboardingScreen3(),
+                        ),
+                      );
                     },
                     child: const Icon(
                       Icons.arrow_forward_ios,

@@ -1,42 +1,36 @@
-
 import 'package:flutter/material.dart';
-import 'package:linkedin/features/auth/presentation/widgets/customInputFiald.dart';
+import 'package:linkedin/features/auth/presentation/screens/create_account/createAcount_screen.dart';
+import 'package:linkedin/features/auth/presentation/screens/forget_password/forget_pasword.dart';
+import 'package:linkedin/core/widgets/custom_text_form_field.dart';
 
-
-
-class CreateAccountForm extends StatefulWidget {
-  const CreateAccountForm({super.key});
+class LoginForm extends StatefulWidget {
+  const LoginForm({super.key});
 
   @override
-  State<CreateAccountForm> createState() => _CreateAccountFormState();
+  State<LoginForm> createState() => LoginFormState();
 }
 
-class _CreateAccountFormState extends State<CreateAccountForm> {
+class LoginFormState extends State<LoginForm> {
   final formKey = GlobalKey<FormState>();
 
   // controllers
-  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
 
   bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
 
   // password regex
   bool _isValidPassword(String password) {
-    final passwordRegex =
-        RegExp(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#\$&*~]).{8,}$');
+    final passwordRegex = RegExp(
+      r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#\$&*~]).{8,}$',
+    );
     return passwordRegex.hasMatch(password);
   }
 
   @override
   void dispose() {
-    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -47,28 +41,17 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Name
-          CustomInputField(
-            controller: _nameController,
-            label: "Name",
-            hint: "Enter your name",
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return "Please enter your name";
-              }
-              return null;
-            },
-            keyboardType: TextInputType.text,
-          ),
-
-          // Email
+          SizedBox(height: 20),
           CustomInputField(
             controller: _emailController,
             label: "Email",
             hint: "Enter your email",
             validator: (value) {
-              if (value == null || value.isEmpty) return "Please enter your email";
-              if (!RegExp(r'^[\w\.\-]+@([\w\-]+\.)+[\w]{2,4}$').hasMatch(value)) {
+              if (value == null || value.isEmpty)
+                return "Please enter your email";
+              if (!RegExp(
+                r'^[\w\.\-]+@([\w\-]+\.)+[\w]{2,4}$',
+              ).hasMatch(value)) {
                 return "Email is invalid";
               }
               return null;
@@ -85,7 +68,8 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
             obscureText: _obscurePassword,
             toggle: () => setState(() => _obscurePassword = !_obscurePassword),
             validator: (value) {
-              if (value == null || value.isEmpty) return "Please enter your password";
+              if (value == null || value.isEmpty)
+                return "Please enter your password";
               if (!_isValidPassword(value)) {
                 return "Password must be at least 8 chars,\ninclude letters, numbers & symbols";
               }
@@ -93,57 +77,68 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
             },
           ),
 
-          // Confirm Password
-          CustomInputField(
-            controller: _confirmPasswordController,
-            label: "Confirm Password",
-            hint: "Enter your confirm password",
-            isPassword: true,
-            obscureText: _obscureConfirmPassword,
-            toggle: () =>
-                setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
-            validator: (value) {
-              if (value == null || value.isEmpty) return "Please re-enter your password";
-              if (value != _passwordController.text) return "Passwords do not match";
-              return null;
-            },
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ForgetPasword(),
+                    ),
+                  );
+                  },
+                child: Text("Forgot Password?", style: TextStyle(color: Colors.teal))),
+            ],
           ),
-
-          
+          SizedBox(height: 8),
           SizedBox(
             width: double.infinity,
             height: 50,
             child: ElevatedButton(
               onPressed: () {
-                //Navigator.push(context, route)
                 if (formKey.currentState!.validate()) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Account Created Successfully!")),
+                    const SnackBar(
+                      content: Text("Account Created Successfully!"),
+                    ),
                   );
                 }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CreateAccountScreen(),
+                  ),
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
               ),
-              child: const Text("Create Account", style: TextStyle(fontSize: 16, color: Colors.white)),
+              child: const Text(
+                "Login",
+                style: TextStyle(fontSize: 16, color: Colors.white),
+              ),
             ),
           ),
 
-          SizedBox(height: 10,),
+          SizedBox(height: 20),
 
           //divider
-           Row(
+          Row(
             children: [
               Expanded(child: Divider()),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Text("Or Login with"),
+                child: Text("Or Create Account with"),
               ),
               Expanded(child: Divider()),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
 
           // Social Buttons
           Row(
@@ -154,19 +149,27 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
               _buildSocialButton(Icons.apple, Colors.black),
             ],
           ),
-
-          const SizedBox(height: 10),
-
-          // Already have account
+          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("Already have an account? "),
+              const Text("don't have an account? "),
               GestureDetector(
                 onTap: () {
-                  //Navigator.push(context, route)
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const CreateAccountScreen(),
+                    ),
+                  );
                 },
-                child: const Text("Login", style: TextStyle(color: Colors.teal, fontWeight: FontWeight.bold)),
+                child: const Text(
+                  "Create Account",
+                  style: TextStyle(
+                    color: Colors.teal,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),
@@ -185,18 +188,17 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
         height: 40,
         width: 80,
         decoration: BoxDecoration(
-          
           shape: BoxShape.rectangle,
           borderRadius: BorderRadius.circular(40),
-          color:Colors.white70 ,
+          color: Colors.white70,
           boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.2), 
-        offset: Offset(2, 4),                 
-        blurRadius: 6,                       
-        spreadRadius: 2,                      
-      ),
-    ], 
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              offset: Offset(2, 4),
+              blurRadius: 6,
+              spreadRadius: 2,
+            ),
+          ],
         ),
         child: Icon(icon, color: color, size: 28),
       ),
