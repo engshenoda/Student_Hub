@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:linkedin/core/routes/route.dart';
 import 'package:linkedin/features/auth/presentation/screens/create_account/createAcount_screen.dart';
 import 'package:linkedin/features/auth/presentation/screens/forget_password/forget_pasword.dart';
 import 'package:linkedin/core/widgets/custom_text_form_field.dart';
+import 'package:linkedin/features/home/presentation/screens/home_screen.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});
@@ -81,15 +84,19 @@ class LoginFormState extends State<LoginForm> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               GestureDetector(
-                  onTap: () {
-                    Navigator.push(
+                onTap: () {
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => const ForgetPasword(),
                     ),
                   );
-                  },
-                child: Text("Forgot Password?", style: TextStyle(color: Colors.teal))),
+                },
+                child: Text(
+                  "Forgot Password?",
+                  style: TextStyle(color: Colors.teal),
+                ),
+              ),
             ],
           ),
           SizedBox(height: 8),
@@ -105,12 +112,8 @@ class LoginFormState extends State<LoginForm> {
                     ),
                   );
                 }
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const CreateAccountScreen(),
-                  ),
-                );
+               
+               GoRouter.of( context).push(Routes.Home); 
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal,
