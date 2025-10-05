@@ -50,6 +50,7 @@ class NotificationScreen extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       itemBuilder: (context, index) {
         return Card(
+          color: Color(0xFFD9F4EF),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
