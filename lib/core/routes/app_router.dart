@@ -7,6 +7,7 @@ import 'package:linkedin/features/auth/presentation/screens/onbording/splash_scr
 import 'package:linkedin/features/home/presentation/screens/home_screen.dart';
 import 'package:linkedin/features/notifications/notifications_screen.dart';
 import 'package:linkedin/features/profile/presentation/screens/profile_screen.dart';
+import 'package:linkedin/features/search_feature/search_screen.dart';
 
 abstract class AppRoute {
   static final GoRouter router = GoRouter(
@@ -34,6 +35,10 @@ abstract class AppRoute {
       GoRoute(
         path: Routes.profile,
         builder: (context, state) => const ProfileScreen(),
+      ),
+      GoRoute(
+        path: Routes.search,
+        builder: (context, state) => const SearchPage(),
       ),
       
       // ShellRoute(

@@ -67,6 +67,12 @@ class HomeScreen extends StatelessWidget {
                           const Spacer(),
                           IconButton(
                             onPressed: () {
+                              GoRouter.of(context).push(Routes.search);
+                            },
+                            icon:const Icon(Icons.search,color: Colors.teal,),
+                          ),
+                          IconButton(
+                            onPressed: () {
                               GoRouter.of(context).go(Routes.notifcation);
                             },
                             icon: const Icon(
@@ -81,36 +87,6 @@ class HomeScreen extends StatelessWidget {
                       const SizedBox(height: 25),
 
                       // Search bar
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              blurRadius: 6,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Search',
-                            prefixIcon: const Icon(
-                              Icons.search,
-                              color: Colors.grey,
-                            ),
-                            suffixIcon: const Icon(
-                              Icons.tune_rounded,
-                              color: Colors.grey,
-                            ),
-                            border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 14,
-                            ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -127,7 +103,7 @@ class HomeScreen extends StatelessWidget {
                         role: "Front end developer",
                         text: "this is php code",
                         image:
-                            "https://www.bing.com/th/id/OIP.EzA6vF2nER9bJEh6o1EHZAHaI7?w=174&h=211&c=8&rs=1&qlt=90&o=6&cb=12&dpr=1.3&pid=3.1&rm=2",
+                            "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
                       ),
                       const SizedBox(height: 8),
                       PostCard(
@@ -135,7 +111,7 @@ class HomeScreen extends StatelessWidget {
                         role: "Front end developer",
                         text: "this is php code",
                         image:
-                            "https://www.bing.com/th/id/OIP.EzA6vF2nER9bJEh6o1EHZAHaI7?w=174&h=211&c=8&rs=1&qlt=90&o=6&cb=12&dpr=1.3&pid=3.1&rm=2",
+                            "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
                       ),
                     ],
                   ),
