@@ -6,7 +6,7 @@ class Routes {
   static const jobs = '/jobs';
   static const profile = '/profile';
   static const notifcation = '/notifcation';
-
+static const search ="/search";
   static const onboardingScreen = '/onboarding';
   static const createAccaount = '/createAccount';
 }
