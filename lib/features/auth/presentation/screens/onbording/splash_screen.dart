@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:linkedin/features/auth/presentation/screens/onbording/Onboarding_pages.dart';
+import 'package:go_router/go_router.dart';
+import 'package:linkedin/core/routes/app_router.dart';
+import 'package:linkedin/core/routes/route.dart';
+import 'package:linkedin/features/auth/presentation/screens/onbording/OnboardingScreen1.dart';
+
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,10 +19,10 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
-    Future.delayed(const Duration(seconds: 5), () {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const OnboardingScreen()),
-      );
+
+    Future.delayed(const Duration(seconds: 2), () {
+      GoRouter.of(context).push(Routes.onboardingScreen);
+
     });
   }
 

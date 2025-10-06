@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class AppColor {
-  // 🌈 Main Palette
-  static const Color primary = Color(0xFF6C5CE7); // Violet / Purple
-  static const Color secondary = Color(0xFF00B894); // Mint Green
-  static const Color accent = Color(0xFFF39C12); // Orange (CTA / Alerts)
+class AppColors {
+  static const primary = Color(0xFF007A66);
+  static const surface = Color(0xFFF7F9F8);
+  static const border = Color(0xFFE6F0EE);
+  static const text = Color(0xFF06423A);  
 
   // Neutral Colors
   static const Color background = Color(0xFFF8F9FA); // Off-White
