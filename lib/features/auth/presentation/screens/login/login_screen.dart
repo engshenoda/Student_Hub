@@ -16,7 +16,6 @@ class LoginScreen extends StatelessWidget {
             children:[
               Header(title: "Login",),
 
-              /// Form area
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: LoginForm(),
