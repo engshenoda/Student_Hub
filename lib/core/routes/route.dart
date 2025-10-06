@@ -5,6 +5,7 @@ class Routes {
   static const create = '/create';
   static const jobs = '/jobs';
   static const profile = '/profile';
+  static const notifcation = '/notifcation';
 
   static const onboardingScreen = '/onboarding';
   static const createAccaount = '/createAccount';

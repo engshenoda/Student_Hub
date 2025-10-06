@@ -5,6 +5,7 @@ import 'package:linkedin/features/auth/presentation/screens/create_account/creat
 import 'package:linkedin/features/auth/presentation/screens/onbording/OnboardingScreen1.dart';
 import 'package:linkedin/features/auth/presentation/screens/onbording/splash_screen.dart';
 import 'package:linkedin/features/home/presentation/screens/home_screen.dart';
+import 'package:linkedin/features/notifications/notifications_screen.dart';
 import 'package:linkedin/features/profile/presentation/screens/profile_screen.dart';
 
 abstract class AppRoute {
@@ -25,6 +26,10 @@ abstract class AppRoute {
       GoRoute(
         path: Routes.Home,
         builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: Routes.notifcation,
+        builder: (context, state) => const NotificationScreen(),
       ),
       GoRoute(
         path: Routes.profile,
