@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/post_card.dart';
 import '../widgets/bottom_navigation.dart';
+import 'package:linkedin/core/widgets/custom_bottom_navigation.dart';
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -129,3 +131,9 @@ class HomeScreen extends StatelessWidget {
     );
   }}
 
+      appBar: AppBar(title: const Text('Home Screen')),
+      bottomNavigationBar: CustomBottomNavigationBar(child: Center(child: Text("Home")) ,),
+      body: const Center(child: Text('This is the Home Screen')),
+    );
+  }
+}
