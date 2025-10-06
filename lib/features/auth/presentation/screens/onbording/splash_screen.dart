@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:linkedin/features/auth/presentation/screens/onbording/OnboardingScreen1.dart';
+import 'package:linkedin/features/auth/presentation/screens/onbording/Onboarding_pages.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -17,7 +17,7 @@ class _SplashScreenState extends State<SplashScreen>
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     Future.delayed(const Duration(seconds: 5), () {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const OnboardingScreen1()),
+        MaterialPageRoute(builder: (_) => const OnboardingScreen()),
       );
     });
   }
