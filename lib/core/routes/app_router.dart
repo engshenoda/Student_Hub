@@ -1,11 +1,10 @@
 import 'package:go_router/go_router.dart';
 import 'package:linkedin/core/routes/route.dart';
-import 'package:linkedin/core/widgets/custom_bottom_navigation.dart';
 import 'package:linkedin/features/auth/presentation/screens/create_account/createAcount_screen.dart';
 import 'package:linkedin/features/auth/presentation/screens/onbording/OnboardingScreen1.dart';
-import 'package:linkedin/features/auth/presentation/screens/onbording/splash_screen.dart';
 import 'package:linkedin/features/home/presentation/screens/home_screen.dart';
 import 'package:linkedin/features/notifications/notifications_screen.dart';
+import 'package:linkedin/features/onbording/splash_screen.dart';
 import 'package:linkedin/features/profile/presentation/screens/profile_screen.dart';
 import 'package:linkedin/features/search_feature/search_screen.dart';
 

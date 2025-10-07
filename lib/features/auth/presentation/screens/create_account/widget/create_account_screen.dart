@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:linkedin/core/widgets/custom_bottom_social_media.dart';
 import 'package:linkedin/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:linkedin/core/widgets/custom_text_form_field.dart';
 
@@ -93,7 +94,7 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
               return null;
             },
           ),
-          
+
           // Confirm Password
           CustomInputField(
             controller: _confirmPasswordController,
@@ -160,9 +161,12 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildSocialButton(Icons.facebook, Colors.blue),
-              _buildSocialButton(Icons.g_mobiledata, Colors.red),
-              _buildSocialButton(Icons.apple, Colors.black),
+              CustomBottomSocialMedia(icon: Icons.facebook, color: Colors.blue),
+              CustomBottomSocialMedia(
+                icon: Icons.g_mobiledata,
+                color: Colors.red,
+              ),
+              CustomBottomSocialMedia(icon: Icons.apple, color: Colors.black),
             ],
           ),
           const SizedBox(height: 10),
@@ -190,33 +194,6 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  /// Social Buttons
-  Widget _buildSocialButton(IconData icon, Color color) {
-    return InkWell(
-      onTap: () {
-        ////////////////////////
-      },
-      child: Container(
-        height: 40,
-        width: 80,
-        decoration: BoxDecoration(
-          shape: BoxShape.rectangle,
-          borderRadius: BorderRadius.circular(40),
-          color: Colors.white70,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              offset: Offset(2, 4),
-              blurRadius: 6,
-              spreadRadius: 2,
-            ),
-          ],
-        ),
-        child: Icon(icon, color: color, size: 28),
       ),
     );
   }

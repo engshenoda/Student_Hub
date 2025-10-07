@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:linkedin/core/theme/app_colors.dart';
+import 'package:linkedin/core/widgets/custom_bottom_social_media.dart';
 
 class ContactUs extends StatefulWidget {
   const ContactUs({super.key});
@@ -53,29 +54,20 @@ class _ContactUsState extends State<ContactUs> {
             ),
           ),
           const SizedBox(height: 30),
+
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              IconButton(
-                onPressed: () {
-                  GoRouter.of(context).go('');
-                },
-                icon: Icon(FontAwesomeIcons.google),
-                color: Colors.red,
-                iconSize: 32,
+              CustomBottomSocialMedia(
+                color: AppColors.primary,
+                icon: Icons.facebook,
               ),
-              IconButton(
-                onPressed: () {
-                  GoRouter.of(context).go('');
-                },
-                icon: Icon(Icons.sms, color: Colors.blue),
-                iconSize: 32,
+              CustomBottomSocialMedia(
+                color: AppColors.primary,
+                icon: Icons.facebook,
               ),
-              IconButton(
-                onPressed: () {
-                  GoRouter.of(context).go('');
-                },
-                icon: Icon(FontAwesomeIcons.whatsapp, color: Colors.green),
+              CustomBottomSocialMedia(
+                color: AppColors.primary,
+                icon: Icons.facebook,
               ),
             ],
           ),
