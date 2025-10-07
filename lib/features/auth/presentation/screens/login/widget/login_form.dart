@@ -4,7 +4,6 @@ import 'package:linkedin/core/routes/route.dart';
 import 'package:linkedin/features/auth/presentation/screens/create_account/createAcount_screen.dart';
 import 'package:linkedin/features/auth/presentation/screens/forget_password/forget_pasword.dart';
 import 'package:linkedin/core/widgets/custom_text_form_field.dart';
-import 'package:linkedin/features/home/presentation/screens/home_screen.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({super.key});

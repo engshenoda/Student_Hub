@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:linkedin/core/routes/route.dart';
 import '../widgets/post_card.dart';
-import '../widgets/bottom_navigation.dart';
 import 'package:linkedin/core/widgets/custom_bottom_navigation.dart';
 
 class HomeScreen extends StatelessWidget {

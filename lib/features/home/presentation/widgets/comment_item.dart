@@ -83,6 +83,6 @@ final String imageUrl ;
         ),
       ],
     );
-  };
+  }
   }
 }

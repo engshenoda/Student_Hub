@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:linkedin/features/home/presentation/screens/comments.dart';
 
 class PostCardRepost extends StatefulWidget {
   final String name;
