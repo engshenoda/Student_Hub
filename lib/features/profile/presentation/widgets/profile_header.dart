@@ -15,7 +15,7 @@ class ProfileHeader extends StatelessWidget {
             shape: BoxShape.circle,
             border: Border.all(color: AppColors.primary, width: 3),
             image: DecorationImage(
-              image: AssetImage('assets/images/profile.jpg'),
+              image: AssetImage('assets/profile.jpg'),
               fit: BoxFit.cover,
             ),
           ),

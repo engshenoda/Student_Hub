@@ -21,7 +21,7 @@ class SettingsCard extends StatelessWidget {
                     shape: BoxShape.circle,
                     border: Border.all(color: Colors.green.shade700, width: 2),
                     image: const DecorationImage(
-                      image: AssetImage('assets/images/profile.jpg'),
+                      image: AssetImage('assets/profile.jpg'),
                       fit: BoxFit.cover,
                     ),
                   ),
