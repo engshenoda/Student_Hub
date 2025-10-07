@@ -3,6 +3,7 @@ import 'package:linkedin/core/routes/route.dart';
 import 'package:linkedin/features/auth/presentation/screens/create_account/createAcount_screen.dart';
 import 'package:linkedin/features/auth/presentation/screens/onbording/OnboardingScreen1.dart';
 import 'package:linkedin/features/home/presentation/screens/home_screen.dart';
+import 'package:linkedin/features/home/presentation/screens/post.dart';
 import 'package:linkedin/features/notifications/notifications_screen.dart';
 import 'package:linkedin/features/onbording/splash_screen.dart';
 import 'package:linkedin/features/profile/presentation/screens/profile_screen.dart';
@@ -54,7 +55,8 @@ abstract class AppRoute {
         path: Routes.termsandconditions,
         builder: (context, state) => const Termsandconditions(),
       ),
-      
+      GoRoute(path: Routes.create, builder: (context, state) => const Post()),
+
       // ShellRoute(
       //   builder: (context, state, child) {
       //     return CustomBottomNavigationBar(child: child);

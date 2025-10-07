@@ -78,7 +78,7 @@ class Settings extends StatelessWidget {
                     color: AppColors.primary,
                   ),
                   onTap: () {
-                    // handle logout
+                    GoRouter.of(context).push(Routes.createAccaount);
                   },
                 ),
               ],
