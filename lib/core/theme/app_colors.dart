@@ -4,7 +4,8 @@ class AppColors {
   static const primary = Color(0xFF007A66);
   static const surface = Color(0xFFF7F9F8);
   static const border = Color(0xFFE6F0EE);
-  static const text = Color(0xFF06423A);  
+  static const text = Color(0xFF06423A);
+  static const danger = Color(0xFF0B8454); // greenish as in design
 
   // Neutral Colors
   static const Color background = Color(0xFFF8F9FA); // Off-White

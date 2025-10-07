@@ -5,8 +5,11 @@ class Routes {
   static const create = '/create';
   static const jobs = '/jobs';
   static const profile = '/profile';
+  static const settings = '/settings';
   static const notifcation = '/notifcation';
 static const search ="/search";
   static const onboardingScreen = '/onboarding';
   static const createAccaount = '/createAccount';
+  static const aboutUs = '/aboutus';
+  static const termsandconditions = '/termsandconditions';
 }

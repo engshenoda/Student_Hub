@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:linkedin/core/routes/route.dart';
 import 'package:linkedin/core/theme/app_text_styles.dart';
 import 'package:linkedin/features/profile/presentation/widgets/education_card.dart';
 import 'package:linkedin/features/profile/presentation/widgets/languages_list.dart';
@@ -20,6 +22,14 @@ class ProfileScreen extends StatelessWidget {
             title: const Text('About me'),
             centerTitle: true,
             elevation: 0,
+            actions: [
+              IconButton(
+                onPressed: () {
+                  GoRouter.of(context).push(Routes.settings);
+                },
+                icon: const Icon(Icons.settings),
+              ),
+            ],
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
