@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:linkedin/core/routes/route.dart';
 
 import '../auth/presentation/widgets/onboarding_Widgets.dart';
 
@@ -38,7 +40,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         curve: Curves.easeInOut,
       );
     } else {
-      Navigator.pushReplacementNamed(context, '/login');
+      GoRouter.of(context).push(Routes.createAccaount);
     }
   }
 
@@ -153,7 +155,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/login');
+                  GoRouter.of(context).push(Routes.createAccaount);
                 },
                 child: const Text(
                   "Get Started",
