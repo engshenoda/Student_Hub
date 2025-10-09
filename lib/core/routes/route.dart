@@ -8,9 +8,12 @@ class Routes {
   static const profile = '/profile';
   static const settings = '/settings';
   static const notifcation = '/notifcation';
-static const search ="/search";
+  static const search = "/search";
   static const onboardingScreen = '/onboarding';
   static const createAccaount = '/createAccount';
   static const aboutUs = '/aboutus';
   static const termsandconditions = '/termsandconditions';
+  static const chatscreen = '/ChatScreen';
+  static const comments = '/comments';
+  static const repost = '/repost';
 }

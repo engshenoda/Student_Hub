@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:linkedin/features/auth/presentation/widgets/auth_button.dart';
 
-
 class PasswordResetScreen extends StatelessWidget {
   const PasswordResetScreen({super.key});
 
@@ -9,7 +8,7 @@ class PasswordResetScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
- 
+
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -17,18 +16,12 @@ class PasswordResetScreen extends StatelessWidget {
           children: [
             const Text(
               "Password reset",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 5),
             const Text(
               "Lorem Ipsum is simply dummy text",
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
             const SizedBox(height: 120),
 
@@ -38,12 +31,12 @@ class PasswordResetScreen extends StatelessWidget {
               style: TextStyle(fontSize: 14, color: Colors.black87),
             ),
             const SizedBox(height: 40),
-//
+            //
             AuthButton(
               text: "Confirm",
               backgroundColor: Colors.teal,
               onPressed: () {
-              //
+                //
               },
             ),
           ],
