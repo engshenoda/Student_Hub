@@ -155,7 +155,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
                 onPressed: () {
-                  GoRouter.of(context).push(Routes.createAccaount);
+                  GoRouter.of(context).push(Routes.careerpreference);
                 },
                 child: const Text(
                   "Get Started",
