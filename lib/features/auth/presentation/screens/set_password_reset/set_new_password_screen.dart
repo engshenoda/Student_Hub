@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:linkedin/features/auth/presentation/widgets/auth_button.dart';
+
+import '../../../../../core/routes/route.dart';
 
 class SetNewPasswordScreen extends StatefulWidget {
   const SetNewPasswordScreen({super.key});
@@ -13,7 +16,8 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
   bool _obscureConfirmPassword = true;
 
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -25,29 +29,23 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-             Text(
+            Text(
               "Set A New Password",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
-             SizedBox(height: 5),
-             Text(
+            SizedBox(height: 5),
+            Text(
               "Lorem Ipsum is simply dummy text",
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
+              style: TextStyle(fontSize: 14, color: Colors.grey),
             ),
-             SizedBox(height: 100),
-            
+            SizedBox(height: 100),
+
             // Password Field
-             Text(
+            Text(
               "Password",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
-             SizedBox(height: 8),
+            SizedBox(height: 8),
             TextField(
               controller: _passwordController,
               obscureText: _obscurePassword,
@@ -71,14 +69,14 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
                 ),
               ),
             ),
-             SizedBox(height: 20),
+            SizedBox(height: 20),
 
             // Confirm Password Field
-             Text(
+            Text(
               "Confirm Password",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
-             SizedBox(height: 8),
+            SizedBox(height: 8),
             TextField(
               controller: _confirmPasswordController,
               obscureText: _obscureConfirmPassword,
@@ -88,7 +86,9 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
                 fillColor: Colors.grey.shade200,
                 suffixIcon: IconButton(
                   icon: Icon(
-                    _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                    _obscureConfirmPassword
+                        ? Icons.visibility_off
+                        : Icons.visibility,
                   ),
                   onPressed: () {
                     setState(() {
@@ -102,17 +102,19 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
                 ),
               ),
             ),
-             SizedBox(height: 40),
+            SizedBox(height: 40),
 
             // Update Button
-           AuthButton(text: "Update Password", backgroundColor: Colors.teal,
-            onPressed: () { 
-              
-             },)
+            AuthButton(
+              text: "Update Password",
+              backgroundColor: Colors.teal,
+              onPressed: () {
+                GoRouter.of(context).push(Routes.login);
+              },
+            ),
           ],
         ),
       ),
     );
   }
 }
-

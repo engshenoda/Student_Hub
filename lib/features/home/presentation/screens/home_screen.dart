@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:linkedin/core/routes/route.dart';
-import '../widgets/post_card.dart';
 import 'package:linkedin/core/widgets/custom_bottom_navigation.dart';
+
+import '../widgets/post_card.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -68,7 +69,7 @@ class HomeScreen extends StatelessWidget {
                             onPressed: () {
                               GoRouter.of(context).push(Routes.search);
                             },
-                            icon:const Icon(Icons.search,color: Colors.teal,),
+                            icon: const Icon(Icons.search, color: Colors.teal),
                           ),
                           IconButton(
                             onPressed: () {

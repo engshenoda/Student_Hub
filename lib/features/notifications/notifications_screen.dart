@@ -22,7 +22,7 @@ class NotificationScreen extends StatelessWidget {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              GoRouter.of(context).pop();
+              GoRouter.of(context).go('/home');
             },
           ),
           title: const Text("Notification"),
