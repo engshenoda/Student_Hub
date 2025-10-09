@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:linkedin/core/routes/route.dart';
 import 'package:linkedin/core/widgets/custom_bottom_social_media.dart';
 import 'package:linkedin/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:linkedin/core/widgets/custom_text_form_field.dart';
@@ -88,10 +92,13 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
             validator: (value) {
               if (value == null || value.isEmpty)
                 return "Please enter your password";
-              if (!_isValidPassword(value)) {
-                return "Password must be at least 8 chars,\ninclude letters, numbers & symbols";
+              else if (value.length < 8) {
+                return "Password must be at least 8 characters long";
+              } else if (!_isValidPassword(value)) {
+                return "Password must contain at least one letter, one number, and one special character";
+              } else {
+                return null;
               }
-              return null;
             },
           ),
 
@@ -119,10 +126,6 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
             height: 50,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                );
                 if (formKey.currentState!.validate()) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -130,6 +133,7 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                     ),
                   );
                 }
+               GoRouter.of(context).go(Routes.login);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal,
