@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 const Color kPrimary = Color(0xFF00B894);
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({super.key});
 
   double responsive(BuildContext context, double value) {
     final size = MediaQuery.of(context).size;

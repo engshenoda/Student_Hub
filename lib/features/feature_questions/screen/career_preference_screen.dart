@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 const Color kPrimary = Color(0xFF00B894);
 
 class CareerPreferenceScreen extends StatefulWidget {
-  const CareerPreferenceScreen({Key? key}) : super(key: key);
+  const CareerPreferenceScreen({super.key});
 
   @override
   State<CareerPreferenceScreen> createState() => _CareerPreferenceScreenState();

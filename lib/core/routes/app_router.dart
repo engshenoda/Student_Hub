@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:linkedin/core/routes/route.dart';
 import 'package:linkedin/features/auth/presentation/screens/create_account/createAcount_screen.dart';
 import 'package:linkedin/features/auth/presentation/screens/login/login_screen.dart';
+import 'package:linkedin/features/feature_questions/screen/career_preference_screen.dart';
 import 'package:linkedin/features/home/presentation/screens/home_screen.dart';
 import 'package:linkedin/features/home/presentation/screens/post.dart';
 import 'package:linkedin/features/jobs/presentation/screen/jops_screen.dart';
@@ -24,6 +25,10 @@ abstract class AppRoute {
       GoRoute(
         path: Routes.onboardingScreen,
         builder: (context, state) => const OnboardingScreen(),
+      ),
+      GoRoute(
+        path: Routes.careerpreference,
+        builder: (context, state) => const CareerPreferenceScreen(),
       ),
       GoRoute(
         path: Routes.createAccaount,
