@@ -52,7 +52,8 @@ class _SearchPageState extends State<SearchPage> {
       length: 4,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Search Page"),
+          title: const Text("Search"),
+          centerTitle: true,
           flexibleSpace: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
@@ -62,6 +63,13 @@ class _SearchPageState extends State<SearchPage> {
               ),
             ),
           ),
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.arrow_back_ios),
+          ),
+
           bottom: const TabBar(
             indicatorColor: Colors.black,
             labelColor: Colors.black,
