@@ -7,6 +7,10 @@ class AppColors {
   static const text = Color(0xFF06423A);
   static const danger = Color(0xFF0B8454); // greenish as in design
 
+  static const kLightGreen = Color(0xFFE0F7FA);
+  static const kDarkTeal = Color(0xFF00897B);
+  static const kTealAccent = Color(0xFF4DB6AC);
+
   // Neutral Colors
   static const Color background = Color(0xFFF8F9FA); // Off-White
   static const Color textDark = Color(0xFF2D3436); // Dark Gray

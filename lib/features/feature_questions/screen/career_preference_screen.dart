@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:linkedin/core/routes/route.dart';
 
 const Color kPrimary = Color(0xFF00B894);
 
@@ -36,7 +38,10 @@ class _CareerPreferenceScreenState extends State<CareerPreferenceScreen> {
                 Container(height: 8, color: kPrimary, width: double.infinity),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(horizontal: s(18), vertical: s(10)),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: s(18),
+                      vertical: s(10),
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -81,9 +86,12 @@ class _CareerPreferenceScreenState extends State<CareerPreferenceScreen> {
                           children: [
                             Expanded(
                               child: OutlinedButton(
-                                onPressed: () => Navigator.of(context).maybePop(),
+                                onPressed: () =>
+                                    Navigator.of(context).maybePop(),
                                 style: OutlinedButton.styleFrom(
-                                  padding: EdgeInsets.symmetric(vertical: s(16)),
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: s(16),
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(s(28)),
                                   ),
@@ -92,7 +100,10 @@ class _CareerPreferenceScreenState extends State<CareerPreferenceScreen> {
                                 ),
                                 child: Text(
                                   'Back',
-                                  style: TextStyle(fontSize: s(16), color: Colors.grey[800]),
+                                  style: TextStyle(
+                                    fontSize: s(16),
+                                    color: Colors.grey[800],
+                                  ),
                                 ),
                               ),
                             ),
@@ -102,11 +113,16 @@ class _CareerPreferenceScreenState extends State<CareerPreferenceScreen> {
                                 onPressed: () {
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (_) => const CareerNextPlaceholder()),
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          const CareerNextPlaceholder(),
+                                    ),
                                   );
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  padding: EdgeInsets.symmetric(vertical: s(16)),
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: s(16),
+                                  ),
                                   backgroundColor: kPrimary,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(s(28)),
@@ -115,7 +131,10 @@ class _CareerPreferenceScreenState extends State<CareerPreferenceScreen> {
                                 ),
                                 child: Text(
                                   'Next',
-                                  style: TextStyle(fontSize: s(16), fontWeight: FontWeight.w600),
+                                  style: TextStyle(
+                                    fontSize: s(16),
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
                             ),
@@ -151,13 +170,16 @@ class _CareerPreferenceScreenState extends State<CareerPreferenceScreen> {
         decoration: BoxDecoration(
           color: isSelected ? kPrimary.withOpacity(0.08) : Colors.white,
           borderRadius: BorderRadius.circular(s(12)),
-          border: Border.all(color: isSelected ? kPrimary : Colors.grey.shade300, width: 1.5),
+          border: Border.all(
+            color: isSelected ? kPrimary : Colors.grey.shade300,
+            width: 1.5,
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.04),
               blurRadius: 12,
               offset: const Offset(0, 6),
-            )
+            ),
           ],
         ),
         child: Row(
@@ -172,12 +194,23 @@ class _CareerPreferenceScreenState extends State<CareerPreferenceScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title,
-                      style: TextStyle(
-                          fontSize: s(15), fontWeight: FontWeight.w600, color: Colors.black)),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: s(15),
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
                   SizedBox(height: s(6)),
-                  Text(subtitle,
-                      style: TextStyle(fontSize: s(13), height: 1.3, color: Colors.grey[700])),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: s(13),
+                      height: 1.3,
+                      color: Colors.grey[700],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -201,27 +234,44 @@ class _CareerHeader extends StatelessWidget {
           children: [
             _StepCircleProgress(fillPercent: 1.0, size: s(28), hasCheck: true),
             SizedBox(height: s(6)),
-            Text('Profile', style: TextStyle(fontSize: s(12), color: Colors.grey[700])),
+            Text(
+              'Profile',
+              style: TextStyle(fontSize: s(12), color: Colors.grey[700]),
+            ),
           ],
         ),
         Expanded(
-          child: Container(height: s(1), margin: EdgeInsets.symmetric(horizontal: s(10)), color: Colors.grey.shade300),
+          child: Container(
+            height: s(1),
+            margin: EdgeInsets.symmetric(horizontal: s(10)),
+            color: Colors.grey.shade300,
+          ),
         ),
         Column(
           children: [
             _StepCircleProgress(fillPercent: 0.75, size: s(28)),
             SizedBox(height: s(6)),
-            Text('Career Preference', style: TextStyle(fontSize: s(12), color: Colors.grey[700])),
+            Text(
+              'Career Preference',
+              style: TextStyle(fontSize: s(12), color: Colors.grey[700]),
+            ),
           ],
         ),
         Expanded(
-          child: Container(height: s(1), margin: EdgeInsets.symmetric(horizontal: s(10)), color: Colors.grey.shade300),
+          child: Container(
+            height: s(1),
+            margin: EdgeInsets.symmetric(horizontal: s(10)),
+            color: Colors.grey.shade300,
+          ),
         ),
         Column(
           children: [
             _StepCircleProgress(fillPercent: 0.0, size: s(28)),
             SizedBox(height: s(6)),
-            Text('Docs', style: TextStyle(fontSize: s(12), color: Colors.grey[700])),
+            Text(
+              'Docs',
+              style: TextStyle(fontSize: s(12), color: Colors.grey[700]),
+            ),
           ],
         ),
       ],
@@ -260,8 +310,7 @@ class _StepCircleProgress extends StatelessWidget {
             child: Container(width: size, height: size, color: kPrimary),
           ),
         ),
-        if (hasCheck)
-          Icon(Icons.check, size: size * 0.6, color: Colors.white),
+        if (hasCheck) Icon(Icons.check, size: size * 0.6, color: Colors.white),
       ],
     );
   }
@@ -273,8 +322,13 @@ class CareerNextPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Career - Next'), backgroundColor: kPrimary),
-      body: const Center(child: Text('Career Next (placeholder)')),
+      appBar: AppBar(title: Text('Career - Next'), backgroundColor: kPrimary),
+      body: ElevatedButton(
+        onPressed: () {
+          GoRouter.of(context).push(Routes.Home);
+        },
+        child: const Text('Go to Home'),
+      ),
     );
   }
 }

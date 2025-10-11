@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:linkedin/core/routes/route.dart';
 
 const Color kLightGreen = Color(0xFFE0F7FA);
 const Color kDarkTeal = Color(0xFF00897B);
@@ -14,22 +16,20 @@ class Message {
 
 final List<Message> dummyMessages = [
   Message(
-    text: "Hi, I'm looking for a soft, long-lasting perfume. Something feminine but not too strong.",
+    text:
+        "Hi, I'm looking for a soft, long-lasting perfume. Something feminine but not too strong.",
     isMe: true,
     time: "6:30 PM",
   ),
-  Message(
-    text: "Hi How Are You ?",
-    isMe: false,
-    time: "6:30 PM",
-  ),
+  Message(text: "Hi How Are You ?", isMe: false, time: "6:30 PM"),
   Message(
     text: "Mostly floral and fruity. Something light for daytime wear.",
     isMe: true,
     time: "6:30 PM",
   ),
   Message(
-    text: "Great choice! Here are 3 perfumes that match your style. Would you like to see pictures?",
+    text:
+        "Great choice! Here are 3 perfumes that match your style. Would you like to see pictures?",
     isMe: false,
     time: "6:30 PM",
   ),
@@ -45,7 +45,6 @@ class ChatScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-     
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -58,10 +57,10 @@ class ChatScreen extends StatelessWidget {
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
-       
+
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: kDarkTeal),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => GoRouter.of(context).go(Routes.Home),
         ),
         title: Row(
           children: [
@@ -76,13 +75,17 @@ class ChatScreen extends StatelessWidget {
                 Text(
                   chatModel.name,
                   style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: kDarkTeal),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: kDarkTeal,
+                  ),
                 ),
                 Text(
                   chatModel.subtitle,
-                  style: TextStyle(fontSize: 12, color: kDarkTeal.withOpacity(0.8)),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: kDarkTeal.withOpacity(0.8),
+                  ),
                 ),
               ],
             ),
@@ -100,7 +103,10 @@ class ChatScreen extends StatelessWidget {
         children: [
           Expanded(
             child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10.0,
+                vertical: 15.0,
+              ),
               reverse: true,
               itemCount: dummyMessages.length,
               itemBuilder: (context, index) {
@@ -109,13 +115,12 @@ class ChatScreen extends StatelessWidget {
               },
             ),
           ),
-          
+
           _buildMessageInput(),
         ],
       ),
     );
   }
-
 
   Widget _buildMessageBubble(Message message) {
     final bool isMe = message.isMe;
@@ -134,15 +139,16 @@ class ChatScreen extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Column(
-        crossAxisAlignment:
-            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: isMe
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment:
-                isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+            mainAxisAlignment: isMe
+                ? MainAxisAlignment.end
+                : MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-           
               if (!isMe)
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0, bottom: 10.0),
@@ -151,7 +157,7 @@ class ChatScreen extends StatelessWidget {
                     backgroundImage: NetworkImage(chatModel.avatarUrl),
                   ),
                 ),
-         
+
               Flexible(
                 child: Container(
                   margin: EdgeInsets.only(
@@ -193,18 +199,15 @@ class ChatScreen extends StatelessWidget {
                   ),
                 ),
               ),
-            
+
               if (isMe)
                 const Padding(
                   padding: EdgeInsets.only(left: 8.0, bottom: 10.0),
-                  child: CircleAvatar(
-                    radius: 15,
-                   
-                  ),
+                  child: CircleAvatar(radius: 15),
                 ),
             ],
           ),
-     
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: Text(
@@ -217,13 +220,14 @@ class ChatScreen extends StatelessWidget {
     );
   }
 
- 
   Widget _buildMessageInput() {
     return Container(
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey.shade200, width: 1.0)),
+        border: Border(
+          top: BorderSide(color: Colors.grey.shade200, width: 1.0),
+        ),
       ),
       child: Row(
         children: [
@@ -239,25 +243,12 @@ class ChatScreen extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.send, color: kDarkTeal),
-            onPressed: () {
-            
-            },
+            onPressed: () {},
           ),
         ],
       ),
     );
   }
-}
-
-
-
-
-
-
-
-
-void main() {
-  runApp(const ChatAppClone());
 }
 
 class ChatAppClone extends StatelessWidget {
@@ -278,7 +269,6 @@ class ChatAppClone extends StatelessWidget {
   }
 }
 
-
 class ChatModel {
   final String avatarUrl;
   final String name;
@@ -293,50 +283,47 @@ class ChatModel {
   });
 }
 
-
 final List<ChatModel> dummyChats = [
- 
-
   ChatModel(
-    avatarUrl: 'https://placehold.co/100x100/43a047/ffffff/png?text=KF', 
-    name: 'Khaled Farouk', 
+    avatarUrl: 'https://placehold.co/100x100/43a047/ffffff/png?text=KF',
+    name: 'Khaled Farouk',
     subtitle: 'Sales Representative',
     date: '10 May 2025',
   ),
   ChatModel(
-    avatarUrl: 'https://placehold.co/100x100/ffb300/ffffff/png?text=SJ', 
-    name: 'Sarah Jones', 
-    subtitle: 'Freelance Writer', 
+    avatarUrl: 'https://placehold.co/100x100/ffb300/ffffff/png?text=SJ',
+    name: 'Sarah Jones',
+    subtitle: 'Freelance Writer',
     date: '09 May 2025',
   ),
   ChatModel(
-    avatarUrl: 'https://placehold.co/100x100/f4511e/ffffff/png?text=MR',   
-    name: 'Michael Rivas', 
-    subtitle: 'Project Manager',   
+    avatarUrl: 'https://placehold.co/100x100/f4511e/ffffff/png?text=MR',
+    name: 'Michael Rivas',
+    subtitle: 'Project Manager',
     date: '08 May 2025',
   ),
   ChatModel(
-    avatarUrl: 'https://placehold.co/100x100/7cb342/ffffff/png?text=HA',   
-    name: 'Huda Alali', 
-    subtitle: 'Teacher',  
+    avatarUrl: 'https://placehold.co/100x100/7cb342/ffffff/png?text=HA',
+    name: 'Huda Alali',
+    subtitle: 'Teacher',
     date: '07 May 2025',
   ),
   ChatModel(
-    avatarUrl: 'https://placehold.co/100x100/5e35b1/ffffff/png?text=DL',   
-    name: 'David Lee', 
-    subtitle: 'Data Analyst',    
+    avatarUrl: 'https://placehold.co/100x100/5e35b1/ffffff/png?text=DL',
+    name: 'David Lee',
+    subtitle: 'Data Analyst',
     date: '06 May 2025',
   ),
   ChatModel(
-    avatarUrl: 'https://placehold.co/100x100/039be5/ffffff/png?text=ZE',    
-    name: 'Zainab Emad', 
-    subtitle: 'UX Designer',     
+    avatarUrl: 'https://placehold.co/100x100/039be5/ffffff/png?text=ZE',
+    name: 'Zainab Emad',
+    subtitle: 'UX Designer',
     date: '05 May 2025',
   ),
   ChatModel(
-    avatarUrl: 'https://placehold.co/100x100/c0ca33/ffffff/png?text=AS',   
-    name: 'Adam Smith', 
-    subtitle: 'Student',  
+    avatarUrl: 'https://placehold.co/100x100/c0ca33/ffffff/png?text=AS',
+    name: 'Adam Smith',
+    subtitle: 'Student',
     date: '04 May 2025',
   ),
 ];
@@ -349,7 +336,7 @@ class ChatsListScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(130.0), 
+        preferredSize: const Size.fromHeight(130.0),
         child: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
@@ -370,6 +357,12 @@ class ChatsListScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back, color: kDarkTeal),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
                     const Text(
                       'Chats',
                       style: TextStyle(
@@ -385,7 +378,7 @@ class ChatsListScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 10),
-               
+    
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   decoration: BoxDecoration(
@@ -419,14 +412,20 @@ class ChatsListScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final chat = dummyChats[index];
           return ListTile(
-            contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 8.0,
+              horizontal: 16.0,
+            ),
             leading: CircleAvatar(
               radius: 30,
               backgroundImage: NetworkImage(chat.avatarUrl),
             ),
             title: Text(
               chat.name,
-              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
             subtitle: Text(
               chat.subtitle,
@@ -437,13 +436,6 @@ class ChatsListScreen extends StatelessWidget {
               style: TextStyle(color: Colors.grey[500], fontSize: 12),
             ),
             onTap: () {
-              
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChatScreen(chatModel: chat),
-                ),
-              );
             },
           );
         },

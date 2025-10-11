@@ -1,12 +1,14 @@
 import 'package:go_router/go_router.dart';
 import 'package:linkedin/core/routes/route.dart';
 import 'package:linkedin/features/auth/presentation/screens/create_account/createAcount_screen.dart';
+import 'package:linkedin/features/auth/presentation/screens/forget_password/forget_pasword.dart';
 import 'package:linkedin/features/auth/presentation/screens/login/login_screen.dart';
+import 'package:linkedin/features/chat/Presentation/Screen/chat_screen.dart';
 import 'package:linkedin/features/feature_questions/screen/career_preference_screen.dart';
 import 'package:linkedin/features/home/presentation/screens/home_screen.dart';
 import 'package:linkedin/features/home/presentation/screens/post.dart';
-import 'package:linkedin/features/jobs/presentation/screen/jops_screen.dart';
-import 'package:linkedin/features/notifications/notifications_screen.dart';
+import 'package:linkedin/features/jobs/presentation/screen/jobs_screen.dart';
+import 'package:linkedin/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:linkedin/features/onbording/Onboarding_pages.dart';
 import 'package:linkedin/features/onbording/splash_screen.dart';
 import 'package:linkedin/features/profile/presentation/screens/profile_screen.dart';
@@ -27,8 +29,8 @@ abstract class AppRoute {
         builder: (context, state) => const OnboardingScreen(),
       ),
       GoRoute(
-        path: Routes.careerpreference,
-        builder: (context, state) => const CareerPreferenceScreen(),
+        path: Routes.createAccaount,
+        builder: (context, state) => const CreateAccountScreen(),
       ),
       GoRoute(
         path: Routes.createAccaount,
@@ -39,8 +41,20 @@ abstract class AppRoute {
         builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
+        path: Routes.login,
+        builder: (context, state) => const ForgetPasword(),
+      ),
+      GoRoute(
+        path: Routes.careerpreference,
+        builder: (context, state) => const CareerPreferenceScreen(),
+      ),
+      GoRoute(
         path: Routes.Home,
         builder: (context, state) => const HomeScreen(),
+      ),
+      GoRoute(
+        path: Routes.messahes,
+        builder: (context, state) => const ChatsListScreen(),
       ),
       GoRoute(
         path: Routes.notifcation,
@@ -68,37 +82,9 @@ abstract class AppRoute {
       ),
       GoRoute(
         path: Routes.jobs,
-        builder: (context, state) => const jops_screen(),
+        builder: (context, state) => const JobScreen(),
       ),
       GoRoute(path: Routes.create, builder: (context, state) => const Post()),
-
-      // ShellRoute(
-      //   builder: (context, state, child) {
-      //     return CustomBottomNavigationBar(child: child);
-      //   },
-      //   routes: [
-      //     GoRoute(
-      //       path: Routes.Home,
-      //       builder: (context, state) => const HomeScreen(),
-      //     ),
-      //     // GoRoute(
-      //     //   path: Rutes.messahes,
-      //     //   builder: (context, state) => const MessagesScreen(),
-      //     // ),
-      //     // GoRoute(
-      //     //   path: Routes.create,
-      //     //   builder: (context, state) => const CreateScreen(),
-      //     // ),
-      //     // GoRoute(
-      //     //   path: Routes.jobs,
-      //     //   builder: (context, state) => const JobsScreen(),
-      //     // ),
-      //     GoRoute(
-      //       path: Routes.profile,
-      //       builder: (context, state) => const ProfileScreen(),
-      //     ),
-      //   ],
-      // ),
     ],
   );
 }

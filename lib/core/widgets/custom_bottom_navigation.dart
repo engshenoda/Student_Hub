@@ -58,15 +58,15 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             currentIndex = index;
           });
           if (index == 0) {
-            context.go(Routes.Home);
+            GoRouter.of(context).push(Routes.Home);
           } else if (index == 1) {
-            context.go(Routes.messahes);
+            GoRouter.of(context).push(Routes.messahes);
           } else if (index == 2) {
-            context.go(Routes.create);
+            GoRouter.of(context).push(Routes.create);
           } else if (index == 3) {
-            context.go(Routes.jobs);
+            GoRouter.of(context).push(Routes.jobs);
           } else if (index == 4) {
-            context.go(Routes.profile);
+            GoRouter.of(context).push(Routes.profile);
           }
         },
         items: const [

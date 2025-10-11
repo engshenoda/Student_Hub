@@ -5,6 +5,7 @@ class Routes {
   static const Home = '/home';
   static const messahes = '/messages';
   static const create = '/create';
+  static const forgetpassword = '/forgetpassword';
   static const login = '/login';
   static const jobs = '/jobs';
   static const profile = '/profile';

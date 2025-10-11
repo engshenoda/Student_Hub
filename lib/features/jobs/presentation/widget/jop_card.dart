@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:linkedin/features/jobs/presentation/screen/jop_details.dart';
+import 'package:linkedin/features/jobs/presentation/screen/job_details.dart';
 
 
 class JobCard extends StatelessWidget {
