@@ -8,6 +8,7 @@ class Routes {
   static const forgetpassword = '/forgetpassword';
   static const login = '/login';
   static const jobs = '/jobs';
+  static const alljobsscreen = '/alljobsscreen';
   static const profile = '/profile';
   static const settings = '/settings';
   static const notifcation = '/notifcation';
@@ -16,7 +17,7 @@ class Routes {
   static const createAccaount = '/createAccount';
   static const aboutUs = '/aboutus';
   static const termsandconditions = '/termsandconditions';
-  static const chatscreen = '/ChatScreen';
+  static const chatscreen = '/chatscreen';
   static const comments = '/comments';
   static const repost = '/repost';
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:linkedin/core/routes/route.dart';
 import '../widget/jop_card.dart';
 import '../widget/jop_tile.dart';
 
@@ -122,7 +123,8 @@ class JobScreen extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: () => context.push('/allJobs'),
+                  onPressed: () =>
+                      GoRouter.of(context).push(Routes.alljobsscreen),
                   child: const Text(
                     "See All",
                     style: TextStyle(color: Color.fromARGB(255, 0, 145, 73)),

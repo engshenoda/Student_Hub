@@ -8,6 +8,7 @@ import 'package:linkedin/features/feature_questions/screen/career_preference_scr
 import 'package:linkedin/features/home/presentation/screens/home_screen.dart';
 import 'package:linkedin/features/home/presentation/screens/post.dart';
 import 'package:linkedin/features/jobs/presentation/screen/jobs_screen.dart';
+import 'package:linkedin/features/jobs/presentation/screen/see_all_screen.dart';
 import 'package:linkedin/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:linkedin/features/onbording/Onboarding_pages.dart';
 import 'package:linkedin/features/onbording/splash_screen.dart';
@@ -56,6 +57,12 @@ abstract class AppRoute {
         path: Routes.messahes,
         builder: (context, state) => const ChatsListScreen(),
       ),
+      
+      // GoRoute(
+      //   path: Routes.chatscreen ,
+        
+      //   builder: (context, state) =>  ChatScreen(chatModel: null,),
+      // ),
       GoRoute(
         path: Routes.notifcation,
         builder: (context, state) => const NotificationScreen(),
@@ -83,6 +90,10 @@ abstract class AppRoute {
       GoRoute(
         path: Routes.jobs,
         builder: (context, state) => const JobScreen(),
+      ),
+      GoRoute(
+        path: Routes.alljobsscreen,
+        builder: (context, state) => const AllJobsScreen(),
       ),
       GoRoute(path: Routes.create, builder: (context, state) => const Post()),
     ],
