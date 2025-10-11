@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../widgets/list_view.dart';
 
@@ -22,7 +23,9 @@ class NotificationScreen extends StatelessWidget {
           ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () {},
+            onPressed: () {
+              GoRouter.of(context).go('/home');
+            },
           ),
           title: const Text("Notification"),
           centerTitle: true,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../widgets/list_view.dart';
 import '../widgets/search_widget.dart';
@@ -65,7 +66,7 @@ class _SearchPageState extends State<SearchPage> {
           ),
           leading: IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              GoRouter.of(context).go('/home');
             },
             icon: Icon(Icons.arrow_back_ios),
           ),
