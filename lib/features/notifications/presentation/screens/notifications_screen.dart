@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+
+import '../widgets/list_view.dart';
 
 class NotificationScreen extends StatelessWidget {
   const NotificationScreen({super.key});
@@ -21,9 +22,7 @@ class NotificationScreen extends StatelessWidget {
           ),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              GoRouter.of(context).go('/home');
-            },
+            onPressed: () {},
           ),
           title: const Text("Notification"),
           centerTitle: true,
@@ -48,35 +47,6 @@ class NotificationScreen extends StatelessWidget {
   }
 
   Widget _buildNotificationList() {
-    return ListView.builder(
-      itemCount: 5,
-      padding: const EdgeInsets.all(8),
-      itemBuilder: (context, index) {
-        return Card(
-          color: Color(0xFFD9F4EF),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          margin: const EdgeInsets.symmetric(vertical: 6),
-          child: ListTile(
-            leading: const CircleAvatar(
-              backgroundColor: Color(0xFF00B894),
-              child: Text("SJ", style: TextStyle(color: Colors.white)),
-            ),
-            title: const Text("Sarah Johnson sent you a message"),
-            subtitle: const Text(
-              "Senior Product Manager at TechCrop • 500+ connections",
-            ),
-            trailing: TextButton(
-              onPressed: () {},
-              style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFF00B894),
-              ),
-              child: const Text("Connect"),
-            ),
-          ),
-        );
-      },
-    );
+    return ListView2();
   }
 }
