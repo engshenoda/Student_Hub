@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:linkedin/core/constants/constants.dart';
-import 'package:linkedin/features/chat%20copy/Presentation/Model/models.dart';
+import 'package:linkedin/features/chat/data/models.dart';
 
 
 import 'chat_screen.dart';
@@ -106,7 +106,7 @@ class ChatsListScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ChatScreen(chatName: chat.name), 
+                  builder: (context) => ChatScreen(chatName: chat.name, chatModel: null,), 
                 ),
               );
             },

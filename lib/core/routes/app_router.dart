@@ -3,7 +3,8 @@ import 'package:linkedin/core/routes/route.dart';
 import 'package:linkedin/features/auth/presentation/screens/create_account/createAcount_screen.dart';
 import 'package:linkedin/features/auth/presentation/screens/forget_password/forget_pasword.dart';
 import 'package:linkedin/features/auth/presentation/screens/login/login_screen.dart';
-import 'package:linkedin/features/chat%20copy/Presentation/widgets/chats_list_screen.dart';
+import 'package:linkedin/features/chat/Presentation/widget/chat_screen.dart';
+import 'package:linkedin/features/chat/Presentation/widget/chats_list_screen.dart';
 
 import 'package:linkedin/features/feature_questions/screen/career_preference_screen.dart';
 import 'package:linkedin/features/home/presentation/screens/home_screen.dart';
@@ -59,11 +60,11 @@ abstract class AppRoute {
         builder: (context, state) => const ChatsListScreen(),
       ),
       
-      // GoRoute(
-      //   path: Routes.chatscreen ,
+      GoRoute(
+        path: Routes.chatscreen ,
         
-      //   builder: (context, state) =>  ChatScreen(chatModel: null,),
-      // ),
+        builder: (context, state) =>  ChatScreen(chatModel: null, chatName: '',),
+      ),
       GoRoute(
         path: Routes.notifcation,
         builder: (context, state) => const NotificationScreen(),

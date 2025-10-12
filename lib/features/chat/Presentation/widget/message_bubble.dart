@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:linkedin/core/constants/constants.dart';
-import 'package:linkedin/features/chat%20copy/Presentation/Model/models.dart';
-import 'package:linkedin/features/chat%20copy/Presentation/widgets/chat_screen.dart';
+import 'package:linkedin/features/chat/data/models.dart';
+import 'package:linkedin/features/chat/Presentation/widget/chat_screen.dart';
 
 
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:linkedin/core/constants/constants.dart';
-import 'package:linkedin/features/chat%20copy/Presentation/widgets/chats_list_screen.dart';
+import 'package:linkedin/features/chat/Presentation/widget/chats_list_screen.dart';
 
 
 
