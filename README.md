@@ -1,4 +1,4 @@
-# linkedin
+# student hub
 
 A new Flutter project.
 
