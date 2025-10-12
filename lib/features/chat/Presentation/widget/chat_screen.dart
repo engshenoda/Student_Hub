@@ -2,9 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:linkedin/core/constants/constants.dart';
-import 'package:linkedin/features/chat%20copy/Presentation/Model/models.dart';
-import 'package:linkedin/features/chat%20copy/Presentation/widgets/chat_input.dart';
-import 'package:linkedin/features/chat%20copy/Presentation/widgets/message_bubble.dart';
+import 'package:linkedin/features/chat/data/models.dart';
+import 'package:linkedin/features/chat/Presentation/widget/chat_input.dart';
+import 'package:linkedin/features/chat/Presentation/widget/message_bubble.dart';
 
 
 
@@ -44,7 +44,7 @@ class ChatScreen extends StatelessWidget {
   // New constructor takes a name (identifier) instead of the whole model
   final String chatName; 
 
-  const ChatScreen({super.key, required this.chatName});
+  const ChatScreen({super.key, required this.chatName, required chatModel});
 
   @override
   Widget build(BuildContext context) {
