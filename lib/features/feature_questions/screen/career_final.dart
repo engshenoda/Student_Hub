@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sapp/screen/Docs_Screen.dart';
+import 'package:linkedin/features/feature_questions/screen/Docs_Screen.dart';
 
 const Color kPrimary = Color(0xFF00B894);
 

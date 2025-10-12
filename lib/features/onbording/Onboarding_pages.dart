@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:linkedin/core/routes/route.dart';
+import 'package:linkedin/core/theme/app_colors.dart';
+import 'package:linkedin/core/widgets/custom_bottom.dart';
 
-import '../auth/presentation/widgets/onboarding_Widgets.dart';
+import 'widget/onboarding_content.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -75,7 +77,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 },
                 child: const Text(
                   "Skip",
-                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  style: TextStyle(
+                    color: AppColors.textDark,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -94,7 +100,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 },
                 child: const Text(
                   "Prev",
-                  style: TextStyle(color: Colors.white, fontSize: 16),
+                  style: TextStyle(
+                    color: AppColors.textDark,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -115,8 +125,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   height: 8,
                   decoration: BoxDecoration(
                     color: _currentPage == index
-                        ? Colors.tealAccent[700]
-                        : Colors.white54,
+                        ? AppColors.primary
+                        : AppColors.white.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -124,21 +134,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
           ),
 
-          // Floating Button (Next / Get Started)
-          Positioned(
-            bottom: 40,
-            right: 20,
-            child: FloatingActionButton(
-              backgroundColor: Colors.tealAccent[700],
-              onPressed: _nextPage,
-              child: Icon(
-                _currentPage == onboardingData.length - 1
-                    ? Icons.done
-                    : Icons.arrow_forward_ios,
-                color: Colors.white,
+          // show FAB only on pages before the last
+          if (_currentPage < onboardingData.length - 1)
+            Positioned(
+              bottom: 40,
+              right: 20,
+              child: FloatingActionButton(
+                backgroundColor: Colors.tealAccent[700],
+                onPressed: _nextPage,
+                child: const Icon(Icons.arrow_forward_ios, color: Colors.white),
               ),
             ),
-          ),
 
           // Get Started Button (inside page 3)
           if (_currentPage == onboardingData.length - 1)
@@ -146,21 +152,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               bottom: 110,
               left: 24,
               right: 24,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.tealAccent[700],
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+              child: Column(
+                children: [
+                  CustomBottom(
+                    title: "Create Account",
+                    onPressed: () {
+                      GoRouter.of(context).push(Routes.createAccaount);
+                    },
                   ),
-                ),
-                onPressed: () {
-                  GoRouter.of(context).push(Routes.careerpreference);
-                },
-                child: const Text(
-                  "Get Started",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+                  SizedBox(height: 16),
+                  CustomBottom(
+                    onPressed: () {
+                      GoRouter.of(context).push(Routes.login);
+                    },
+                    title: "Login",
+                  ),
+                ],
               ),
             ),
         ],

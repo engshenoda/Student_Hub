@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:linkedin/core/routes/route.dart';
+import 'package:linkedin/core/widgets/custom_bottom.dart';
 import 'package:linkedin/features/auth/presentation/screens/create_account/createAcount_screen.dart';
 import 'package:linkedin/features/auth/presentation/screens/forget_password/forget_pasword.dart';
 import 'package:linkedin/core/widgets/custom_text_form_field.dart';
@@ -99,34 +100,20 @@ class LoginFormState extends State<LoginForm> {
             ],
           ),
           SizedBox(height: 8),
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Account Created Successfully!"),
-                    ),
-                  );
-                }
-               
-               GoRouter.of( context).push(Routes.Home); 
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),
-              ),
-              child: const Text(
-                "Login",
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
-            ),
-          ),
+          CustomBottom(
+            title: "Login",
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Account Created Successfully!"),
+                  ),
+                );
+              }
 
+              GoRouter.of(context).push(Routes.Home);
+            },
+          ),
           SizedBox(height: 20),
 
           //divider

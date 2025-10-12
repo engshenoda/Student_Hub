@@ -93,7 +93,7 @@ class Settings extends StatelessWidget {
 class _Section extends StatelessWidget {
   final String title;
   final List<Widget> children;
-  const _Section({required this.title, required this.children, super.key});
+  const _Section({required this.title, required this.children});
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +122,7 @@ class _Section extends StatelessWidget {
 }
 
 class _DarkModeSwitch extends StatefulWidget {
-  const _DarkModeSwitch({super.key});
+  const _DarkModeSwitch();
   @override
   State<_DarkModeSwitch> createState() => _DarkModeSwitchState();
 }

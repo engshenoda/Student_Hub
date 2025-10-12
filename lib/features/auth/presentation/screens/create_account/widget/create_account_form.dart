@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:linkedin/core/routes/route.dart';
+import 'package:linkedin/core/widgets/custom_bottom.dart';
 import 'package:linkedin/core/widgets/custom_bottom_social_media.dart';
 import 'package:linkedin/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:linkedin/core/widgets/custom_text_form_field.dart';
@@ -119,33 +120,19 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
             },
           ),
 
-          SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton(
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Account Created Successfully!"),
-                    ),
-                  );
-                }
-               GoRouter.of(context).go(Routes.login);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25),
-                ),
-              ),
-              child: const Text(
-                "Create Account",
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
-            ),
+          CustomBottom(
+            title: "Create Account",
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Account Created Successfully!"),
+                  ),
+                );
+              }
+              GoRouter.of(context).go(Routes.careerpreference);
+            },
           ),
-
           SizedBox(height: 10),
 
           //divider

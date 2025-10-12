@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:linkedin/features/home/presentation/widgets/comment_item.dart';
-import '../widgets/comment_item.dart';
 class Comments extends StatelessWidget {
   const Comments({super.key});
 

@@ -6,7 +6,10 @@ class Routes {
   static const messahes = '/messages';
   static const create = '/create';
   static const forgetpassword = '/forgetpassword';
+  static const veryfypassword = '/veryfypassword';
   static const login = '/login';
+  static const setnewpassword = '/setnewpassword';
+  static const passwordreset = '/passwordreset';
   static const jobs = '/jobs';
   static const alljobsscreen = '/alljobsscreen';
   static const profile = '/profile';

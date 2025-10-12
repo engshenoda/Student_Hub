@@ -25,7 +25,6 @@ class _DetailsJobScreenState extends State<DetailsJobScreen>
     super.dispose();
   }
 
-  @override
   Widget _buildDescription() {
     return const Padding(
       padding: EdgeInsets.all(16),
@@ -36,7 +35,6 @@ class _DetailsJobScreenState extends State<DetailsJobScreen>
     );
   }
   
-  @override
   Widget _buildRequirement() {
     return const Padding(
       padding: EdgeInsets.all(16),
@@ -47,7 +45,6 @@ class _DetailsJobScreenState extends State<DetailsJobScreen>
     );
   }
 
-  @override
   Widget _buildReviews() {
     return const Padding(
       padding: EdgeInsets.all(16),

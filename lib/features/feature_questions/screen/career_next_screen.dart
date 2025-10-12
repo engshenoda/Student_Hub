@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sapp/screen/career_final.dart';
+import 'package:linkedin/features/feature_questions/screen/career_final.dart';
 
 const Color kPrimary = Color(0xFF00B894);
 

@@ -3,8 +3,13 @@ import 'package:linkedin/core/routes/route.dart';
 import 'package:linkedin/features/auth/presentation/screens/create_account/createAcount_screen.dart';
 import 'package:linkedin/features/auth/presentation/screens/forget_password/forget_pasword.dart';
 import 'package:linkedin/features/auth/presentation/screens/login/login_screen.dart';
+import 'package:linkedin/features/auth/presentation/screens/set_password_reset/password_reset_screen.dart';
+import 'package:linkedin/features/auth/presentation/screens/set_password_reset/set_new_password_screen.dart';
+import 'package:linkedin/features/auth/presentation/screens/verification/verify.dart';
 import 'package:linkedin/features/chat/Presentation/widget/chat_screen.dart';
 import 'package:linkedin/features/chat/Presentation/widget/chats_list_screen.dart';
+import 'package:linkedin/features/feature_questions/screen/career_final.dart';
+import 'package:linkedin/features/feature_questions/screen/career_next_screen.dart';
 
 import 'package:linkedin/features/feature_questions/screen/career_preference_screen.dart';
 import 'package:linkedin/features/home/presentation/screens/home_screen.dart';
@@ -35,21 +40,30 @@ abstract class AppRoute {
         path: Routes.createAccaount,
         builder: (context, state) => const CreateAccountScreen(),
       ),
-      GoRoute(
-        path: Routes.createAccaount,
-        builder: (context, state) => const CreateAccountScreen(),
-      ),
+    
       GoRoute(
         path: Routes.login,
         builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
-        path: Routes.login,
+        path: Routes.forgetpassword,
         builder: (context, state) => const ForgetPasword(),
       ),
       GoRoute(
+        path: Routes.veryfypassword,
+        builder: (context, state) => const VerifyCodeScreen(),
+      ),
+      GoRoute(
+        path: Routes.setnewpassword,
+        builder: (context, state) => const SetNewPasswordScreen(),
+      ),
+      GoRoute(
+        path: Routes.passwordreset,
+        builder: (context, state) => const PasswordResetScreen(),
+      ),
+      GoRoute(
         path: Routes.careerpreference,
-        builder: (context, state) => const CareerPreferenceScreen(),
+        builder: (context, state) => const CareerNextScreen(),
       ),
       GoRoute(
         path: Routes.Home,

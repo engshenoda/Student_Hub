@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:linkedin/features/auth/presentation/screens/create_account/widget/create_account_screen.dart';
+import 'package:linkedin/features/auth/presentation/screens/create_account/widget/create_account_form.dart';
 import 'package:linkedin/features/auth/presentation/widgets/header.dart';
 
 
