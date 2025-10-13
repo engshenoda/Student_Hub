@@ -1,6 +1,9 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:sapp/screen/career_final.dart';
+import 'package:go_router/go_router.dart';
+import 'package:linkedin/core/routes/route.dart';
+import 'package:linkedin/features/profile/presentation/screens/profile_screen.dart';
+import 'package:linkedin/features/questions/data/career_final.dart';
 import 'profile_screen.dart';
 
 const Color kPrimary = Color(0xFF00B894);
@@ -87,8 +90,8 @@ class DocsScreen extends StatelessWidget {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  const CarerrScreenFinal()),
+                            builder: (context) => const CarerrScreenFinal(),
+                          ),
                         );
                       },
                       style: OutlinedButton.styleFrom(
@@ -112,11 +115,7 @@ class DocsScreen extends StatelessWidget {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const ProfileScreen()),
-                        );
+                        GoRouter.of(context).push(Routes.Home);
                       },
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.symmetric(vertical: rh(16)),
@@ -148,7 +147,11 @@ class DocsScreen extends StatelessWidget {
 
   // 🔹 دالة بناء الكور اللي فوق
   Widget _buildStep(
-      String title, bool isDone, bool isOutlined, bool isHalfFilled) {
+    String title,
+    bool isDone,
+    bool isOutlined,
+    bool isHalfFilled,
+  ) {
     return Column(
       children: [
         Container(
@@ -161,8 +164,7 @@ class DocsScreen extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(100),
             child: CustomPaint(
-              painter:
-                  _HalfCirclePainter(isDone, isOutlined, isHalfFilled),
+              painter: _HalfCirclePainter(isDone, isOutlined, isHalfFilled),
               child: Center(
                 child: isDone
                     ? const Icon(Icons.check, color: Colors.white, size: 16)
@@ -186,7 +188,10 @@ class DocsScreen extends StatelessWidget {
 
   // 🔹 دالة بناء Box الإضافة
   Widget _buildAddBox(
-      double Function(double) rw, double Function(double) rh, String label) {
+    double Function(double) rw,
+    double Function(double) rh,
+    String label,
+  ) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: rh(20)),
@@ -226,8 +231,11 @@ class _HalfCirclePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     if (isDone) {
       final paint = Paint()..color = kPrimary;
-      canvas.drawCircle(Offset(size.width / 2, size.height / 2),
-          size.width / 2, paint);
+      canvas.drawCircle(
+        Offset(size.width / 2, size.height / 2),
+        size.width / 2,
+        paint,
+      );
     } else if (isHalfFilled) {
       final paint = Paint()
         ..color = kPrimary

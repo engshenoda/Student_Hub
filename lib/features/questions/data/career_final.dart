@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sapp/screen/Docs_Screen.dart';
-import 'package:sapp/screen/career_next_screen.dart';
+import 'package:linkedin/features/questions/data/Docs_Screen.dart';
+import 'package:linkedin/features/questions/data/career_next_screen.dart';
+
 
 const Color kPrimary = Color(0xFF00B894);
 

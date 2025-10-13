@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'career_preference_screen.dart';
 const Color kPrimary = Color(0xFF00B894);
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+class ProfileQScreen extends StatelessWidget {
+  const ProfileQScreen({super.key});
 
   double responsive(BuildContext context, double value) {
     final size = MediaQuery.of(context).size;

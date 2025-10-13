@@ -130,7 +130,7 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                   ),
                 );
               }
-              GoRouter.of(context).go(Routes.careerpreference);
+              GoRouter.of(context).go(Routes.profileqscreen);
             },
           ),
           SizedBox(height: 10),

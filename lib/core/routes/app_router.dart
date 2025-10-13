@@ -8,10 +8,7 @@ import 'package:linkedin/features/auth/presentation/screens/set_password_reset/s
 import 'package:linkedin/features/auth/presentation/screens/verification/verify.dart';
 import 'package:linkedin/features/chat/Presentation/widget/chat_screen.dart';
 import 'package:linkedin/features/chat/Presentation/widget/chats_list_screen.dart';
-import 'package:linkedin/features/feature_questions/screen/career_final.dart';
-import 'package:linkedin/features/feature_questions/screen/career_next_screen.dart';
 
-import 'package:linkedin/features/feature_questions/screen/career_preference_screen.dart';
 import 'package:linkedin/features/home/presentation/screens/home_screen.dart';
 import 'package:linkedin/features/home/presentation/screens/post.dart';
 import 'package:linkedin/features/jobs/presentation/screen/jobs_screen.dart';
@@ -20,6 +17,8 @@ import 'package:linkedin/features/notifications/presentation/screens/notificatio
 import 'package:linkedin/features/onbording/Onboarding_pages.dart';
 import 'package:linkedin/features/onbording/splash_screen.dart';
 import 'package:linkedin/features/profile/presentation/screens/profile_screen.dart';
+import 'package:linkedin/features/questions/data/career_next_screen.dart';
+import 'package:linkedin/features/questions/data/profile_screen.dart';
 import 'package:linkedin/features/search_feature/search_screen.dart';
 import 'package:linkedin/features/settings/screens/about_us.dart';
 import 'package:linkedin/features/settings/screens/settings.dart';
@@ -64,6 +63,10 @@ abstract class AppRoute {
       GoRoute(
         path: Routes.careerpreference,
         builder: (context, state) => const CareerNextScreen(),
+      ),
+      GoRoute(
+        path: Routes.profileqscreen,
+        builder: (context, state) => const ProfileQScreen(),
       ),
       GoRoute(
         path: Routes.Home,

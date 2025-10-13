@@ -1,6 +1,7 @@
 class Routes {
   static const splash = '/';
   static const careerpreference = '/careerpreference';
+  static const profileqscreen = '/profileqscreen';
 
   static const Home = '/home';
   static const messahes = '/messages';

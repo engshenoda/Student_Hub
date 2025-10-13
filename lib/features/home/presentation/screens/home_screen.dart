@@ -73,7 +73,7 @@ class HomeScreen extends StatelessWidget {
                           ),
                           IconButton(
                             onPressed: () {
-                              GoRouter.of(context).go(Routes.notifcation);
+                              GoRouter.of(context).push(Routes.notifcation);
                             },
                             icon: const Icon(
                               Icons.notifications_none_rounded,
