@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:linkedin/features/feature_questions/screen/career_final.dart';
+import 'package:sapp/screen/career_final.dart';
 
 const Color kPrimary = Color(0xFF00B894);
 
@@ -43,8 +43,11 @@ class _CareerNextScreenState extends State<CareerNextScreen> {
               padding: EdgeInsets.symmetric(horizontal: s(18), vertical: s(10)),
               child: Column(
                 children: [
+                  // الخط العلوي
                   Container(height: 8, color: kPrimary, width: double.infinity),
                   SizedBox(height: s(20)),
+
+                  // الدواير الثلاثة مع الأسماء
                   Column(
                     children: [
                       Row(
@@ -65,7 +68,7 @@ class _CareerNextScreenState extends State<CareerNextScreen> {
                             label: 'Career',
                             scale: s,
                             hasCheck: false,
-                            fillPercent: 0.70,
+                            fillPercent: 0.70, // ثلثين
                           ),
                           Container(width: s(50), height: 2, color: Colors.grey[300]),
                           _StepCircleWithLabel(
@@ -125,6 +128,8 @@ class _CareerNextScreenState extends State<CareerNextScreen> {
                     ],
                   ),
                   SizedBox(height: s(28)),
+
+                  // العنوان
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
@@ -136,6 +141,8 @@ class _CareerNextScreenState extends State<CareerNextScreen> {
                     ),
                   ),
                   SizedBox(height: s(16)),
+
+                  // المستطيل الطويل
                   Container(
                     width: double.infinity,
                     padding: EdgeInsets.symmetric(vertical: s(16), horizontal: s(14)),
@@ -158,11 +165,15 @@ class _CareerNextScreenState extends State<CareerNextScreen> {
                       style: TextStyle(
                         fontSize: s(16),
                         fontWeight: FontWeight.w600,
-                        color: selectedOption == -1 ? Colors.grey[600] : kPrimary,
+                        color: selectedOption == -1
+                            ? Colors.grey[600]
+                            : kPrimary,
                       ),
                     ),
                   ),
                   SizedBox(height: s(26)),
+
+                  // المستطيلات الأربعة
                   Expanded(
                     child: GridView.builder(
                       padding: EdgeInsets.zero,
@@ -215,9 +226,14 @@ class _CareerNextScreenState extends State<CareerNextScreen> {
                       },
                     ),
                   ),
+                
+                  // الأزرار في الأسفل
                   Container(
                     width: double.infinity,
-                    padding: EdgeInsets.only(top: s(20), bottom: s(26)),
+                    padding: EdgeInsets.only(
+                      top: s(20),
+                      bottom: s(26),
+                    ),
                     child: Row(
                       children: [
                         Expanded(
@@ -247,13 +263,7 @@ class _CareerNextScreenState extends State<CareerNextScreen> {
                           child: ElevatedButton(
                             onPressed: selectedOption != -1
                                 ? () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const CareerPreferenceScreen(),
-                                      ),
-                                    );
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const CarerrScreenFinal()));
                                   }
                                 : null,
                             style: ElevatedButton.styleFrom(
@@ -294,7 +304,7 @@ class _StepCircleWithLabel extends StatelessWidget {
   final double Function(double) scale;
   final bool hasCheck;
   final double fillPercent;
-
+  
   const _StepCircleWithLabel({
     required this.size,
     required this.isActive,
@@ -306,48 +316,59 @@ class _StepCircleWithLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
+    
+    return Column(
       children: [
-        Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: isActive ? kPrimary : Colors.grey[300]!,
-              width: 2,
-            ),
-          ),
-        ),
-        if (fillPercent > 0)
-          ClipOval(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              heightFactor: fillPercent.clamp(0.0, 1.0),
-              child: Container(
-                width: size,
-                height: size,
-                color: kPrimary,
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            // الخلفية البيضاء
+            Container(
+              width: size,
+              height: size,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isActive ? kPrimary : Colors.grey[300]!,
+                  width: 2,
+                ),
               ),
             ),
-          ),
-        if (hasCheck)
-          Icon(
-            Icons.check,
-            color: Colors.white,
-            size: size * 0.6,
-          ),
+            
+            // الجزء الملون
+            if (fillPercent > 0)
+              ClipOval(
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  heightFactor: fillPercent.clamp(0.0, 1.0),
+                  child: Container(
+                    width: size,
+                    height: size,
+                    color: kPrimary,
+                  ),
+                ),
+              ),
+            
+            // علامة الصح
+            if (hasCheck)
+              Icon(
+                Icons.check, 
+                color: Colors.white, 
+                size: size * 0.6
+              ),
+          ],
+        ),
       ],
     );
   }
 }
 
+// ignore: unused_element
 class _StepCircle extends StatelessWidget {
   final double size;
   final bool isActive;
-
+  
   const _StepCircle({
     required this.size,
     required this.isActive,
@@ -361,7 +382,7 @@ class _StepCircle extends StatelessWidget {
       decoration: BoxDecoration(
         color: isActive ? kPrimary : Colors.grey[300],
         shape: BoxShape.circle,
-        boxShadow: isActive
+        boxShadow: isActive 
             ? [
                 BoxShadow(
                   color: kPrimary.withOpacity(0.25),
@@ -372,9 +393,9 @@ class _StepCircle extends StatelessWidget {
             : null,
       ),
       child: Icon(
-        Icons.check,
-        color: isActive ? Colors.white : Colors.grey[500],
-        size: size * 0.6,
+        Icons.check, 
+        color: isActive ? Colors.white : Colors.grey[500], 
+        size: size * 0.6
       ),
     );
   }
