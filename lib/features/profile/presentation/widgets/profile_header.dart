@@ -23,51 +23,87 @@ class _ProfileHeaderState extends State<ProfileHeader> {
     _loadImageFromCache();
   }
 
-  /// ✅ Load the saved image path when the widget is initialized
+  /// ✅ Safely load cached image
   Future<void> _loadImageFromCache() async {
-    final prefs = await SharedPreferences.getInstance();
-    final imagePath = prefs.getString(_imageKey);
-    if (imagePath != null && File(imagePath).existsSync()) {
-      setState(() {
-        _profileImage = File(imagePath);
-      });
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final imagePath = prefs.getString(_imageKey);
+
+      if (imagePath == null) return;
+
+      final file = File(imagePath);
+      final exists = await file.exists();
+
+      if (exists) {
+        setState(() {
+          _profileImage = file;
+        });
+      } else {
+        // ⚠ If cached image was deleted or moved, remove from cache
+        await prefs.remove(_imageKey);
+      }
+    } catch (e) {
+      debugPrint('⚠ Error loading cached image: $e');
     }
   }
 
-  /// ✅ Pick image from gallery and save to cache
+  /// ✅ Pick image and save safely
   Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    try {
+      final picker = ImagePicker();
+      final pickedImage = await picker.pickImage(source: ImageSource.gallery);
 
-    if (pickedImage != null) {
+      if (pickedImage == null) return;
+
       final file = File(pickedImage.path);
-      setState(() {
-        _profileImage = file;
-      });
-
-      // Save image path in cache
       final prefs = await SharedPreferences.getInstance();
+
+      // Save image path
       await prefs.setString(_imageKey, file.path);
+
+      setState(() => _profileImage = file);
+    } catch (e) {
+      debugPrint('⚠ Error picking image: $e');
+
+      // Optional: show error dialog to the user
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load image. Please try again.')),
+        );
+      }
     }
+  }
+
+  /// ✅ Reset image to default
+  Future<void> _removeImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_imageKey);
+    setState(() => _profileImage = null);
   }
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // ✅ Profile image container
+        // ✅ Profile Image (with fallback)
         Container(
           width: 88,
           height: 88,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(color: AppColors.primary, width: 3),
-            image: DecorationImage(
-              image: _profileImage != null
-                  ? FileImage(_profileImage!) as ImageProvider
-                  : const AssetImage('assets/profile.jpg'),
-              fit: BoxFit.cover,
-            ),
+          ),
+          child: ClipOval(
+            child: _profileImage != null
+                ? Image.file(
+                    _profileImage!,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      // ✅ Handle corrupted or missing file gracefully
+                      return _buildDefaultImage();
+                    },
+                  )
+                : _buildDefaultImage(),
           ),
         ),
         const SizedBox(width: 14),
@@ -97,6 +133,14 @@ class _ProfileHeaderState extends State<ProfileHeader> {
                     foregroundColor: Colors.white,
                   ),
                 ),
+                const SizedBox(height: 8),
+
+                // ✅ Remove image button
+                TextButton.icon(
+                  onPressed: _removeImage,
+                  icon: const Icon(Icons.delete_outline, color: Colors.red),
+                  label: const Text('Remove Image', style: TextStyle(color: Colors.red)),
+                ),
                 const SizedBox(height: 12),
 
                 // ✅ Name field
@@ -121,6 +165,14 @@ class _ProfileHeaderState extends State<ProfileHeader> {
           icon: const Icon(Icons.edit, color: AppColors.primary),
         ),
       ],
+    );
+  }
+
+  /// ✅ Default fallback image widget
+  Widget _buildDefaultImage() {
+    return Image.asset(
+      'assets/profile.jpg',
+      fit: BoxFit.cover,
     );
   }
 }

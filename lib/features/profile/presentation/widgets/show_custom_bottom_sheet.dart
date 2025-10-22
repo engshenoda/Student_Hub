@@ -55,7 +55,10 @@ void showCustomBottomSheet({
                 ),
               ),
               onPressed: () => Navigator.pop(context),
-              child: const Text('Save Changes'),
+              child: const Text(
+                'Save Changes',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
         ],
