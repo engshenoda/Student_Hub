@@ -1,136 +1,94 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:linkedin/core/routes/route.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linkedin/core/widgets/custom_bottom.dart';
 import 'package:linkedin/core/widgets/custom_bottom_social_media.dart';
+import 'package:linkedin/features/auth/data/auth_repo.dart';
+import 'package:linkedin/features/auth/logic/auth_cubit/auth_cubit.dart';
+import 'package:linkedin/features/auth/presentation/screens/create_account/auth_view_model.dart';
 import 'package:linkedin/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:linkedin/core/widgets/custom_text_form_field.dart';
 
-class CreateAccountForm extends StatefulWidget {
-  const CreateAccountForm({super.key});
-
-  @override
-  State<CreateAccountForm> createState() => _CreateAccountFormState();
-}
-
-class _CreateAccountFormState extends State<CreateAccountForm> {
-  final formKey = GlobalKey<FormState>();
-
-  // controllers
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
-
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
-
-  // password regex
-  bool _isValidPassword(String password) {
-    final passwordRegex = RegExp(
-      r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#\$&*~]).{8,}$',
-    );
-    return passwordRegex.hasMatch(password);
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
-  }
+class CreateAccountForm extends StatelessWidget {
+  const CreateAccountForm({super.key, required this.viewModel});
+  final AuthViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
+    final authCubit = BlocProvider.of<AuthCubit>(context);
     return Form(
-      key: formKey,
+      key: viewModel.formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // CustomInputField(
+          //   controller: viewModel.nameController,
+          //   label: "Name",
+          //   hint: "Enter your name",
+          //   validator: (value) {
+          //     if (value == null || value.isEmpty) {
+          //       return "Please enter your name";
+          //     }
+          //     return null;
+          //   },
+          //   keyboardType: TextInputType.text,
+          // ),
           CustomInputField(
-            controller: _nameController,
-            label: "Name",
-            hint: "Enter your name",
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return "Please enter your name";
-              }
-              return null;
-            },
-            keyboardType: TextInputType.text,
-          ),
-
-          CustomInputField(
-            controller: _emailController,
+            controller: viewModel.emailController,
             label: "Email",
             hint: "Enter your email",
-            validator: (value) {
-              if (value == null || value.isEmpty)
-                return "Please enter your email";
-              if (!RegExp(
-                r'^[\w\.\-]+@([\w\-]+\.)+[\w]{2,4}$',
-              ).hasMatch(value)) {
-                return "Email is invalid";
-              }
-              return null;
-            },
+            validator: viewModel.validateEmail,
             keyboardType: TextInputType.emailAddress,
           ),
 
           // Password
-          CustomInputField(
-            controller: _passwordController,
-            label: "Password",
-            hint: "Enter your password",
-            isPassword: true,
-            obscureText: _obscurePassword,
-            toggle: () => setState(() => _obscurePassword = !_obscurePassword),
-            validator: (value) {
-              if (value == null || value.isEmpty)
-                return "Please enter your password";
-              else if (value.length < 8) {
-                return "Password must be at least 8 characters long";
-              } else if (!_isValidPassword(value)) {
-                return "Password must contain at least one letter, one number, and one special character";
-              } else {
-                return null;
-              }
+          BlocBuilder<AuthCubit, AuthCubitState>(
+            builder: (context, state) {
+              final authCubit = BlocProvider.of<AuthCubit>(context);
+              return CustomInputField(
+                controller: viewModel.passwordController,
+                label: "Password",
+                hint: "Enter your password",
+                isPassword: true,
+                obscureText: authCubit.obscurePassword,
+                toggle: () => authCubit.togglePasswordVisibility(),
+                validator: viewModel.validatePassword,
+              );
             },
           ),
 
           // Confirm Password
-          CustomInputField(
-            controller: _confirmPasswordController,
-            label: "Confirm Password",
-            hint: "Enter your confirm password",
-            isPassword: true,
-            obscureText: _obscureConfirmPassword,
-            toggle: () => setState(
-              () => _obscureConfirmPassword = !_obscureConfirmPassword,
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty)
-                return "Please re-enter your password";
-              if (value != _passwordController.text)
-                return "Passwords do not match";
-              return null;
+          BlocBuilder<AuthCubit, AuthCubitState>(
+            builder: (context, state) {
+              final authCubit = BlocProvider.of<AuthCubit>(context);
+              return CustomInputField(
+                controller: viewModel.confirmPasswordController,
+                label: "Confirm Password",
+                hint: "Enter your confirm password",
+                isPassword: true,
+                obscureText: authCubit.obscureConfirmPassword,
+                toggle: () => authCubit.toggleConfirmPasswordVisibility(),
+                validator: viewModel.validateConfirmPassword,
+              );
             },
           ),
 
+          // CustomInputField(
+          //   controller: viewModel.confirmPasswordController,
+          //   label: "Confirm Password",
+          //   hint: "Enter your confirm password",
+          //   isPassword: true,
+          //   obscureText: authCubit.obscureConfirmPassword,
+          //   toggle: () => authCubit.toggleConfirmPasswordVisibility(),
+          //   validator: viewModel.validateConfirmPassword,
+          // ),
           CustomBottom(
             title: "Create Account",
             onPressed: () {
-              if (formKey.currentState!.validate()) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Account Created Successfully!"),
-                  ),
-                );
+              final state = context.read<AuthCubit>().state;
+              if (state is! AuthLoadingState &&
+                  viewModel.formKey.currentState!.validate()) {
+                authCubit.register();
               }
-              GoRouter.of(context).go(Routes.profileqscreen);
             },
           ),
           SizedBox(height: 10),

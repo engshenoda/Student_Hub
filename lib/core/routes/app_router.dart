@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:linkedin/core/routes/route.dart';
-import 'package:linkedin/features/auth/presentation/screens/create_account/createAcount_screen.dart';
+import 'package:linkedin/features/auth/presentation/screens/create_account/create_account_screen.dart';
 import 'package:linkedin/features/auth/presentation/screens/forget_password/forget_pasword.dart';
 import 'package:linkedin/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:linkedin/features/auth/presentation/screens/set_password_reset/password_reset_screen.dart';
