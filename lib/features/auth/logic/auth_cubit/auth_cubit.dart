@@ -4,14 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linkedin/features/auth/data/models/auth_model.dart';
 import 'package:linkedin/features/auth/presentation/screens/create_account/create_account_view_model.dart';
+import 'package:linkedin/features/auth/presentation/screens/forget_password/forget_password_view_model.dart';
 import 'package:linkedin/features/auth/presentation/screens/login/Login_view_model.dart';
 import 'package:meta/meta.dart';
 
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthCubitState> {
-  AuthCubit({this.createAuthViewModel, this.loginauthAuthViewModel})
-    : super(AuthInitial());
+  AuthCubit({
+    this.createAuthViewModel,
+    this.loginauthAuthViewModel,
+    this.forgetPasswordViewModel,
+  }) : super(AuthInitial());
   final CreateAccountViewModel? createAuthViewModel;
   final LoginViewModel? loginauthAuthViewModel;
 
@@ -95,6 +99,38 @@ class AuthCubit extends Cubit<AuthCubitState> {
       emit(LoginFailureState(errorMessage));
     } catch (e) {
       emit(LoginFailureState('Login failed: ${e.toString()}'));
+    }
+  }
+
+  final ForgetPasswordViewModel? forgetPasswordViewModel;
+
+  Future<void> resetPassword() async {
+    emit(ResetPasswordLoadingState());
+    try {
+      final email = forgetPasswordViewModel!.emailController.text.trim();
+      if (email.isEmpty) {
+        emit(ResetPasswordFailureState("Please enter your email."));
+        return;
+      }
+      await forgetPasswordViewModel!.resetPassword(email);
+      emit(
+        ResetPasswordSuccessState("Password reset email sent successfully!"),
+      );
+    } on FirebaseAuthException catch (e) {
+      String message;
+      switch (e.code) {
+        case 'user-not-found':
+          message = "No user found with this email.";
+          break;
+        case 'invalid-email':
+          message = "Invalid email address.";
+          break;
+        default:
+          message = "An error occurred. Please try again.";
+      }
+      emit(ResetPasswordFailureState(message));
+    } catch (e) {
+      emit(ResetPasswordFailureState(e.toString()));
     }
   }
 }

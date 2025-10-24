@@ -42,3 +42,15 @@ final class AuthPasswordVisibilityChanged extends AuthCubitState {
     required this.obscureConfirmPassword,
   });
 }
+
+final class ResetPasswordLoadingState extends AuthCubitState {}
+
+final class ResetPasswordSuccessState extends AuthCubitState {
+  final String message;
+  ResetPasswordSuccessState(this.message);
+}
+
+final class ResetPasswordFailureState extends AuthCubitState {
+  final String failure;
+  ResetPasswordFailureState(this.failure);
+}
