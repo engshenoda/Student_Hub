@@ -1,15 +1,19 @@
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linkedin/features/auth/data/models/auth_model.dart';
-import 'package:linkedin/features/auth/presentation/screens/create_account/auth_view_model.dart';
+import 'package:linkedin/features/auth/presentation/screens/create_account/create_account_view_model.dart';
+import 'package:linkedin/features/auth/presentation/screens/login/Login_view_model.dart';
 import 'package:meta/meta.dart';
 
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthCubitState> {
-  AuthCubit(this.authViewModel) : super(AuthInitial());
-  final AuthViewModel authViewModel;
+  AuthCubit({this.createAuthViewModel, this.loginauthAuthViewModel})
+    : super(AuthInitial());
+  final CreateAccountViewModel? createAuthViewModel;
+  final LoginViewModel? loginauthAuthViewModel;
 
   bool obscurePassword = true;
   bool obscureConfirmPassword = true;
@@ -35,13 +39,13 @@ class AuthCubit extends Cubit<AuthCubitState> {
   }
 
   Future<void> register() async {
-    emit(AuthLoadingState());
+    emit(SignUpLoadingState());
     try {
-      final user = await authViewModel.register(
-        authViewModel.emailController.text.trim(),
-        authViewModel.passwordController.text.trim(),
+      final user = await createAuthViewModel!.register(
+        createAuthViewModel!.emailController.text.trim(),
+        createAuthViewModel!.passwordController.text.trim(),
       );
-      emit(AuthSuccsessState(user));
+      emit(SignUpSuccsessState(user));
     } on FirebaseAuthException catch (e) {
       print("🔥 Firebase Error Code: ${e.code}");
       print("🔥 Firebase Message: ${e.message}");
@@ -59,20 +63,20 @@ class AuthCubit extends Cubit<AuthCubitState> {
         default:
           errorMessage = 'An unexpected error occurred. Please try again.';
       }
-      emit(AuthFailureState(errorMessage));
+      emit(SignUpFailureState(errorMessage));
     } catch (e) {
-      emit(AuthFailureState('Registration failed: ${e.toString()}'));
+      emit(SignUpFailureState('Registration failed: ${e.toString()}'));
     }
   }
 
   Future<void> login() async {
-    emit(AuthLoadingState());
+    emit(LoginLoadingState());
     try {
-      final user = await authViewModel.login(
-        authViewModel.emailController.text.trim(),
-        authViewModel.passwordController.text.trim(),
+      final user = await loginauthAuthViewModel!.login(
+        loginauthAuthViewModel!.emailController.text.trim(),
+        loginauthAuthViewModel!.passwordController.text.trim(),
       );
-      emit(AuthSuccsessState(user));
+      emit(LoginSuccsessState(user));
     } on FirebaseAuthException catch (e) {
       String errorMessage;
       switch (e.code) {
@@ -88,9 +92,9 @@ class AuthCubit extends Cubit<AuthCubitState> {
         default:
           errorMessage = 'An unexpected error occurred during login.';
       }
-      emit(AuthFailureState(errorMessage));
+      emit(LoginFailureState(errorMessage));
     } catch (e) {
-      emit(AuthFailureState('Login failed: ${e.toString()}'));
+      emit(LoginFailureState('Login failed: ${e.toString()}'));
     }
   }
 }

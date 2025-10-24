@@ -5,18 +5,32 @@ sealed class AuthCubitState {}
 
 final class AuthInitial extends AuthCubitState {}
 
-final class AuthSuccsessState extends AuthInitial {
+final class SignUpSuccsessState extends AuthInitial {
   final UserModel user;
 
-  AuthSuccsessState(this.user);
+  SignUpSuccsessState(this.user);
 }
 
-final class AuthLoadingState extends AuthInitial {}
+final class SignUpLoadingState extends AuthInitial {}
 
-final class AuthFailureState extends AuthInitial {
+final class SignUpFailureState extends AuthInitial {
   final String failure;
 
-  AuthFailureState(this.failure);
+  SignUpFailureState(this.failure);
+}
+
+final class LoginSuccsessState extends AuthInitial {
+  final UserModel user;
+
+  LoginSuccsessState(this.user);
+}
+
+final class LoginLoadingState extends AuthInitial {}
+
+final class LoginFailureState extends AuthInitial {
+  final String failure;
+
+  LoginFailureState(this.failure);
 }
 
 final class AuthPasswordVisibilityChanged extends AuthCubitState {

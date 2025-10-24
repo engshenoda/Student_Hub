@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linkedin/core/widgets/custom_bottom.dart';
 import 'package:linkedin/core/widgets/custom_bottom_social_media.dart';
-import 'package:linkedin/features/auth/data/auth_repo.dart';
 import 'package:linkedin/features/auth/logic/auth_cubit/auth_cubit.dart';
-import 'package:linkedin/features/auth/presentation/screens/create_account/auth_view_model.dart';
+import 'package:linkedin/features/auth/presentation/screens/create_account/create_account_view_model.dart';
 import 'package:linkedin/features/auth/presentation/screens/login/login_screen.dart';
 import 'package:linkedin/core/widgets/custom_text_form_field.dart';
 
 class CreateAccountForm extends StatelessWidget {
   const CreateAccountForm({super.key, required this.viewModel});
-  final AuthViewModel viewModel;
+  final CreateAccountViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +84,7 @@ class CreateAccountForm extends StatelessWidget {
             title: "Create Account",
             onPressed: () {
               final state = context.read<AuthCubit>().state;
-              if (state is! AuthLoadingState &&
+              if (state is! SignUpLoadingState &&
                   viewModel.formKey.currentState!.validate()) {
                 authCubit.register();
               }

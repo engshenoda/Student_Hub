@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:linkedin/features/auth/data/auth_repo.dart';
 import 'package:linkedin/features/auth/data/models/auth_model.dart';
 
-class AuthViewModel {
+class CreateAccountViewModel {
   final AuthRepo _authRepo;
 
-  AuthViewModel(this._authRepo);
+  CreateAccountViewModel(this._authRepo);
 
   // Form Controllers & Keys
   final formKey = GlobalKey<FormState>();
