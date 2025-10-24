@@ -1,36 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:linkedin/core/routes/route.dart';
 import 'package:linkedin/core/widgets/custom_bottom.dart';
 import 'package:linkedin/core/widgets/custom_text_form_field.dart';
+import 'package:linkedin/features/auth/logic/auth_cubit/auth_cubit.dart';
+import 'package:linkedin/features/auth/presentation/screens/forget_password/forget_password_view_model.dart';
 
-class ForgetPasswordForm extends StatefulWidget {
-  const ForgetPasswordForm({super.key});
+class ForgetPasswordForm extends StatelessWidget {
+  const ForgetPasswordForm({super.key, required this.forgetPasswordViewModel});
+  final ForgetPasswordViewModel forgetPasswordViewModel;
 
-  @override
-  State<ForgetPasswordForm> createState() => _ForgetPasswordFormState();
-}
-
-final TextEditingController _emailController = TextEditingController();
-final formKey = GlobalKey<FormState>();
-
-@override
-void dispose() {
-  _emailController.dispose();
-}
-
-class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
   @override
   Widget build(BuildContext context) {
+    final authCubit = BlocProvider.of<AuthCubit>(context);
+
     return Form(
-      key: formKey,
+      key: forgetPasswordViewModel.formKey,
       child: Column(
         children: [
           const SizedBox(height: 40),
 
           // Email
           CustomInputField(
-            controller: _emailController,
+            controller: forgetPasswordViewModel.emailController,
             label: "Email",
             hint: "Enter your email",
             validator: (value) {
@@ -48,14 +41,7 @@ class _ForgetPasswordFormState extends State<ForgetPasswordForm> {
           CustomBottom(
             title: "Reset password",
             onPressed: () {
-              if (formKey.currentState!.validate()) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Account Created Successfully!"),
-                  ),
-                );
-              }
-              GoRouter.of(context).push(Routes.veryfypassword);
+              authCubit.resetPassword();
             },
           ),
         ],
