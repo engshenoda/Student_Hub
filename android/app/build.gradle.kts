@@ -11,7 +11,7 @@ plugins {
 android {
     namespace = "com.example.linkedin"
     compileSdk = flutter.compileSdkVersion
-    compileSdk = 34
+    compileSdk = 35
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
