@@ -63,6 +63,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '564726691203',
     projectId: 'student-hub-7c50c',
     storageBucket: 'student-hub-7c50c.firebasestorage.app',
+    iosClientId: '564726691203-rltjju42f6pihl6lgj09ptbf78poik9u.apps.googleusercontent.com',
     iosBundleId: 'com.example.linkedin',
   );
 
@@ -72,6 +73,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '564726691203',
     projectId: 'student-hub-7c50c',
     storageBucket: 'student-hub-7c50c.firebasestorage.app',
+    iosClientId: '564726691203-rltjju42f6pihl6lgj09ptbf78poik9u.apps.googleusercontent.com',
     iosBundleId: 'com.example.linkedin',
   );
 
@@ -83,4 +85,5 @@ class DefaultFirebaseOptions {
     authDomain: 'student-hub-7c50c.firebaseapp.com',
     storageBucket: 'student-hub-7c50c.firebasestorage.app',
   );
+
 }

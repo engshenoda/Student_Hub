@@ -11,7 +11,7 @@ plugins {
 android {
     namespace = "com.example.linkedin"
     compileSdk = flutter.compileSdkVersion
-    compileSdk = 35
+    compileSdk = 36
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -27,7 +27,7 @@ android {
         applicationId = "com.example.linkedin"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdkVersion(23)
+        minSdkVersion(24)
         targetSdkVersion(34)
         versionCode = 1
         versionName = "1.0"
@@ -45,3 +45,4 @@ android {
 flutter {
     source = "../.."
 }
+apply(plugin = "com.google.gms.google-services")
