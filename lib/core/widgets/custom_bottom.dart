@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomBottom extends StatelessWidget {
   const CustomBottom({super.key, required this.onPressed, required this.title});
-  final void Function() onPressed;
+  final void Function()? onPressed;
   final String title;
   @override
   Widget build(BuildContext context) {
