@@ -63,6 +63,18 @@ class CreateAccountViewModel {
   Future<UserModel> login(String email, String password) =>
       _authRepo.signIn(email, password);
 
+
+
+Future<UserModel> signUpWithGoogle() async {
+    return await AuthRepo().signInWithGoogle();
+  }
+
+  Future<UserModel> signUpWithFacebook() async {
+    return await _authRepo.signInWithFacebook();
+  }
+
+
+
   // Cleanup
 
   void dispose() {

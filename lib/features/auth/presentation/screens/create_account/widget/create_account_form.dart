@@ -107,12 +107,31 @@ class CreateAccountForm extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              CustomBottomSocialMedia(icon: Icons.facebook, color: Colors.blue),
+              CustomBottomSocialMedia(icon: Icons.facebook, color: Colors.blue,  onPressed: () {
+  
+  
+final state =context.read<AuthCubit>().state;
+    if (state is! FacebookLoginLoadingState 
+                  ) {
+                authCubit.signInWithFacebook();
+              }
+
+
+
+
+  }),
               CustomBottomSocialMedia(
                 icon: Icons.g_mobiledata,
-                color: Colors.red,
+                color: Colors.red,  onPressed: () {
+    final state =context.read<AuthCubit>().state;
+    if (state is! GoogleLoginLoadingState 
+                  ) {
+                authCubit.signInWithGoogle();
+              }
+    
+  },
               ),
-              CustomBottomSocialMedia(icon: Icons.apple, color: Colors.black),
+              
             ],
           ),
           const SizedBox(height: 10),

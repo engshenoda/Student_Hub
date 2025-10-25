@@ -4,7 +4,7 @@ class CustomBottomSocialMedia extends StatelessWidget {
   const CustomBottomSocialMedia({
     super.key,
     required this.icon,
-    required this.color,
+    required this.color, required Null Function() onPressed,
   });
   final IconData icon;
   final Color color;

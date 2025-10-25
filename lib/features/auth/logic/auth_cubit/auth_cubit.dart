@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:linkedin/features/auth/data/auth_repo.dart';
 import 'package:linkedin/features/auth/data/models/auth_model.dart';
 import 'package:linkedin/features/auth/presentation/screens/create_account/create_account_view_model.dart';
 import 'package:linkedin/features/auth/presentation/screens/forget_password/forget_password_view_model.dart';
@@ -18,7 +19,7 @@ class AuthCubit extends Cubit<AuthCubitState> {
   }) : super(AuthInitial());
   final CreateAccountViewModel? createAuthViewModel;
   final LoginViewModel? loginauthAuthViewModel;
-
+  final AuthRepo _authRepo =AuthRepo();
   bool obscurePassword = true;
   bool obscureConfirmPassword = true;
 
@@ -131,6 +132,33 @@ class AuthCubit extends Cubit<AuthCubitState> {
       emit(ResetPasswordFailureState(message));
     } catch (e) {
       emit(ResetPasswordFailureState(e.toString()));
+    }}
+    
+
+
+      Future<void> signInWithGoogle() async {
+    emit(GoogleLoginLoadingState());
+    try {
+      final user = await AuthRepo().signInWithGoogle();
+      emit(GoogleLoginSuccessState(user));
+    } catch (e) {
+      emit(GoogleLoginFailureState(e.toString()));
     }
   }
-}
+
+
+   Future<void> signInWithFacebook() async {
+    emit(FacebookLoginLoadingState());
+    try {
+      final user = await AuthRepo().signInWithFacebook();
+      emit(FacebookLoginSuccessState(user));
+    } catch (e) {
+      emit(FacebookLoginFailureState(e.toString()));
+    }
+  }
+    
+
+
+
+    
+    }

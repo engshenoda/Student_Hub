@@ -59,15 +59,15 @@ class _ContactUsState extends State<ContactUs> {
             children: [
               CustomBottomSocialMedia(
                 color: AppColors.primary,
-                icon: Icons.facebook,
+                icon: Icons.facebook, onPressed: () {  },
               ),
               CustomBottomSocialMedia(
                 color: AppColors.primary,
-                icon: Icons.facebook,
+                icon: Icons.facebook, onPressed: () {  },
               ),
               CustomBottomSocialMedia(
                 color: AppColors.primary,
-                icon: Icons.facebook,
+                icon: Icons.facebook, onPressed: () {  },
               ),
             ],
           ),

@@ -48,6 +48,63 @@ class CreateAccountScreen extends StatelessWidget {
                           context,
                         ).showSnackBar(SnackBar(content: Text(state.failure)));
                       }
+
+
+                  else if (state is GoogleLoginLoadingState) {
+                        showDialog(
+                          context: context,
+                          builder: (_) =>
+                              const Center(child: CircularProgressIndicator()),
+                        );
+                      }
+
+
+          else if (state is GoogleLoginSuccessState) {
+                        
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Account Created!")),
+                        );
+                        GoRouter.of(context).go(Routes.profileqscreen);
+                      }
+
+
+
+          else if (state is GoogleLoginFailureState) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(state.failure)));
+                      }
+
+
+
+
+           else if (state is FacebookLoginLoadingState) {
+                        showDialog(
+                          context: context,
+                          builder: (_) =>
+                              const Center(child: CircularProgressIndicator()),
+                        );
+                      }
+
+           else if (state is FacebookLoginSuccessState) {
+                        
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Account Created!")),
+                        );
+                        GoRouter.of(context).go(Routes.profileqscreen);
+                      }
+
+
+
+            else if (state is FacebookLoginFailureState) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(state.failure)));
+                      }
+
+                      
                     },
                     child: CreateAccountForm(viewModel: viewModel,),
                   ),
