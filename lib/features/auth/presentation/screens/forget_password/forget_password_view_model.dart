@@ -8,10 +8,26 @@ class ForgetPasswordViewModel {
   final TextEditingController emailController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
-  @override
   void dispose() {
     emailController.dispose();
   }
 
-  Future<void> resetPassword(String email) => _authRepo.resetPassword(email);
+  //Validation logic here
+  String? validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Please enter your email";
+    }
+    if (!RegExp(r'^[\w\.\-]+@([\w\-]+\.)+[\w]{2,4}$').hasMatch(value)) {
+      return "Invalid email address";
+    }
+    return null;
+  }
+
+  Future<void> resetPassword(String email) async {
+    if (email.isEmpty) {
+      throw Exception("Please enter your email address");
+    }
+
+    await _authRepo.resetPassword(email);
+  }
 }

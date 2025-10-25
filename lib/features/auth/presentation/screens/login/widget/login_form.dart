@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:linkedin/core/routes/route.dart';
+import 'package:linkedin/core/theme/app_colors.dart';
 import 'package:linkedin/core/widgets/custom_bottom.dart';
 import 'package:linkedin/core/widgets/custom_text_form_field.dart';
 import 'package:linkedin/features/auth/logic/auth_cubit/auth_cubit.dart';
@@ -35,6 +38,21 @@ class LoginForm extends StatelessWidget {
                 obscureText: obscurePassword,
                 toggle: () => authCubit.togglePasswordVisibility(),
                 validator: viewModel.validatePassword,
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    GoRouter.of(context).go(Routes.forgetpassword);
+                  },
+                  child: Text(
+                    "Forgot Password?",
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
               ),
               CustomBottom(
                 title: "Login",

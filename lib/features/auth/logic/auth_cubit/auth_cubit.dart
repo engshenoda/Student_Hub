@@ -107,6 +107,10 @@ class AuthCubit extends Cubit<AuthCubitState> {
   Future<void> resetPassword() async {
     emit(ResetPasswordLoadingState());
     try {
+      if (forgetPasswordViewModel == null) {
+      emit(ResetPasswordFailureState("ViewModel not initialized."));
+      return;
+    }
       final email = forgetPasswordViewModel!.emailController.text.trim();
       if (email.isEmpty) {
         emit(ResetPasswordFailureState("Please enter your email."));
@@ -114,7 +118,7 @@ class AuthCubit extends Cubit<AuthCubitState> {
       }
       await forgetPasswordViewModel!.resetPassword(email);
       emit(
-        ResetPasswordSuccessState("Password reset email sent successfully!"),
+        ResetPasswordSuccessState("Password reset link has been sent to $email"),
       );
     } on FirebaseAuthException catch (e) {
       String message;
