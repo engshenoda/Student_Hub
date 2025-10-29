@@ -1,7 +1,5 @@
-
-
 import 'package:flutter/material.dart';
-import 'package:linkedin/core/constants/constants.dart';
+import 'package:linkedin/core/theme/app_colors.dart';
 import 'package:linkedin/features/chat/data/models.dart';
 import 'package:linkedin/features/chat/Presentation/widget/chat_input.dart';
 import 'package:linkedin/features/chat/Presentation/widget/message_bubble.dart';
@@ -63,7 +61,7 @@ class ChatScreen extends StatelessWidget {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [kLightGreen, Colors.white],
+              colors: [AppColors.kLightGreen, Colors.white],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               stops: [0.0, 1.0],
@@ -74,7 +72,7 @@ class ChatScreen extends StatelessWidget {
         elevation: 0,
         
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: kDarkTeal),
+          icon: const Icon(Icons.arrow_back_ios, color: AppColors.kDarkTeal),
           onPressed: () => Navigator.pop(context),
         ),
         title: Row(
@@ -92,11 +90,11 @@ class ChatScreen extends StatelessWidget {
                   style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: kDarkTeal),
+                      color: AppColors.kDarkTeal),
                 ),
                 Text(
                   chatModel.subtitle,
-                  style: TextStyle(fontSize: 12, color: kDarkTeal.withOpacity(0.8)),
+                  style: TextStyle(fontSize: 12, color: AppColors.kDarkTeal.withOpacity(0.8)),
                 ),
               ],
             ),
@@ -104,7 +102,7 @@ class ChatScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.more_vert, color: kDarkTeal),
+            icon: const Icon(Icons.more_vert, color: AppColors.kDarkTeal),
             onPressed: () {},
           ),
           const SizedBox(width: 8),

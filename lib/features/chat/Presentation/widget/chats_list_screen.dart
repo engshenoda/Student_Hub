@@ -1,7 +1,5 @@
-
-
 import 'package:flutter/material.dart';
-import 'package:linkedin/core/constants/constants.dart';
+import 'package:linkedin/core/theme/app_colors.dart';
 import 'package:linkedin/features/chat/data/models.dart';
 
 
@@ -23,7 +21,7 @@ class ChatsListScreen extends StatelessWidget {
           flexibleSpace: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [kLightGreen, Colors.white],
+                colors: [AppColors.kLightGreen, Colors.white],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 stops: [0.0, 1.0],
@@ -41,11 +39,11 @@ class ChatsListScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: kDarkTeal,
+                        color: AppColors.kDarkTeal,
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.more_vert, color: kDarkTeal),
+                      icon: const Icon(Icons.more_vert, color: AppColors.kDarkTeal),
                       onPressed: () {},
                     ),
                   ],

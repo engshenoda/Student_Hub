@@ -39,7 +39,7 @@ abstract class AppRoute {
         path: Routes.createAccaount,
         builder: (context, state) => const CreateAccountScreen(),
       ),
-    
+
       GoRoute(
         path: Routes.login,
         builder: (context, state) => const LoginScreen(),
@@ -76,11 +76,11 @@ abstract class AppRoute {
         path: Routes.messahes,
         builder: (context, state) => const ChatsListScreen(),
       ),
-      
+
       GoRoute(
-        path: Routes.chatscreen ,
-        
-        builder: (context, state) =>  ChatScreen(chatModel: null, chatName: '',),
+        path: Routes.chatscreen,
+
+        builder: (context, state) => ChatScreen(chatModel: null, chatName: ''),
       ),
       GoRoute(
         path: Routes.notifcation,
@@ -88,8 +88,13 @@ abstract class AppRoute {
       ),
       GoRoute(
         path: Routes.profile,
-        builder: (context, state) => const ProfileScreen(),
+        name: 'profile',
+        builder: (context, state) {
+          final uid = state.pathParameters['uid']!;
+          return ProfileScreen(uid: uid);
+        },
       ),
+
       GoRoute(
         path: Routes.settings,
         builder: (context, state) => const Settings(),

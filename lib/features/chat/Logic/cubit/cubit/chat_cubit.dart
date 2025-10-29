@@ -2,7 +2,7 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:linkedin/features/chat/data/chatmodel.dart';
-import 'package:linkedin/features/chat/repo/chat_repo.dart';
+import 'package:linkedin/features/chat/data/repo/chat_repo.dart';
 
 part 'chat_state.dart';
 

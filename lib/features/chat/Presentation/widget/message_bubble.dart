@@ -1,12 +1,7 @@
-
-
 import 'package:flutter/material.dart';
-
-import 'package:linkedin/core/constants/constants.dart';
+import 'package:linkedin/core/theme/app_colors.dart';
 import 'package:linkedin/features/chat/data/models.dart';
 import 'package:linkedin/features/chat/Presentation/widget/chat_screen.dart';
-
-
 
 class MessageBubble extends StatelessWidget {
   final Message message;
@@ -22,14 +17,14 @@ class MessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isMe = message.isMe;
 
-   
-    final Color bubbleColor = isMe ? kDarkTeal : kLightGreen.withOpacity(0.7);
+    final Color bubbleColor = isMe
+        ? AppColors.kDarkTeal
+        : AppColors.kLightGreen.withOpacity(0.7);
     final Color textColor = isMe ? Colors.white : Colors.black87;
-    
-  
+
     final Gradient? gradient = isMe
         ? const LinearGradient(
-            colors: [kTealAccent, kDarkTeal],
+            colors: [AppColors.kTealAccent, AppColors.kDarkTeal],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           )
@@ -38,15 +33,16 @@ class MessageBubble extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Column(
-        crossAxisAlignment:
-            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: isMe
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment:
-                isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+            mainAxisAlignment: isMe
+                ? MainAxisAlignment.end
+                : MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-          
               if (!isMe)
                 Padding(
                   padding: const EdgeInsets.only(right: 8.0, bottom: 10.0),
@@ -55,8 +51,7 @@ class MessageBubble extends StatelessWidget {
                     backgroundImage: NetworkImage(chatModel.avatarUrl),
                   ),
                 ),
-              
-           
+
               Flexible(
                 child: Container(
                   margin: EdgeInsets.only(
@@ -99,22 +94,18 @@ class MessageBubble extends StatelessWidget {
                   ),
                 ),
               ),
-              
-              
+
               if (isMe)
                 const Padding(
                   padding: EdgeInsets.only(left: 8.0, bottom: 10.0),
-                  child: CircleAvatar(
-                    radius: 15,
-                  ),
+                  child: CircleAvatar(radius: 15),
                 ),
             ],
           ),
-          
-   
+
           Padding(
             padding: EdgeInsets.only(
-              left: isMe ? 0 : 45.0, 
+              left: isMe ? 0 : 45.0,
               right: isMe ? 10.0 : 0,
             ),
             child: Text(
