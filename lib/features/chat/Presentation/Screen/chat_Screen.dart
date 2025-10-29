@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:linkedin/core/constants/constants.dart';
+import 'package:linkedin/core/theme/app_colors.dart';
 import 'package:linkedin/features/chat/Presentation/widget/chats_list_screen.dart';
-
-
 
 class ChatApp extends StatelessWidget {
   const ChatApp({super.key});
@@ -13,8 +11,8 @@ class ChatApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Chat ',
       theme: ThemeData(
-        primaryColor: kDarkTeal,
-        colorScheme: ColorScheme.fromSeed(seedColor: kDarkTeal),
+        primaryColor: AppColors.kDarkTeal,
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.kDarkTeal),
         useMaterial3: true,
       ),
       home: const ChatsListScreen(),

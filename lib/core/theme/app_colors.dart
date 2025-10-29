@@ -11,6 +11,15 @@ class AppColors {
   static const kDarkTeal = Color(0xFF00897B);
   static const kTealAccent = Color(0xFF4DB6AC);
 
+
+
+static const Color kPrimaryTextColor = Colors.black87;
+static const Color kSecondaryTextColor = Colors.grey;
+static const Color kMessageTimeColor = Colors.grey;
+
+
+
+
   // Neutral Colors
   static const Color background = Color(0xFFF8F9FA); // Off-White
   static const Color textDark = Color(0xFF2D3436); // Dark Gray

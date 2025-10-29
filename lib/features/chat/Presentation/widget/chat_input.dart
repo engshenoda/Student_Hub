@@ -1,7 +1,5 @@
-
-
 import 'package:flutter/material.dart';
-import 'package:linkedin/core/constants/constants.dart';
+import 'package:linkedin/core/theme/app_colors.dart';
 
 
 
@@ -29,7 +27,7 @@ class ChatInput extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.send, color: kDarkTeal),
+            icon: const Icon(Icons.send, color: AppColors.kDarkTeal),
             onPressed: () {
              
             },

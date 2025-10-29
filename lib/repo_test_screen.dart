@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:linkedin/features/chat/repo/chat_repo.dart';
+import 'package:linkedin/features/chat/data/repo/chat_repo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RepoTestScreen extends StatelessWidget {
