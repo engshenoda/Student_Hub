@@ -7,7 +7,7 @@ part 'career_preference_state.dart';
 
 class CareerPreferenceCubit extends Cubit<CareerPreferenceState> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final String _collectionPath='Career';
+  final String _collectionPath = 'career_preferences';
 
   CareerPreferenceCubit() : super(CareerPreferenceInitial());
 
@@ -15,19 +15,17 @@ class CareerPreferenceCubit extends Cubit<CareerPreferenceState> {
     emit(CareerPreferenceLoading());
     try {
       final doc = await _firestore.collection(_collectionPath).doc(userId).get();
-
-      if (doc.exists) {
+      if (doc.exists && doc.data() != null) {
         final model = CareerPreference.fromMap(doc.data()!);
         emit(CareerPreferenceLoaded(model.selectedOption));
       } else {
-        emit(CareerPreferenceLoaded('')); 
+        emit(CareerPreferenceLoaded(''));
       }
     } catch (e) {
       emit(CareerPreferenceError('Failed to load career preference'));
     }
   }
 
-  
   Future<void> updateCareerPreference(String userId, String selectedOption) async {
     emit(CareerPreferenceUploading());
     try {
@@ -35,19 +33,17 @@ class CareerPreferenceCubit extends Cubit<CareerPreferenceState> {
         selectedOption: selectedOption,
         lastUpdated: DateTime.now(),
       );
-
       await _firestore
-          .collection('career_preferences')
+          .collection(_collectionPath)
           .doc(userId)
           .set(model.toMap(), SetOptions(merge: true));
-
       emit(CareerPreferenceLoaded(selectedOption));
     } catch (e) {
       emit(CareerPreferenceError('Failed to update career preference'));
     }
   }
+
   void resetState() {
     emit(CareerPreferenceInitial());
   }
 }
-

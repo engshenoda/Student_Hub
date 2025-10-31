@@ -9,17 +9,14 @@ class CareerPreference {
     required this.lastUpdated,
   });
 
-  
-  factory CareerPreference.fromMap(Map<String, dynamic> map) {
+  factory CareerPreference.fromMap(Map map) {
     return CareerPreference(
       selectedOption: map['selectedOption'] ?? '',
       lastUpdated: map['lastUpdated'] is Timestamp
           ? (map['lastUpdated'] as Timestamp).toDate()
-          : DateTime.tryParse(map['lastUpdated']?.toString() ?? '') ??
-              DateTime.now(),
+          : DateTime.tryParse(map['lastUpdated']?.toString() ?? '') ?? DateTime.now(),
     );
   }
-
 
   Map<String, dynamic> toMap() {
     return {
@@ -28,7 +25,6 @@ class CareerPreference {
     };
   }
 
- 
   CareerPreference copyWith({
     String? selectedOption,
     DateTime? lastUpdated,
