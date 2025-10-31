@@ -1,8 +1,14 @@
 import 'dart:math' as math;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+// <<<<<<< feature/profile-logic
+// import 'package:go_router/go_router.dart';
+// import 'package:linkedin/core/routes/route.dart';
+// =======
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
-import 'package:linkedin/core/routes/route.dart';
+
 import 'career_final.dart';
 import 'profile_screen.dart';
 
@@ -30,7 +36,6 @@ class _DocsScreenState extends State<DocsScreen> {
       type: FileType.custom,
       allowedExtensions: ['pdf'],
     );
-
     if (result != null && result.files.single.path != null) {
       setState(() {
         if (isCV)
@@ -51,28 +56,29 @@ class _DocsScreenState extends State<DocsScreen> {
       item.isValid = text.isEmpty ? true : _isValidUrl(text);
       if (!item.isValid) allValid = false;
     }
+// <<<<<<< feature/profile-logic
 
-    final hasValidLink = portfolioItems.any(
-      (i) => _isValidUrl(i.controller.text),
-    );
+//     final hasValidLink = portfolioItems.any(
+//       (i) => _isValidUrl(i.controller.text),
+//     );
+
+// =======
+    final hasValidLink = portfolioItems.any((i) => _isValidUrl(i.controller.text));
 
     if (cvFileName == null) {
       _showError("Please upload your CV file.");
       return false;
     }
-
     if (!hasValidLink && portfolioFileName == null) {
       _showError(
         "Please add at least one portfolio link or upload a PDF file.",
       );
       return false;
     }
-
     if (!allValid) {
       _showError("Please check your portfolio links.");
       return false;
     }
-
     return true;
   }
 
@@ -82,11 +88,30 @@ class _DocsScreenState extends State<DocsScreen> {
     );
   }
 
-  void _onNextPressed() {
+  void _onNextPressed() async {
     if (_validateInputs()) {
-      GoRouter.of(context).go(Routes.Home);
+// <<<<<<< feature/profile-logic
+//       GoRouter.of(context).go(Routes.Home);
+// =======
+      final userId = FirebaseAuth.instance.currentUser?.uid ?? "demo_user";
+      final Map<String, dynamic> data = {
+        "cvFileName": cvFileName,
+        "portfolioFileName": portfolioFileName,
+        "portfolioLinks": portfolioItems
+            .map((item) => item.controller.text)
+            .where((text) => text.isNotEmpty)
+            .toList(),
+        "lastUpdated": FieldValue.serverTimestamp(),
+      };
+      await FirebaseFirestore.instance
+          .collection("user_docs")
+          .doc(userId)
+          .set(data, SetOptions(merge: true));
+      if (!mounted) return;
+      context.go(Routes.Home); // GoRouter navigation to home screen
+
     } else {
-      setState(() {}); // لإعادة رسم الـ borders
+      setState(() {});
     }
   }
 
@@ -106,24 +131,16 @@ class _DocsScreenState extends State<DocsScreen> {
             children: [
               const StepsHeader(),
               SizedBox(height: rh(40)),
-
               const _IntroText(),
-
               SizedBox(height: rh(32)),
-
-              // CV Section
               UploadCard(
                 title: "Upload your CV in PDF (max. 5 MB)",
                 fileName: cvFileName,
                 onTap: () => _pickFile(isCV: true),
               ),
-
               SizedBox(height: rh(30)),
-
-              // Portfolio Section
               const SectionTitle("Portfolio (optional)"),
               SizedBox(height: rh(10)),
-
               Column(
                 children: List.generate(portfolioItems.length, (i) {
                   final item = portfolioItems[i];
@@ -161,17 +178,13 @@ class _DocsScreenState extends State<DocsScreen> {
                   style: TextStyle(color: kPrimary),
                 ),
               ),
-
               SizedBox(height: rh(20)),
-
               UploadCard(
                 title: "Or upload your portfolio as PDF",
                 fileName: portfolioFileName,
                 onTap: () => _pickFile(isCV: false),
               ),
-
               SizedBox(height: rh(100)),
-
               Row(
                 children: [
                   Expanded(
