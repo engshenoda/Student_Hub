@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:linkedin/features/questions/data/Docs_Screen.dart';
 import 'package:linkedin/features/questions/data/career_next_screen.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 const Color kPrimary = Color(0xFF00B894);
 
@@ -13,9 +14,6 @@ class CarerrScreenFinal extends StatefulWidget {
 }
 
 class _CarerrScreenFinalState extends State<CarerrScreenFinal> {
-  String selectedIndustry =
-      "E-Commerce, FinTech, Consulting, Food And Beverage";
-
   final List<String> allTags = [
     "E-Commerce, FinTech, Consulting, Food And Beverage",
     "3D Design",
@@ -44,18 +42,15 @@ class _CarerrScreenFinalState extends State<CarerrScreenFinal> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 🔹 الخط العلوي (Profile - Career Preference - Docs)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   _buildStep("Profile", true, false),
                   _buildStep("Career Preference", true, false),
-                  _buildStep("Docs", false, true), // ← كورة بإطار فقط
+                  _buildStep("Docs", false, true),
                 ],
               ),
-
               SizedBox(height: rh(40)),
-
               Text(
                 "What industry do you prefer to work in?",
                 style: TextStyle(
@@ -65,14 +60,11 @@ class _CarerrScreenFinalState extends State<CarerrScreenFinal> {
                   height: 1.3,
                 ),
               ),
-
               SizedBox(height: rh(24)),
-
               if (selectedTags.isNotEmpty)
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: rw(12), vertical: rh(14)),
+                  padding: EdgeInsets.symmetric(horizontal: rw(12), vertical: rh(14)),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
@@ -113,9 +105,7 @@ class _CarerrScreenFinalState extends State<CarerrScreenFinal> {
                     ],
                   ),
                 ),
-
               SizedBox(height: rh(30)),
-
               Text(
                 "Suggestions",
                 style: TextStyle(
@@ -124,9 +114,7 @@ class _CarerrScreenFinalState extends State<CarerrScreenFinal> {
                   color: Colors.grey.shade600,
                 ),
               ),
-
               SizedBox(height: rh(12)),
-
               Wrap(
                 spacing: rw(10),
                 runSpacing: rh(10),
@@ -147,19 +135,17 @@ class _CarerrScreenFinalState extends State<CarerrScreenFinal> {
                     )
                     .toList(),
               ),
-
               SizedBox(height: rh(220)),
-
               Row(
                 children: [
-                   Expanded(
+                  Expanded(
                     child: OutlinedButton(
                       onPressed: () {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  const CareerNextScreen()),
+                            builder: (context) => const CareerNextScreen(),
+                          ),
                         );
                       },
                       style: OutlinedButton.styleFrom(
@@ -182,8 +168,17 @@ class _CarerrScreenFinalState extends State<CarerrScreenFinal> {
                   SizedBox(width: rw(12)),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         if (selectedTags.isNotEmpty) {
+                          final userId = FirebaseAuth.instance.currentUser?.uid ?? "demo_user";
+                          await FirebaseFirestore.instance
+                              .collection("career_industries")
+                              .doc(userId)
+                              .set({
+                                "selectedTags": selectedTags.toList(),
+                                "lastUpdated": FieldValue.serverTimestamp(),
+                              }, SetOptions(merge: true));
+                          if (!mounted) return;
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -228,7 +223,6 @@ class _CarerrScreenFinalState extends State<CarerrScreenFinal> {
     );
   }
 
-  // 🔹 دالة بناء الكور اللي فوق
   Widget _buildStep(String title, bool isDone, bool isOutlined) {
     return Column(
       children: [
@@ -261,7 +255,6 @@ class _CarerrScreenFinalState extends State<CarerrScreenFinal> {
     );
   }
 
-  // 🔹 دالة بناء التاجات
   Widget _buildTag(String text, bool selected) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),

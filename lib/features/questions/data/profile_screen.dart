@@ -21,15 +21,11 @@ class ProfileQScreen extends StatelessWidget {
       future: _initFirebase(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-              body: Center(child: CircularProgressIndicator()));
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
         }
         if (snapshot.hasError) {
-          return Scaffold(
-              body: Center(
-                  child: Text('Firebase init error: ${snapshot.error}')));
+          return Scaffold(body: Center(child: Text('Firebase init error: ${snapshot.error}')));
         }
-
         final userId = FirebaseAuth.instance.currentUser?.uid ?? 'demo_user';
         return BlocProvider(
           create: (_) => UserCubit()..listenToUser(userId),
@@ -40,11 +36,31 @@ class ProfileQScreen extends StatelessWidget {
   }
 }
 
-//------------------ MAIN BODY ------------------
-
-class _ProfileQBody extends StatelessWidget {
+class _ProfileQBody extends StatefulWidget {
   final String userId;
   const _ProfileQBody({required this.userId});
+
+  @override
+  State<_ProfileQBody> createState() => _ProfileQBodyState();
+}
+
+class _ProfileQBodyState extends State<_ProfileQBody> {
+  final _fullNameCtrl = TextEditingController();
+  final _whatsappCtrl = TextEditingController();
+  final _roleCtrl = TextEditingController();
+  final _degreeYearCtrl = TextEditingController();
+  final _minSalaryCtrl = TextEditingController();
+  bool _initialized = false;
+
+  @override
+  void dispose() {
+    _fullNameCtrl.dispose();
+    _whatsappCtrl.dispose();
+    _roleCtrl.dispose();
+    _degreeYearCtrl.dispose();
+    _minSalaryCtrl.dispose();
+    super.dispose();
+  }
 
   double responsive(BuildContext context, double value) {
     final size = MediaQuery.of(context).size;
@@ -74,6 +90,15 @@ class _ProfileQBody extends StatelessWidget {
             final user = state.user;
             final cubit = context.read<UserCubit>();
 
+            if (!_initialized) {
+              _fullNameCtrl.text = user.fullName;
+              _whatsappCtrl.text = user.whatsapp.toString();
+              _roleCtrl.text = user.role;
+              _degreeYearCtrl.text = user.degreeYear;
+              _minSalaryCtrl.text = user.minSalary.toStringAsFixed(0);
+              _initialized = true;
+            }
+
             return Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 600),
@@ -82,8 +107,7 @@ class _ProfileQBody extends StatelessWidget {
                     Container(height: 8, color: kPrimary, width: double.infinity),
                     Expanded(
                       child: SingleChildScrollView(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: s(18), vertical: s(10)),
+                        padding: EdgeInsets.symmetric(horizontal: s(18), vertical: s(10)),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -97,118 +121,96 @@ class _ProfileQBody extends StatelessWidget {
                               ),
                             ),
                             SizedBox(height: s(12)),
-
-                            InfoRecommendationCard(scale: s, cubit: cubit, userId: userId),
+                            InfoRecommendationCard(scale: s, cubit: cubit, userId: widget.userId),
                             SizedBox(height: s(18)),
-
-                            // Editable Profile Fields
                             ProfileField(
                               scale: s,
                               leading: Icons.person,
                               label: 'Full Name',
-                              value: user.fullName,
+                              controller: _fullNameCtrl,
                               showTrailingEdit: true,
-                              onSave: (val) => cubit.updateUserField('fullName', val, userId),
                             ),
                             SizedBox(height: s(12)),
-
                             ProfileField(
                               scale: s,
                               leading: Icons.chat,
                               label: 'WhatsApp Number',
-                              value: user.whatsapp.toString(),
+                              controller: _whatsappCtrl,
                               showTrailingEdit: true,
-                              onSave: (val) => cubit.updateUserField('whatsapp', val, userId),
                             ),
                             SizedBox(height: s(12)),
-
                             ProfileField(
                               scale: s,
                               leading: Icons.badge,
                               label: 'Most Recent Role & Company',
-                              value: user.role,
+                              controller: _roleCtrl,
                               showTrailingEdit: true,
-                              onSave: (val) => cubit.updateUserField('role', val, userId),
                             ),
                             SizedBox(height: s(12)),
-
                             ProfileField(
                               scale: s,
                               leading: Icons.school,
                               label: 'Bachelor Degree Entry Year',
-                              value: user.degreeYear,
+                              controller: _degreeYearCtrl,
                               showTrailingEdit: true,
-                              onSave: (val) =>
-                                  cubit.updateUserField('degreeYear', val, userId),
                             ),
                             SizedBox(height: s(12)),
-
                             ProfileField(
                               scale: s,
                               leading: Icons.attach_money,
                               label: 'Minimum Base Salary',
-                              value: user.minSalary.toStringAsFixed(0),
+                              controller: _minSalaryCtrl,
                               showTrailingInfo: true,
                               showTrailingEdit: true,
-                              onSave: (val) {
-                                final parsed = double.tryParse(val) ?? 0.0;
-                                cubit.updateUserField('minSalary', parsed.toString(), userId);
-                              },
                             ),
-
                             SizedBox(height: s(30)),
                             Row(
                               children: [
                                 Expanded(
                                   child: OutlinedButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).maybePop(),
+                                    onPressed: () => Navigator.of(context).maybePop(),
                                     style: OutlinedButton.styleFrom(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: s(16)),
+                                      padding: EdgeInsets.symmetric(vertical: s(16)),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(s(28)),
+                                        borderRadius: BorderRadius.circular(s(28)),
                                       ),
-                                      side: BorderSide(
-                                          color: Colors.grey.shade300),
+                                      side: BorderSide(color: Colors.grey.shade300),
                                       backgroundColor: Colors.white,
                                     ),
                                     child: Text(
                                       'Back',
-                                      style: TextStyle(
-                                          fontSize: s(16),
-                                          color: Colors.grey[800]),
+                                      style: TextStyle(fontSize: s(16), color: Colors.grey[800]),
                                     ),
                                   ),
                                 ),
                                 SizedBox(width: s(12)),
                                 Expanded(
                                   child: ElevatedButton(
-                                    onPressed: () {
+                                    onPressed: () async {
+                                      await cubit.updateUserField('fullName', _fullNameCtrl.text, widget.userId);
+                                      await cubit.updateUserField('whatsapp', _whatsappCtrl.text, widget.userId);
+                                      await cubit.updateUserField('role', _roleCtrl.text, widget.userId);
+                                      await cubit.updateUserField('degreeYear', _degreeYearCtrl.text, widget.userId);
+                                      await cubit.updateUserField('minSalary', _minSalaryCtrl.text, widget.userId);
+                                      if (!mounted) return;
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (_) =>
-                                              const CareerPreferenceScreen(),
+                                          builder: (_) => const CareerPreferenceScreen(),
                                         ),
                                       );
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: s(16)),
+                                      padding: EdgeInsets.symmetric(vertical: s(16)),
                                       backgroundColor: kPrimary,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(s(28)),
+                                        borderRadius: BorderRadius.circular(s(28)),
                                       ),
                                       elevation: 4,
                                     ),
                                     child: Text(
                                       'Next',
-                                      style: TextStyle(
-                                          fontSize: s(16),
-                                          fontWeight: FontWeight.w600),
+                                      style: TextStyle(fontSize: s(16), fontWeight: FontWeight.w600),
                                     ),
                                   ),
                                 ),
@@ -230,7 +232,7 @@ class _ProfileQBody extends StatelessWidget {
   }
 }
 
-//------------------ STEP HEADER ------------------
+// --- Stepper & Info Card widgets preserved and unchanged ---
 
 class _StepHeader extends StatelessWidget {
   final double Function(double) scale;
@@ -251,12 +253,12 @@ class _StepHeader extends StatelessWidget {
   }
 
   Widget _Connector(double Function(double) s) => Expanded(
-        child: Container(
-          height: s(1),
-          margin: EdgeInsets.symmetric(horizontal: s(10)),
-          color: Colors.grey.shade300,
-        ),
-      );
+    child: Container(
+      height: s(1),
+      margin: EdgeInsets.symmetric(horizontal: s(10)),
+      color: Colors.grey.shade300,
+    ),
+  );
 }
 
 class _Step extends StatelessWidget {
@@ -279,11 +281,11 @@ class _Step extends StatelessWidget {
                 color: filled ? kPrimary : Colors.grey.shade300, width: 2),
             boxShadow: filled
                 ? [
-                    BoxShadow(
-                        color: kPrimary.withOpacity(0.18),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4))
-                  ]
+              BoxShadow(
+                  color: kPrimary.withOpacity(0.18),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4))
+            ]
                 : [],
           ),
           child: filled
@@ -291,14 +293,11 @@ class _Step extends StatelessWidget {
               : null,
         ),
         SizedBox(height: s(6)),
-        Text(label,
-            style: TextStyle(fontSize: s(12), color: Colors.grey[700])),
+        Text(label, style: TextStyle(fontSize: s(12), color: Colors.grey[700])),
       ],
     );
   }
 }
-
-//------------------ INFO CARD ------------------
 
 class InfoRecommendationCard extends StatelessWidget {
   final double Function(double) scale;
@@ -368,26 +367,22 @@ class InfoRecommendationCard extends StatelessWidget {
   }
 }
 
-//------------------ PROFILE FIELD ------------------
-
 class ProfileField extends StatefulWidget {
   final double Function(double) scale;
   final IconData leading;
   final String label;
-  final String value;
+  final TextEditingController controller;
   final bool showTrailingEdit;
   final bool showTrailingInfo;
-  final Function(String) onSave;
 
   const ProfileField({
     super.key,
     required this.scale,
     required this.leading,
     required this.label,
-    required this.value,
+    required this.controller,
     this.showTrailingEdit = false,
     this.showTrailingInfo = false,
-    required this.onSave,
   });
 
   @override
@@ -395,33 +390,11 @@ class ProfileField extends StatefulWidget {
 }
 
 class _ProfileFieldState extends State<ProfileField> {
-  late TextEditingController _controller;
   bool _isEditing = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController(text: widget.value);
-  }
-
-  @override
-  void didUpdateWidget(ProfileField oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.value != widget.value) {
-      _controller.text = widget.value;
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     final s = widget.scale;
-
     return Container(
       padding: EdgeInsets.all(s(12)),
       decoration: BoxDecoration(
@@ -444,59 +417,41 @@ class _ProfileFieldState extends State<ProfileField> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.label,
-                    style: TextStyle(fontSize: s(12), color: Colors.grey[600])),
+                Text(widget.label, style: TextStyle(fontSize: s(12), color: Colors.grey[600])),
                 SizedBox(height: s(6)),
                 _isEditing
                     ? TextField(
-                        controller: _controller,
+                        controller: widget.controller,
                         autofocus: true,
-                        style: TextStyle(
-                            fontSize: s(15), fontWeight: FontWeight.w600),
+                        style: TextStyle(fontSize: s(15), fontWeight: FontWeight.w600),
                         decoration: InputDecoration(
                           isDense: true,
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: s(4), horizontal: s(8)),
+                          contentPadding: EdgeInsets.symmetric(vertical: s(4), horizontal: s(8)),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(s(8)),
-                            borderSide:
-                                const BorderSide(color: kPrimary, width: 1),
+                            borderSide: const BorderSide(color: kPrimary, width: 1),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(s(8)),
-                            borderSide:
-                                const BorderSide(color: kPrimary, width: 1.5),
+                            borderSide: const BorderSide(color: kPrimary, width: 1.5),
                           ),
                         ),
-                        onSubmitted: (value) {
-                          setState(() => _isEditing = false);
-                          widget.onSave(value);
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content: Text('${widget.label} updated!'),
-                              duration: const Duration(seconds: 1)));
-                        },
+                        onSubmitted: (_) => setState(() => _isEditing = false),
                       )
-                    : Text(
-                        _controller.text,
-                        style: TextStyle(
-                            fontSize: s(15), fontWeight: FontWeight.w600),
-                      ),
+                    : Text(widget.controller.text, style: TextStyle(fontSize: s(15), fontWeight: FontWeight.w600)),
               ],
             ),
           ),
           if (widget.showTrailingInfo)
             Padding(
               padding: EdgeInsets.only(left: s(8)),
-              child: Icon(Icons.info_outline,
-                  color: Colors.grey[500], size: s(20)),
+              child: Icon(Icons.info_outline, color: Colors.grey[500], size: s(20)),
             ),
           if (widget.showTrailingEdit)
             InkWell(
               onTap: () => setState(() => _isEditing = !_isEditing),
               child: Icon(
-                _isEditing
-                    ? Icons.check_circle_outline
-                    : Icons.edit_outlined,
+                _isEditing ? Icons.check_circle_outline : Icons.edit_outlined,
                 color: _isEditing ? kPrimary : Colors.grey[600],
                 size: s(20),
               ),
