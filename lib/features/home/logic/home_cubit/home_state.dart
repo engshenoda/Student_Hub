@@ -1,12 +1,9 @@
-import 'package:equatable/equatable.dart';
 import 'package:linkedin/features/home/data/models/comment_model.dart';
 import 'package:linkedin/features/home/data/models/post_model.dart';
 
 
-abstract class HomeState extends Equatable {
-  @override
-  List<Object?> get props => [];
-}
+// @immutable
+sealed class HomeState {}
 
 class HomeInitial extends HomeState {}
 

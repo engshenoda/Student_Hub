@@ -5,15 +5,14 @@ sealed class ProfileState {}
 
 final class ProfileInitial extends ProfileState {}
 
-final class ProfileSuccess extends ProfileState {
-  final ProfileModel profileModel;
+final class ProfileLoading extends ProfileState {}
 
-  ProfileSuccess(this.profileModel);
+final class ProfileSuccess extends ProfileState {
+  final ProfileModel profile;
+  ProfileSuccess(this.profile);
 }
 
-class ProfileLoading extends ProfileState {}
-
-class ProfileError extends ProfileState {
+final class ProfileError extends ProfileState {
   final String message;
   ProfileError(this.message);
 }
