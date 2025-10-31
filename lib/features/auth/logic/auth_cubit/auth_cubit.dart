@@ -19,7 +19,7 @@ class AuthCubit extends Cubit<AuthCubitState> {
   }) : super(AuthInitial());
   final CreateAccountViewModel? createAuthViewModel;
   final LoginViewModel? loginauthAuthViewModel;
-  final AuthRepo _authRepo =AuthRepo();
+  final AuthRepo _authRepo = AuthRepo();
   bool obscurePassword = true;
   bool obscureConfirmPassword = true;
 
@@ -46,14 +46,17 @@ class AuthCubit extends Cubit<AuthCubitState> {
   Future<void> register() async {
     emit(SignUpLoadingState());
     try {
+      // if (email.isEmpty || password.isEmpty) {
+      //   emit(LoginFailureState("Please fill in all fields."));
+      //   return;
+      // }
       final user = await createAuthViewModel!.register(
         createAuthViewModel!.emailController.text.trim(),
         createAuthViewModel!.passwordController.text.trim(),
       );
+
       emit(SignUpSuccsessState(user));
     } on FirebaseAuthException catch (e) {
-      print("🔥 Firebase Error Code: ${e.code}");
-      print("🔥 Firebase Message: ${e.message}");
       String errorMessage;
       switch (e.code) {
         case 'weak-password':
@@ -98,6 +101,7 @@ class AuthCubit extends Cubit<AuthCubitState> {
           errorMessage = 'An unexpected error occurred during login.';
       }
       emit(LoginFailureState(errorMessage));
+      print("FirebaseAuthException code: ${e.code}, message: ${e.message}");
     } catch (e) {
       emit(LoginFailureState('Login failed: ${e.toString()}'));
     }
@@ -109,9 +113,9 @@ class AuthCubit extends Cubit<AuthCubitState> {
     emit(ResetPasswordLoadingState());
     try {
       if (forgetPasswordViewModel == null) {
-      emit(ResetPasswordFailureState("ViewModel not initialized."));
-      return;
-    }
+        emit(ResetPasswordFailureState("ViewModel not initialized."));
+        return;
+      }
       final email = forgetPasswordViewModel!.emailController.text.trim();
       if (email.isEmpty) {
         emit(ResetPasswordFailureState("Please enter your email."));
@@ -119,7 +123,9 @@ class AuthCubit extends Cubit<AuthCubitState> {
       }
       await forgetPasswordViewModel!.resetPassword(email);
       emit(
-        ResetPasswordSuccessState("Password reset link has been sent to $email"),
+        ResetPasswordSuccessState(
+          "Password reset link has been sent to $email",
+        ),
       );
     } on FirebaseAuthException catch (e) {
       String message;
@@ -136,11 +142,10 @@ class AuthCubit extends Cubit<AuthCubitState> {
       emit(ResetPasswordFailureState(message));
     } catch (e) {
       emit(ResetPasswordFailureState(e.toString()));
-    }}
-    
+    }
+  }
 
-
-      Future<void> signInWithGoogle() async {
+  Future<void> signInWithGoogle() async {
     emit(GoogleLoginLoadingState());
     try {
       final user = await AuthRepo().signInWithGoogle();
@@ -150,8 +155,7 @@ class AuthCubit extends Cubit<AuthCubitState> {
     }
   }
 
-
-   Future<void> signInWithFacebook() async {
+  Future<void> signInWithFacebook() async {
     emit(FacebookLoginLoadingState());
     try {
       final user = await AuthRepo().signInWithFacebook();
@@ -160,9 +164,4 @@ class AuthCubit extends Cubit<AuthCubitState> {
       emit(FacebookLoginFailureState(e.toString()));
     }
   }
-    
-
-
-
-    
-    }
+}

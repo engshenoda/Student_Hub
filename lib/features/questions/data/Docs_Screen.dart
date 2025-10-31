@@ -1,9 +1,14 @@
 import 'dart:math' as math;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+// <<<<<<< feature/profile-logic
+// import 'package:go_router/go_router.dart';
+// import 'package:linkedin/core/routes/route.dart';
+// =======
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
+
 import 'career_final.dart';
 import 'profile_screen.dart';
 
@@ -19,7 +24,7 @@ class DocsScreen extends StatefulWidget {
 class _DocsScreenState extends State<DocsScreen> {
   String? cvFileName;
   String? portfolioFileName;
-  final List<_PortfolioItem> portfolioItems = [ _PortfolioItem() ];
+  final List<_PortfolioItem> portfolioItems = [_PortfolioItem()];
 
   bool _isValidUrl(String url) {
     final pattern = r'^(https?:\/\/)[^\s/$.?#].[^\s]*$';
@@ -33,13 +38,16 @@ class _DocsScreenState extends State<DocsScreen> {
     );
     if (result != null && result.files.single.path != null) {
       setState(() {
-        if (isCV) cvFileName = result.files.single.name;
-        else portfolioFileName = result.files.single.name;
+        if (isCV)
+          cvFileName = result.files.single.name;
+        else
+          portfolioFileName = result.files.single.name;
       });
     }
   }
 
-  void _addPortfolioField() => setState(() => portfolioItems.add(_PortfolioItem()));
+  void _addPortfolioField() =>
+      setState(() => portfolioItems.add(_PortfolioItem()));
 
   bool _validateInputs() {
     bool allValid = true;
@@ -48,13 +56,23 @@ class _DocsScreenState extends State<DocsScreen> {
       item.isValid = text.isEmpty ? true : _isValidUrl(text);
       if (!item.isValid) allValid = false;
     }
+// <<<<<<< feature/profile-logic
+
+//     final hasValidLink = portfolioItems.any(
+//       (i) => _isValidUrl(i.controller.text),
+//     );
+
+// =======
     final hasValidLink = portfolioItems.any((i) => _isValidUrl(i.controller.text));
+
     if (cvFileName == null) {
       _showError("Please upload your CV file.");
       return false;
     }
     if (!hasValidLink && portfolioFileName == null) {
-      _showError("Please add at least one portfolio link or upload a PDF file.");
+      _showError(
+        "Please add at least one portfolio link or upload a PDF file.",
+      );
       return false;
     }
     if (!allValid) {
@@ -72,6 +90,9 @@ class _DocsScreenState extends State<DocsScreen> {
 
   void _onNextPressed() async {
     if (_validateInputs()) {
+// <<<<<<< feature/profile-logic
+//       GoRouter.of(context).go(Routes.Home);
+// =======
       final userId = FirebaseAuth.instance.currentUser?.uid ?? "demo_user";
       final Map<String, dynamic> data = {
         "cvFileName": cvFileName,
@@ -87,7 +108,8 @@ class _DocsScreenState extends State<DocsScreen> {
           .doc(userId)
           .set(data, SetOptions(merge: true));
       if (!mounted) return;
-      context.go('/home'); // GoRouter navigation to home screen
+      context.go(Routes.Home); // GoRouter navigation to home screen
+
     } else {
       setState(() {});
     }
@@ -138,7 +160,10 @@ class _DocsScreenState extends State<DocsScreen> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(color: kPrimary, width: 1.5),
+                          borderSide: const BorderSide(
+                            color: kPrimary,
+                            width: 1.5,
+                          ),
                         ),
                       ),
                     ),
@@ -148,7 +173,10 @@ class _DocsScreenState extends State<DocsScreen> {
               TextButton.icon(
                 onPressed: _addPortfolioField,
                 icon: const Icon(Icons.add, color: kPrimary),
-                label: const Text("Add Another Link", style: TextStyle(color: kPrimary)),
+                label: const Text(
+                  "Add Another Link",
+                  style: TextStyle(color: kPrimary),
+                ),
               ),
               SizedBox(height: rh(20)),
               UploadCard(
@@ -165,7 +193,9 @@ class _DocsScreenState extends State<DocsScreen> {
                       outlined: true,
                       onPressed: () => Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (_) => const CarerrScreenFinal()),
+                        MaterialPageRoute(
+                          builder: (_) => const CarerrScreenFinal(),
+                        ),
                       ),
                     ),
                   ),
@@ -206,7 +236,11 @@ class _IntroText extends StatelessWidget {
         Text(
           "Get your CV analyzed & receive job offers",
           style: TextStyle(
-              fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black, height: 1.3),
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+            height: 1.3,
+          ),
         ),
         SizedBox(height: 10),
         Text(
@@ -224,10 +258,13 @@ class SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-        title,
-        style: const TextStyle(
-            fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black),
-      );
+    title,
+    style: const TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      color: Colors.black,
+    ),
+  );
 }
 
 class UploadCard extends StatelessWidget {
@@ -248,8 +285,14 @@ class UploadCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black)),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.black,
+          ),
+        ),
         const SizedBox(height: 10),
         GestureDetector(
           onTap: onTap,
@@ -267,15 +310,19 @@ class UploadCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.upload_file,
-                    color: hasFile ? kPrimary : Colors.black54, size: 20),
+                Icon(
+                  Icons.upload_file,
+                  color: hasFile ? kPrimary : Colors.black54,
+                  size: 20,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   hasFile ? "Uploaded" : "Add File",
                   style: TextStyle(
-                      color: hasFile ? kPrimary : Colors.black87,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600),
+                    color: hasFile ? kPrimary : Colors.black87,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 if (hasFile)
                   const Padding(
@@ -289,8 +336,10 @@ class UploadCard extends StatelessWidget {
         if (hasFile)
           Padding(
             padding: const EdgeInsets.only(top: 6),
-            child: Text(fileName!,
-                style: TextStyle(color: Colors.grey[700], fontSize: 13)),
+            child: Text(
+              fileName!,
+              style: TextStyle(color: Colors.grey[700], fontSize: 13),
+            ),
           ),
       ],
     );
@@ -319,7 +368,10 @@ class _CustomButton extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: rh(16)),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(rw(28)),
-        side: BorderSide(color: outlined ? Colors.grey.shade400 : kPrimary, width: 1.5),
+        side: BorderSide(
+          color: outlined ? Colors.grey.shade400 : kPrimary,
+          width: 1.5,
+        ),
       ),
     );
 
@@ -392,9 +444,10 @@ class StepCircle extends StatelessWidget {
         Text(
           title,
           style: TextStyle(
-              fontSize: 12,
-              color: (isDone || isHalfFilled) ? kPrimary : Colors.grey,
-              fontWeight: FontWeight.w600),
+            fontSize: 12,
+            color: (isDone || isHalfFilled) ? kPrimary : Colors.grey,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ],
     );
@@ -412,13 +465,19 @@ class _HalfCirclePainter extends CustomPainter {
     if (isDone) {
       final paint = Paint()..color = kPrimary;
       canvas.drawCircle(
-          Offset(size.width / 2, size.height / 2), size.width / 2, paint);
+        Offset(size.width / 2, size.height / 2),
+        size.width / 2,
+        paint,
+      );
     } else if (isHalfFilled) {
       final paint = Paint()..color = kPrimary;
       final path = Path()
         ..moveTo(size.width / 2, size.height / 2)
-        ..addArc(Rect.fromLTWH(0, 0, size.width, size.height),
-            -math.pi / 2, math.pi);
+        ..addArc(
+          Rect.fromLTWH(0, 0, size.width, size.height),
+          -math.pi / 2,
+          math.pi,
+        );
       canvas.drawPath(path, paint);
     }
   }
