@@ -29,7 +29,7 @@ abstract class AppRoute {
     routes: [
       GoRoute(
         path: Routes.splash,
-        builder: (context, state) => const ProfileScreen(),
+        builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(
         path: Routes.onboardingScreen,
@@ -86,14 +86,14 @@ abstract class AppRoute {
         path: Routes.notifcation,
         builder: (context, state) => const NotificationScreen(),
       ),
-      // GoRoute(
-      //   path: Routes.profile,
-      //   name: 'profile',
-      //   builder: (context, state) {
-      //     // final uid = state.pathParameters['uid']!;
-      //     return ProfileScreen();
-      //   },
-      // ),
+      GoRoute(
+        path: Routes.profile,
+        name: 'profile',
+        builder: (context, state) {
+          // final uid = state.pathParameters['uid']!;
+          return ProfileScreen();
+        },
+      ),
 
       GoRoute(
         path: Routes.settings,

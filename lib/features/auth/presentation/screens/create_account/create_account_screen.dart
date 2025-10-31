@@ -37,7 +37,6 @@ class CreateAccountScreen extends StatelessWidget {
                               const Center(child: CircularProgressIndicator()),
                         );
                       } else if (state is SignUpSuccsessState) {
-                        
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("Account Created!")),
                         );
@@ -47,66 +46,41 @@ class CreateAccountScreen extends StatelessWidget {
                         ScaffoldMessenger.of(
                           context,
                         ).showSnackBar(SnackBar(content: Text(state.failure)));
-                      }
-
-
-                  else if (state is GoogleLoginLoadingState) {
+                      } else if (state is GoogleLoginLoadingState) {
                         showDialog(
                           context: context,
                           builder: (_) =>
                               const Center(child: CircularProgressIndicator()),
                         );
-                      }
-
-
-          else if (state is GoogleLoginSuccessState) {
-                        
+                      } else if (state is GoogleLoginSuccessState) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("Account Created!")),
                         );
                         GoRouter.of(context).go(Routes.profileqscreen);
-                      }
-
-
-
-          else if (state is GoogleLoginFailureState) {
+                      } else if (state is GoogleLoginFailureState) {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(
                           context,
                         ).showSnackBar(SnackBar(content: Text(state.failure)));
-                      }
-
-
-
-
-           else if (state is FacebookLoginLoadingState) {
+                      } else if (state is FacebookLoginLoadingState) {
                         showDialog(
                           context: context,
                           builder: (_) =>
                               const Center(child: CircularProgressIndicator()),
                         );
-                      }
-
-           else if (state is FacebookLoginSuccessState) {
-                        
+                      } else if (state is FacebookLoginSuccessState) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("Account Created!")),
                         );
                         GoRouter.of(context).go(Routes.profileqscreen);
-                      }
-
-
-
-            else if (state is FacebookLoginFailureState) {
+                      } else if (state is FacebookLoginFailureState) {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(
                           context,
                         ).showSnackBar(SnackBar(content: Text(state.failure)));
                       }
-
-                      
                     },
-                    child: CreateAccountForm(viewModel: viewModel,),
+                    child: CreateAccountForm(viewModel: viewModel),
                   ),
                 ),
               ],

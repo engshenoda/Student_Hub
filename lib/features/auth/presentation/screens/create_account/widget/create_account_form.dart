@@ -71,15 +71,7 @@ class CreateAccountForm extends StatelessWidget {
             },
           ),
 
-          // CustomInputField(
-          //   controller: viewModel.confirmPasswordController,
-          //   label: "Confirm Password",
-          //   hint: "Enter your confirm password",
-          //   isPassword: true,
-          //   obscureText: authCubit.obscureConfirmPassword,
-          //   toggle: () => authCubit.toggleConfirmPasswordVisibility(),
-          //   validator: viewModel.validateConfirmPassword,
-          // ),
+   
           CustomBottom(
             title: "Create Account",
             onPressed: () {

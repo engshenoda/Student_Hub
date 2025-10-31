@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:linkedin/core/routes/route.dart';
 import 'package:linkedin/core/theme/app_colors.dart';
 import 'package:linkedin/core/widgets/custom_bottom.dart';
+import 'package:linkedin/core/widgets/custom_bottom_social_media.dart';
 import 'package:linkedin/core/widgets/custom_text_form_field.dart';
 import 'package:linkedin/features/auth/logic/auth_cubit/auth_cubit.dart';
+import 'package:linkedin/features/auth/presentation/screens/create_account/create_account_screen.dart';
 import 'package:linkedin/features/auth/presentation/screens/login/Login_view_model.dart';
 
 class LoginForm extends StatelessWidget {
@@ -61,6 +63,67 @@ class LoginForm extends StatelessWidget {
                     authCubit.login();
                   }
                 },
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(child: Divider()),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Text("Or Login with"),
+                  ),
+                  Expanded(child: Divider()),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  CustomBottomSocialMedia(
+                    icon: Icons.facebook,
+                    color: Colors.blue,
+                    onPressed: () {
+                      final state = context.read<AuthCubit>().state;
+                      if (state is! FacebookLoginLoadingState) {
+                        authCubit.signInWithFacebook();
+                      }
+                    },
+                  ),
+                  CustomBottomSocialMedia(
+                    icon: Icons.g_mobiledata,
+                    color: Colors.red,
+                    onPressed: () {
+                      final state = context.read<AuthCubit>().state;
+                      if (state is! GoogleLoginLoadingState) {
+                        authCubit.signInWithGoogle();
+                      }
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Dont have an account? "),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CreateAccountScreen(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      "Create Account",
+                      style: TextStyle(
+                        color: Colors.teal,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
