@@ -27,12 +27,14 @@ class UserModel {
       fullName: data['fullName'] ?? '',
       whatsapp: (data['whatsapp'] is String)
           ? int.tryParse(data['whatsapp']) ?? 0
-          : data['whatsapp'] ?? 0,
+          : (data['whatsapp'] ?? 0),
       role: data['role'] ?? '',
       degreeYear: data['degreeYear'] ?? '',
-      minSalary: (data['minSalary'] is int)
-          ? (data['minSalary'] as int).toDouble()
-          : (data['minSalary'] ?? 0.0).toDouble(),
+      minSalary: data['minSalary'] == null
+          ? 0.0
+          : (data['minSalary'] is num)
+              ? (data['minSalary'] as num).toDouble()
+              : double.tryParse(data['minSalary'].toString()) ?? 0.0,
       createdAt: data['createdAt'] != null
           ? (data['createdAt'] as Timestamp).toDate()
           : null,
@@ -54,4 +56,3 @@ class UserModel {
     };
   }
 }
-
