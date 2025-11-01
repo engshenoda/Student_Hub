@@ -8,9 +8,12 @@ import 'package:linkedin/features/auth/presentation/screens/set_password_reset/s
 import 'package:linkedin/features/auth/presentation/screens/verification/verify.dart';
 import 'package:linkedin/features/chat/Presentation/widget/chat_screen.dart';
 import 'package:linkedin/features/chat/Presentation/widget/chats_list_screen.dart';
+import 'package:linkedin/features/home/data/models/post_model.dart';
+import 'package:linkedin/features/home/presentation/screens/comments.dart';
 
 import 'package:linkedin/features/home/presentation/screens/home_screen.dart';
 import 'package:linkedin/features/home/presentation/screens/post.dart';
+import 'package:linkedin/features/home/presentation/screens/repost.dart';
 import 'package:linkedin/features/jobs/presentation/screen/jobs_screen.dart';
 import 'package:linkedin/features/jobs/presentation/screen/see_all_screen.dart';
 import 'package:linkedin/features/notifications/presentation/screens/notifications_screen.dart';
@@ -119,7 +122,30 @@ abstract class AppRoute {
         path: Routes.alljobsscreen,
         builder: (context, state) => const AllJobsScreen(),
       ),
-      GoRoute(path: Routes.create, builder: (context, state) => const Post()),
+      GoRoute(
+  path: '/AddPost',
+  builder: (context, state) {
+    final post = state.extra as Post?;
+    return AddPost(existing: post);
+  },
+),
+GoRoute(
+  path: '/repost',
+  builder: (context, state) {
+    final originalPost = state.extra as Post;
+    return Repost(originalPost: originalPost);
+  },
+),
+
+    GoRoute(
+  path: '/comments',
+  builder: (context, state) {
+    final postId = state.extra as String;
+    return Comments(postId: postId);
+  },
+),
+
+
     ],
   );
 }

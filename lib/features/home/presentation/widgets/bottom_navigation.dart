@@ -27,7 +27,7 @@ class BottomNavigation extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Post()),
+                MaterialPageRoute(builder: (context) => AddPost()),
               );
             },
             icon: Icon(Icons.add_box_outlined, size: 26),

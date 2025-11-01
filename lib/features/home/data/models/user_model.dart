@@ -10,13 +10,15 @@ class UserModel {
     required this.jobTitle,
     required this.profileImage,
   });
+
   Map<String, dynamic> toMap() {
-  return {
-    'id': id,
-    'name': name,
-    'profileImage': profileImage,
-  };
-}
+    return {
+      'id': id,
+      'name': name,
+      'jobTitle': jobTitle,
+      'profileImage': profileImage,
+    };
+  }
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
@@ -27,5 +29,3 @@ class UserModel {
     );
   }
 }
-
-
