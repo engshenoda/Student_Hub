@@ -4,91 +4,39 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:linkedin/core/theme/app_colors.dart';
 import 'package:linkedin/features/profile/data/models/profile_model.dart';
 import 'package:linkedin/features/profile/logic/profile_cubit/profile_cubit.dart';
+import 'package:linkedin/features/profile/presentation/widgets/show_custom_bottom_sheet.dart';
 
 class EducationSection extends StatelessWidget {
   const EducationSection({super.key});
 
-  Future<void> _editEducation(BuildContext context, Education current) async {
-    final universityController = TextEditingController(
-      text: current.university,
-    );
-    final yearController = TextEditingController(text: current.year);
-    final degreeController = TextEditingController(text: current.degree);
+Future<void> _editEducation(BuildContext context, Education current) async {
+  final universityController = TextEditingController(text: current.university);
+  final yearController = TextEditingController(text: current.year);
+  final degreeController = TextEditingController(text: current.degree);
 
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-          left: 16,
-          right: 16,
-          top: 16,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Edit Education',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: universityController,
-              decoration: const InputDecoration(
-                labelText: 'University',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: yearController,
-              decoration: const InputDecoration(
-                labelText: 'Graduation Year',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: degreeController,
-              decoration: const InputDecoration(
-                labelText: 'Degree',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-              ),
-              onPressed: () async {
-                final uid = FirebaseAuth.instance.currentUser?.uid;
-                if (uid != null) {
-                  final newEducation = Education(
-                    university: universityController.text.trim(),
-                    year: yearController.text.trim(),
-                    degree: degreeController.text.trim(),
-                  );
-                  await context.read<ProfileCubit>().updateEducation(
-                    uid,
-                    newEducation,
-                  );
-                  if (context.mounted) Navigator.pop(context);
-                }
-              },
-              child: const Text('Save', style: TextStyle(color: Colors.white)),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  await showCustomBottomSheet(
+    context: context,
+    title: 'Edit Education',
+    children: [
+      TextFormField(controller: universityController, decoration: const InputDecoration(labelText: 'University', border: OutlineInputBorder())),
+      const SizedBox(height: 12),
+      TextFormField(controller: yearController, decoration: const InputDecoration(labelText: 'Graduation Year', border: OutlineInputBorder()), keyboardType: TextInputType.number),
+      const SizedBox(height: 12),
+      TextFormField(controller: degreeController, decoration: const InputDecoration(labelText: 'Degree', border: OutlineInputBorder())),
+    ],
+    onSaveAsync: () async {
+      final uni = universityController.text.trim();
+      final year = yearController.text.trim();
+      final deg = degreeController.text.trim();
+      if (uni.isEmpty && year.isEmpty && deg.isEmpty) return false;
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) throw Exception('User not logged in');
+      final newEducation = Education(university: uni, year: year, degree: deg);
+      final ok = await context.read<ProfileCubit>().updateEducation(uid, newEducation);
+      return ok;
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:linkedin/core/theme/app_colors.dart';
-import 'package:linkedin/features/profile/presentation/widgets/custom_button_profile.dart';
 
 Future<void> showCustomBottomSheet({
   required BuildContext context,
-  required String title,
+  String? title,
   required List<Widget> children,
-  VoidCallback? onSave,
+  Future<bool> Function()? onSaveAsync, // returns true if saved ok
   bool isSaving = false,
 }) async {
   await showModalBottomSheet(
@@ -15,12 +14,13 @@ Future<void> showCustomBottomSheet({
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
-    builder: (context) {
+    builder: (ctx) {
+      // use ctx for inside lookups
       return Padding(
         padding: EdgeInsets.only(
           left: 20,
           right: 20,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+          bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
           top: 20,
         ),
         child: SingleChildScrollView(
@@ -28,7 +28,7 @@ Future<void> showCustomBottomSheet({
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                title,
+                title ?? 'Edit',
                 style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -38,10 +38,31 @@ Future<void> showCustomBottomSheet({
               const SizedBox(height: 16),
               ...children,
               const SizedBox(height: 24),
-              CustomButton(
-                text: 'Save',
-                isLoading: isSaving,
-                onPressed: onSave ?? () => Navigator.pop(context),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  onPressed: () async {
+                    if (onSaveAsync != null) {
+                      try {
+                        final ok = await onSaveAsync();
+                        if (ok && ctx.mounted) Navigator.pop(ctx);
+                      } catch (e) {
+                        if (ctx.mounted) {
+                          ScaffoldMessenger.of(ctx).showSnackBar(
+                            SnackBar(content: Text('Save failed: $e')),
+                          );
+                        }
+                      }
+                    } else {
+                      Navigator.pop(ctx);
+                    }
+                  },
+                  child: const Text('Save', style: TextStyle(color: Colors.white)),
+                ),
               ),
             ],
           ),
