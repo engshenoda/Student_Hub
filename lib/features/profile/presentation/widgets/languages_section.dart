@@ -14,89 +14,90 @@ class LanguagesSection extends StatelessWidget {
     final controller = TextEditingController();
     final tempLanguages = List<String>.from(currentLanguages);
 
+    final cubit = context.read<ProfileCubit>();
+
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (ctx) => BlocBuilder<ProfileCubit, ProfileState>(
-        builder: (context, state) => Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
-            left: 16,
-            right: 16,
-            top: 16,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Edit Languages',
-                style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.bold,
-                ),
+      builder: (ctx) {
+        return BlocProvider.value(
+          value: cubit, // ✅ نمرر نفس الـ cubit
+          child: BlocBuilder<ProfileCubit, ProfileState>(
+            builder: (context, state) => Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+                left: 16,
+                right: 16,
+                top: 16,
               ),
-              const SizedBox(height: 16),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: tempLanguages
-                    .map(
-                      (lang) => Chip(
-                        label: Text(lang),
-                        deleteIcon: const Icon(Icons.close, size: 18),
-                        onDeleted: () async {
-                          final uid = FirebaseAuth.instance.currentUser?.uid;
-                          if (uid != null) {
-                            await context.read<ProfileCubit>().removeLanguage(
-                              uid,
-                              lang,
-                            );
-                            tempLanguages.remove(lang);
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Edit Languages',
+                    style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: tempLanguages
+                        .map(
+                          (lang) => Chip(
+                            label: Text(lang),
+                            deleteIcon: const Icon(Icons.close, size: 18),
+                            onDeleted: () async {
+                              final uid = FirebaseAuth.instance.currentUser?.uid;
+                              if (uid != null && ctx.mounted) {
+                                await cubit.removeLanguage(uid, lang);
+                                tempLanguages.remove(lang);
+                              }
+                            },
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: controller,
+                          decoration: const InputDecoration(
+                            labelText: 'Add Language',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        icon: const Icon(
+                          Icons.add_circle,
+                          color: AppColors.primary,
+                        ),
+                        onPressed: () async {
+                          final newLang = controller.text.trim();
+                          if (newLang.isNotEmpty) {
+                            final uid = FirebaseAuth.instance.currentUser?.uid;
+                            if (uid != null && ctx.mounted) {
+                              await cubit.addLanguage(uid, newLang);
+                              controller.clear();
+                            }
                           }
                         },
                       ),
-                    )
-                    .toList(),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: controller,
-                      decoration: const InputDecoration(
-                        labelText: 'Add Language',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.add_circle,
-                      color: AppColors.primary,
-                    ),
-                    onPressed: () async {
-                      final newLang = controller.text.trim();
-                      if (newLang.isNotEmpty) {
-                        final uid = FirebaseAuth.instance.currentUser?.uid;
-                        if (uid != null) {
-                          await context.read<ProfileCubit>().addLanguage(
-                            uid,
-                            newLang,
-                          );
-                          controller.clear();
-                        }
-                      }
-                    },
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -104,9 +105,7 @@ class LanguagesSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ProfileCubit, ProfileState>(
       builder: (context, state) {
-        if (state is! ProfileSuccess) {
-          return const SizedBox();
-        }
+        if (state is! ProfileSuccess) return const SizedBox();
 
         final languages = state.profile.languages;
 
@@ -146,22 +145,26 @@ class LanguagesSection extends StatelessWidget {
                   ),
                 ],
               ),
-              if (languages.isNotEmpty) ...[
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: languages
-                      .map(
-                        (lang) => Chip(
-                          label: Text(lang),
-                          backgroundColor: AppColors.primary.withOpacity(0.1),
-                          labelStyle: const TextStyle(color: AppColors.primary),
-                        ),
-                      )
-                      .toList(),
-                ),
-              ] else
+              if (languages.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: languages
+                        .map(
+                          (lang) => Chip(
+                            label: Text(lang),
+                            backgroundColor:
+                                AppColors.primary.withOpacity(0.1),
+                            labelStyle:
+                                const TextStyle(color: AppColors.primary),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                )
+              else
                 const Padding(
                   padding: EdgeInsets.only(top: 8),
                   child: Text(

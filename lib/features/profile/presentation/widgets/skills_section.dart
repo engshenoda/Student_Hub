@@ -9,6 +9,7 @@ class SkillsSection extends StatelessWidget {
 
   Future<void> _editSkills(BuildContext context, List<String> currentSkills) async {
     final controller = TextEditingController();
+    final cubit = context.read<ProfileCubit>(); // ✅ ناخده قبل الـ bottomSheet
 
     await showModalBottomSheet(
       context: context,
@@ -17,107 +18,109 @@ class SkillsSection extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-          left: 16,
-          right: 16,
-          top: 20,
-        ),
-        child: BlocBuilder<ProfileCubit, ProfileState>(
-          builder: (context, state) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Edit Skills',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primary,
-                  ),
-                ),
-                const SizedBox(height: 12),
-
-                // قائمة الـ skills الحالية
-                if (currentSkills.isNotEmpty)
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: currentSkills
-                        .map(
-                          (skill) => Chip(
-                            label: Text(skill),
-                            deleteIcon: const Icon(Icons.close, size: 18),
-                            onDeleted: () async {
-                              final uid = FirebaseAuth.instance.currentUser?.uid;
-                              if (uid != null) {
-                                await context.read<ProfileCubit>().removeSkill(uid, skill);
-                              }
-                            },
-                          ),
-                        )
-                        .toList(),
-                  )
-                else
-                  const Text(
-                    'No skills added yet.',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-
-                const SizedBox(height: 16),
-                Row(
+      builder: (ctx) {
+        return BlocProvider.value(
+          value: cubit, // ✅ نمرر نفس الـ cubit
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+              left: 16,
+              right: 16,
+              top: 20,
+            ),
+            child: BlocBuilder<ProfileCubit, ProfileState>(
+              builder: (context, state) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: TextField(
-                        controller: controller,
-                        decoration: const InputDecoration(
-                          labelText: 'Add a skill',
-                          border: OutlineInputBorder(),
+                    const Text(
+                      'Edit Skills',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    if (currentSkills.isNotEmpty)
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: currentSkills
+                            .map(
+                              (skill) => Chip(
+                                label: Text(skill),
+                                deleteIcon: const Icon(Icons.close, size: 18),
+                                onDeleted: () async {
+                                  final uid = FirebaseAuth.instance.currentUser?.uid;
+                                  if (uid != null && ctx.mounted) {
+                                    await cubit.removeSkill(uid, skill);
+                                  }
+                                },
+                              ),
+                            )
+                            .toList(),
+                      )
+                    else
+                      const Text(
+                        'No skills added yet.',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: controller,
+                            decoration: const InputDecoration(
+                              labelText: 'Add a skill',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        IconButton(
+                          icon: const Icon(Icons.add_circle,
+                              color: AppColors.primary, size: 30),
+                          onPressed: () async {
+                            final newSkill = controller.text.trim();
+                            if (newSkill.isNotEmpty) {
+                              final uid = FirebaseAuth.instance.currentUser?.uid;
+                              if (uid != null && ctx.mounted) {
+                                await cubit.addSkill(uid, newSkill);
+                                controller.clear();
+                              }
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        onPressed: () => Navigator.pop(ctx),
+                        child: const Text(
+                          'Done',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    IconButton(
-                      icon: const Icon(Icons.add_circle, color: AppColors.primary, size: 30),
-                      onPressed: () async {
-                        final newSkill = controller.text.trim();
-                        if (newSkill.isNotEmpty) {
-                          final uid = FirebaseAuth.instance.currentUser?.uid;
-                          if (uid != null) {
-                            await context.read<ProfileCubit>().addSkill(uid, newSkill);
-                            controller.clear();
-                          }
-                        }
-                      },
-                    ),
                   ],
-                ),
-
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text(
-                      'Done',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
-      ),
+                );
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -174,8 +177,10 @@ class SkillsSection extends StatelessWidget {
                       .map(
                         (skill) => Chip(
                           label: Text(skill),
-                          backgroundColor: AppColors.primary.withOpacity(0.1),
-                          labelStyle: const TextStyle(color: AppColors.primary),
+                          backgroundColor:
+                              AppColors.primary.withOpacity(0.1),
+                          labelStyle:
+                              const TextStyle(color: AppColors.primary),
                         ),
                       )
                       .toList(),
@@ -192,3 +197,4 @@ class SkillsSection extends StatelessWidget {
     );
   }
 }
+

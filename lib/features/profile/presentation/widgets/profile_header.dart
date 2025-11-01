@@ -7,6 +7,7 @@ import 'package:linkedin/core/theme/app_colors.dart';
 import 'package:linkedin/core/theme/app_text_styles.dart';
 import 'package:linkedin/features/profile/logic/profile_cubit/profile_cubit.dart';
 import 'package:linkedin/features/profile/presentation/widgets/custom_button_profile.dart';
+import 'package:linkedin/features/profile/presentation/widgets/show_custom_bottom_sheet.dart';
 
 class ProfileHeader extends StatelessWidget {
   const ProfileHeader({super.key});
@@ -31,59 +32,43 @@ class ProfileHeader extends StatelessWidget {
     }
   }
 
-  Future<void> _editProfile(
-    BuildContext context,
-    String currentName,
-    String currentTitle,
-  ) async {
-    final nameController = TextEditingController(text: currentName);
-    final titleController = TextEditingController(text: currentTitle);
+Future<void> _editProfile(BuildContext context, String currentName, String currentTitle) async {
+  final nameController = TextEditingController(text: currentName);
+  final titleController = TextEditingController(text: currentTitle);
 
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => Padding(
-        padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom,
-          left: 16,
-          right: 16,
-          top: 16,
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: titleController,
-                decoration: const InputDecoration(labelText: 'Title'),
-              ),
-              const SizedBox(height: 16),
-              CustomButton(
-                text: 'Save',
-                onPressed: () async {
-                  final uid = FirebaseAuth.instance.currentUser?.uid;
-                  if (uid != null) {
-                    await context.read<ProfileCubit>().updateHeader(
-                          uid,
-                          name: nameController.text.trim(),
-                          title: titleController.text.trim(),
-                        );
-                  }
-                  Navigator.pop(context);
-                },
-              ),
-              const SizedBox(height: 16),
-            ],
-          ),
-        ),
+  await showCustomBottomSheet(
+    context: context,
+    title: 'Edit Profile',
+    children: [
+      TextField(
+        controller: nameController,
+        decoration: const InputDecoration(labelText: 'Name'),
       ),
-    );
-  }
+      const SizedBox(height: 8),
+      TextField(
+        controller: titleController,
+        decoration: const InputDecoration(labelText: 'Title'),
+      ),
+    ],
+    onSaveAsync: () async {
+      final newName = nameController.text.trim();
+      final newTitle = titleController.text.trim();
+      if (newName.isEmpty && newTitle.isEmpty) {
+        // nothing to save
+        return false;
+      }
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) throw Exception('User not logged in');
+
+      final success = await context.read<ProfileCubit>().updateHeader(
+        uid,
+        name: newName.isEmpty ? null : newName,
+        title: newTitle.isEmpty ? null : newTitle,
+      );
+      return success;
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {

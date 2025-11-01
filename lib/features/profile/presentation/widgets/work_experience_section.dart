@@ -162,7 +162,7 @@ class WorkExperienceSection extends StatelessWidget {
                           // Show confirmation dialog
                           final shouldDelete = await showDialog<bool>(
                             context: context,
-                            builder: (context) => AlertDialog(
+                            builder: (dialogCtx) => AlertDialog(
                               title: const Text('Delete Experience'),
                               content: Text(
                                 'Are you sure you want to delete "${exp.title}"?',
@@ -170,11 +170,12 @@ class WorkExperienceSection extends StatelessWidget {
                               actions: [
                                 TextButton(
                                   onPressed: () =>
-                                      Navigator.pop(context, false),
+                                      Navigator.pop(dialogCtx, false),
                                   child: const Text('Cancel'),
                                 ),
                                 TextButton(
-                                  onPressed: () => Navigator.pop(context, true),
+                                  onPressed: () =>
+                                      Navigator.pop(dialogCtx, true),
                                   style: TextButton.styleFrom(
                                     foregroundColor: Colors.red,
                                   ),
@@ -184,17 +185,23 @@ class WorkExperienceSection extends StatelessWidget {
                             ),
                           );
 
+                          // بعد ما يقفل الـ dialog
                           if (shouldDelete == true) {
                             final uid = FirebaseAuth.instance.currentUser?.uid;
-                            if (uid != null && context.mounted) {
+                            if (uid != null) {
+                              // استخدم context آمن (اللي فوق في الـ build)
                               await context
                                   .read<ProfileCubit>()
                                   .removeExperience(uid, exp);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Experience deleted'),
-                                ),
-                              );
+
+                              // تأكد إن الويجت لسه mounted قبل استخدام context
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Experience deleted'),
+                                  ),
+                                );
+                              }
                             }
                           }
                         },
