@@ -1,132 +1,165 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:linkedin/features/chat/data/repo/chat_servure.dart';
 import 'package:linkedin/core/theme/app_colors.dart';
-import 'package:linkedin/features/chat/data/models.dart';
-import 'package:linkedin/features/chat/Presentation/widget/chat_input.dart';
-import 'package:linkedin/features/chat/Presentation/widget/message_bubble.dart';
 
 
+class ChatScreen extends StatefulWidget {
+  final String chatName;
+  final String receiverId;
 
-class Message {
-  final String text;
-  final bool isMe;
-  final String time;
+  const ChatScreen({
+    super.key,
+    required this.chatName,
+    required this.receiverId,
+  });
 
-  Message({required this.text, required this.isMe, required this.time});
+  @override
+  State<ChatScreen> createState() => _ChatScreenState();
 }
 
-final List<Message> dummyMessages = [
-  Message(
-    text: "Hi, I'm looking for a soft, long-lasting perfume. Something feminine but not too strong.",
-    isMe: true,
-    time: "6:30 PM",
-  ),
-  Message(
-    text: "Hi How Are You ?",
-    isMe: false,
-    time: "6:30 PM",
-  ),
-  Message(
-    text: "Mostly floral and fruity. Something light for daytime wear.",
-    isMe: true,
-    time: "6:30 PM",
-  ),
-  Message(
-    text: "Great choice! Here are 3 perfumes that match your style. Would you like to see pictures?",
-    isMe: false,
-    time: "6:30 PM",
-  ),
-];
+class _ChatScreenState extends State<ChatScreen> {
+  final ChatService _chatService = ChatService();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final TextEditingController _messageController = TextEditingController();
 
-// --- Chat Screen Widget ---
-class ChatScreen extends StatelessWidget {
-  // New constructor takes a name (identifier) instead of the whole model
-  final String chatName; 
+  late String receiverId;
 
-  const ChatScreen({super.key, required this.chatName, required chatModel});
+  @override
+  void initState() {
+    super.initState();
+    receiverId = widget.receiverId;
+  }
+
+  void _sendMessage() async {
+    final user = _auth.currentUser;
+    if (user == null) return;
+
+    final text = _messageController.text.trim();
+    if (text.isEmpty) return;
+
+    await _chatService.sendMessage(
+      senderId: user.uid,
+      receiverId: receiverId,
+      message: text,
+    );
+
+    _messageController.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Look up the ChatModel using the provided chatName
-    final ChatModel chatModel = dummyChats.firstWhere(
-      (chat) => chat.name == chatName,
-      // Provide a fallback in a real app, though not strictly needed for this dummy data
-      orElse: () => ChatModel(
-       
-      ), 
-    );
+    final user = _auth.currentUser!;
+    final chatStream = _chatService.getMessages(user.uid, receiverId);
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [AppColors.kLightGreen, Colors.white],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              stops: [0.0, 1.0],
-            ),
-          ),
+        title: Text(
+          widget.chatName,
+          style: const TextStyle(color: AppColors.kDarkTeal),
         ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
-        
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: AppColors.kDarkTeal),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Row(
-          children: [
-            CircleAvatar(
-              radius: 20,
-              backgroundImage: NetworkImage(chatModel.avatarUrl),
-            ),
-            const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  chatModel.name,
-                  style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.kDarkTeal),
-                ),
-                Text(
-                  chatModel.subtitle,
-                  style: TextStyle(fontSize: 12, color: AppColors.kDarkTeal.withOpacity(0.8)),
-                ),
-              ],
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert, color: AppColors.kDarkTeal),
-            onPressed: () {},
-          ),
-          const SizedBox(width: 8),
-        ],
+        iconTheme: const IconThemeData(color: AppColors.kDarkTeal),
       ),
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
-              reverse: true,
-              itemCount: dummyMessages.length,
-              itemBuilder: (context, index) {
-                final message = dummyMessages[dummyMessages.length - 1 - index];
-          
-                return MessageBubble(
-                  message: message, 
-                  chatModel: chatModel,
+            child: StreamBuilder<QuerySnapshot>(
+              stream: chatStream,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text("No messages yet."));
+                }
+
+                final messages = snapshot.data!.docs;
+
+                return ListView.builder(
+                  reverse: true,
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    final data = messages[index];
+                    final isMe = data['senderId'] == user.uid;
+
+                    String timeText = '';
+                    if (data['timestamp'] != null) {
+                      final timestamp = data['timestamp'] as Timestamp;
+                      final date = timestamp.toDate();
+                      timeText =
+                          '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+                    }
+
+                    return Align(
+                      alignment: isMe
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 4, horizontal: 8),
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: isMe
+                              ? AppColors.kLightGreen
+                              : Colors.grey[300],
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              data['message'] ?? '',
+                              style: TextStyle(
+                                color: isMe ? Colors.white : Colors.black,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              timeText,
+                              style: TextStyle(
+                                  color: Colors.grey[600], fontSize: 11),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
             ),
           ),
-   
-          const ChatInput(),
+          Container(
+            padding: const EdgeInsets.all(10.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                top: BorderSide(color: Colors.grey.shade200, width: 1.0),
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    decoration: const InputDecoration(
+                      hintText: 'Message',
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.send, color: AppColors.kDarkTeal),
+                  onPressed: _sendMessage,
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

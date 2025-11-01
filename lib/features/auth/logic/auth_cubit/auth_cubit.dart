@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,10 +51,17 @@ class AuthCubit extends Cubit<AuthCubitState> {
       //   emit(LoginFailureState("Please fill in all fields."));
       //   return;
       // }
-      final user = await createAuthViewModel!.register(
-        createAuthViewModel!.emailController.text.trim(),
-        createAuthViewModel!.passwordController.text.trim(),
-      );
+     final user = await _authRepo.signUp(
+  createAuthViewModel!.emailController.text.trim(),
+  createAuthViewModel!.passwordController.text.trim(),
+  createAuthViewModel!.nameController.text.trim(),
+);
+await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+  'uid': user.uid,
+  'email': user.email,
+  'name': createAuthViewModel!.nameController.text.trim(),
+  'createdAt': FieldValue.serverTimestamp(),
+});
 
       emit(SignUpSuccsessState(user));
     } on FirebaseAuthException catch (e) {

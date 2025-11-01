@@ -3,22 +3,29 @@ import 'package:linkedin/core/theme/app_colors.dart';
 
 
 
-class ChatInput extends StatelessWidget {
-  const ChatInput({super.key});
+class ChatInput extends StatefulWidget {
+  final Function(String) onSend;
+
+  const ChatInput({super.key, required this.onSend});
+
+  @override
+  State<ChatInput> createState() => _ChatInputState();
+}
+
+class _ChatInputState extends State<ChatInput> {
+  final TextEditingController _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey.shade200, width: 1.0)),
-      ),
+      color: Colors.white,
       child: Row(
         children: [
-          const Expanded(
+          Expanded(
             child: TextField(
-              decoration: InputDecoration(
+              controller: _controller,
+              decoration: const InputDecoration(
                 hintText: 'Message',
                 hintStyle: TextStyle(color: Colors.grey),
                 border: InputBorder.none,
@@ -27,9 +34,13 @@ class ChatInput extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.send, color: AppColors.kDarkTeal),
+            icon: const Icon(Icons.send),
             onPressed: () {
-             
+              final text = _controller.text.trim();
+              if (text.isNotEmpty) {
+                widget.onSend(text);
+                _controller.clear();
+              }
             },
           ),
         ],
