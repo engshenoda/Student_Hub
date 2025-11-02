@@ -10,7 +10,7 @@ class HomeInitial extends HomeState {}
 class HomeLoading extends HomeState {}
 
 class HomeLoaded extends HomeState {
-  final List<PostModel> posts;
+  final List<Post> posts;
   HomeLoaded(this.posts);
 
   @override

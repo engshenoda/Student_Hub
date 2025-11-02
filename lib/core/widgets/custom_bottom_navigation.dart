@@ -9,7 +9,7 @@ class CustomBottomNavigationBar extends StatefulWidget {
   static const _routes = [
     Routes.Home,
     Routes.messahes,
-    Routes.create,
+    Routes.AddPost,
     Routes.jobs,
     Routes.profile,
   ];
@@ -62,7 +62,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
           } else if (index == 1) {
             GoRouter.of(context).push(Routes.messahes);
           } else if (index == 2) {
-            GoRouter.of(context).push(Routes.create);
+            GoRouter.of(context).push(Routes.AddPost);
           } else if (index == 3) {
             GoRouter.of(context).push(Routes.jobs);
           } else if (index == 4) {

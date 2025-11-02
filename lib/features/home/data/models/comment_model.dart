@@ -20,7 +20,14 @@ class CommentModel {
   });
 
   factory CommentModel.fromDoc(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
+    final data = doc.data() as Map<String, dynamic>? ?? {};
+    DateTime created;
+    if (data['createdAt'] is Timestamp) {
+      created = (data['createdAt'] as Timestamp).toDate();
+    } else {
+      created = DateTime.now();
+    }
+
     return CommentModel(
       id: doc.id,
       postId: data['postId'] ?? '',
@@ -28,18 +35,18 @@ class CommentModel {
       userName: data['userName'] ?? '',
       userImage: data['userImage'] ?? '',
       text: data['text'] ?? '',
-      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      createdAt: created,
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap({bool useServerTimestamp = true}) {
     return {
       'postId': postId,
       'userId': userId,
       'userName': userName,
       'userImage': userImage,
       'text': text,
-      'createdAt': createdAt,
+      'createdAt': useServerTimestamp ? FieldValue.serverTimestamp() : Timestamp.fromDate(createdAt),
     };
   }
 }

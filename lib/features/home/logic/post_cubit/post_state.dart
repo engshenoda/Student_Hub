@@ -1,0 +1,27 @@
+ 
+
+
+
+
+import 'package:linkedin/features/home/data/models/post_model.dart';
+
+abstract class PostState {}
+
+class PostInitial extends PostState {}
+class PostLoading extends PostState {}
+class PostLoaded extends PostState {
+  final List<Post> posts;
+  PostLoaded({required this.posts});
+}
+class PostError extends PostState {
+  final String message;
+  PostError({required this.message});
+}
+
+// action states
+class PostActionInProgress extends PostState {}
+class PostActionSuccess extends PostState {}
+class PostActionFailure extends PostState {
+  final String error;
+  PostActionFailure(this.error);
+}
