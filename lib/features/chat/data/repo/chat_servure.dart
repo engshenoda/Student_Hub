@@ -8,43 +8,77 @@ class ChatService {
     required String receiverId,
     required String message,
   }) async {
-    final chatId = _getChatId(senderId, receiverId);
+    final chatId = _generateChatId(senderId, receiverId);
 
-    final messageData = {
+    final chatRef = _firestore.collection('chats').doc(chatId);
+final messagesRef = _firestore.collection('chats').doc(chatId).collection('messages');
+    final timestamp = FieldValue.serverTimestamp();
+
+    await messagesRef.add({
       'senderId': senderId,
       'receiverId': receiverId,
-      'message': message.trim(),
-      'timestamp': FieldValue.serverTimestamp(), 
-      'isRead': false,
-    };
+      'message': message,
+      'timestamp': timestamp,
+      'isSeen': false,    
+    });
 
-    await _firestore
-        .collection('chats')
-        .doc(chatId)
-        .collection('messages')
-        .add(messageData);
-
-    await _firestore.collection('chats').doc(chatId).set({
+    await chatRef.set({
       'chatId': chatId,
-      'lastMessage': message.trim(),
+      'participants': [senderId, receiverId],
+      'lastMessage': message,
       'lastSenderId': senderId,
       'lastReceiverId': receiverId,
-      'lastTimestamp': FieldValue.serverTimestamp(),
-      'participants': [senderId, receiverId],
+      'lastTimestamp': timestamp,
     }, SetOptions(merge: true));
   }
 
- Stream<QuerySnapshot> getMessages(String userId, String receiverId) {
-  return FirebaseFirestore.instance
-      .collection('chats')
-      .doc(_getChatId(userId, receiverId))
-      .collection('messages')
-      .orderBy('timestamp', descending: true) 
-      .snapshots();
+  Stream<QuerySnapshot> getMessages(String senderId, String receiverId) {
+    final chatId = _generateChatId(senderId, receiverId);
+
+    return _firestore
+        .collection('chats')
+        .doc(chatId)
+        .collection('messages')
+        .orderBy('timestamp', descending: true)
+        .snapshots();
+  }
+
+  Future<void> markMessagesAsSeen(String currentUserId, String otherUserId) async {
+    final chatId = _generateChatId(currentUserId, otherUserId);
+    final messagesRef = _firestore.collection('chats').doc(chatId).collection('messages');
+
+    final unreadMessages = await messagesRef
+        .where('receiverId', isEqualTo: currentUserId)
+        .where('isSeen', isEqualTo: false)
+        .get();
+
+    for (var doc in unreadMessages.docs) {
+      await doc.reference.update({'isSeen': true});
+    }
+  }
+
+  // حذف الشات 
+ Future<void> deleteChat(String senderId, String receiverId) async {
+  try {
+    final chatId = _generateChatId(senderId, receiverId);
+
+    final chatRef = _firestore.collection('chats').doc(chatId);
+
+    final messages = await chatRef.collection('messages').get();
+    for (var msg in messages.docs) {
+      await msg.reference.delete();
+    }
+
+    await chatRef.delete();
+  } catch (e) {
+    print("Error deleting chat: $e");
+  }
 }
 
-  String _getChatId(String user1, String user2) {
-    final sorted = [user1, user2]..sort();
-    return '${sorted[0]}_${sorted[1]}';
+
+  String _generateChatId(String uid1, String uid2) {
+    final uids = [uid1, uid2];
+    uids.sort(); 
+    return '${uids[0]}_${uids[1]}';
   }
 }

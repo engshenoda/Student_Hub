@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:linkedin/core/theme/app_colors.dart';
 import 'package:linkedin/features/chat/Logic/cubit/cubit/search_chat.dart';
+import 'package:linkedin/features/chat/data/repo/chat_servure.dart';
 import 'chat_screen.dart';
 
 class ChatsListScreen extends StatefulWidget {
@@ -83,45 +84,145 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
           ),
         ),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('users').snapshots(),
+body: searchQuery.isEmpty
+    ? StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('chats')
+            .where('participants',
+                arrayContains: FirebaseAuth.instance.currentUser!.uid)
+            .orderBy('lastTimestamp', descending: true)
+            .snapshots(),
         builder: (context, snapshot) {
          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text('No users found.'));
+  return const SizedBox.shrink();
+}
+
+
+          final chats = snapshot.data!.docs;
+
+          return ListView.builder(
+            itemCount: chats.length,
+            itemBuilder: (context, index) {
+              final chat = chats[index].data() as Map<String, dynamic>;
+              final participants = List<String>.from(chat['participants'] ?? []);
+              final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+              String receiverId = currentUserId; // default
+
+          if (participants.isNotEmpty) {  
+  receiverId = participants.firstWhere(
+    (id) => id != currentUserId,
+    orElse: () => currentUserId,
+  );
+}
+
+if (receiverId == currentUserId) {
+  return const SizedBox.shrink();
+}
+
+
+
+              return FutureBuilder<DocumentSnapshot>(
+                future: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(receiverId)
+                    .get(),
+                builder: (context, userSnapshot) {
+                  if (!userSnapshot.hasData) {
+                    return const SizedBox.shrink();
+                  }
+
+                  final userData =
+                      userSnapshot.data!.data() as Map<String, dynamic>?;
+
+                  if (userData == null) return const SizedBox.shrink();
+
+                  return GestureDetector(
+  onLongPress: () async {
+    final confirm = await showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Delete Chat"),
+        content: const Text("Are you sure you want to delete this chat?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text("Delete", style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      final chatService = ChatService();
+      await chatService.deleteChat(
+        FirebaseAuth.instance.currentUser!.uid,
+        receiverId,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Chat deleted successfully")),
+      );
+    }
+  },
+  child: ListTile(
+    leading: CircleAvatar(
+      backgroundColor: AppColors.kDarkTeal,
+      child: const Icon(Icons.person, color: Colors.white),
+    ),
+    title: Text(userData['name'] ?? 'Unknown'),
+    subtitle: Text(chat['lastMessage'] ?? ''),
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChatScreen(
+            chatName: userData['name'] ?? 'Chat',
+            receiverId: userData['uid'],
+          ),
+        ),
+      );
+    },
+  ),
+);
+
+                },
+              );
+            },
+          );
+        },
+      )
+    : StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('users').snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
           }
 
-           final docs = snapshot.data!.docs;
-           
+          final docs = snapshot.data!.docs;
 
-            final filteredDocs = ChatSearchLogic.filterUsers(
-                allUsers: docs,
-                searchQuery: searchQuery,
-                currentUser: FirebaseAuth.instance.currentUser,
-              );
+          final filteredDocs = ChatSearchLogic.filterUsers(
+            allUsers: docs,
+            searchQuery: searchQuery,
+            currentUser: FirebaseAuth.instance.currentUser,
+          );
 
-          
+          if (filteredDocs.isEmpty) {
+            return const Center(child: Text('No users found.'));
+          }
 
           return ListView.builder(
             itemCount: filteredDocs.length,
             itemBuilder: (context, index) {
-            final user = filteredDocs[index].data() as Map<String, dynamic>;
-             
-              // تحقق من وجود uid
-              if (user['uid'] == null || user['uid'].toString().isEmpty) {
-               debugPrint('⚠️ Skipping user without UID: $user');
-                return const SizedBox.shrink();
-              }
-              
-               final currentUser = FirebaseAuth.instance.currentUser;
-              if (user['uid'] == currentUser?.uid) {
-              return const SizedBox.shrink(); // Hide current user
-              }
-
+              final user =
+                  filteredDocs[index].data() as Map<String, dynamic>;
 
               return ListTile(
                 leading: CircleAvatar(
                   backgroundColor: AppColors.kDarkTeal,
-                  child: Icon(Icons.person, color: Colors.white),
+                  child: const Icon(Icons.person, color: Colors.white),
                 ),
                 title: Text(user['name'] ?? 'Unknown'),
                 subtitle: Text(user['email'] ?? ''),
@@ -131,7 +232,7 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
                     MaterialPageRoute(
                       builder: (context) => ChatScreen(
                         chatName: user['name'] ?? 'Chat',
-                        receiverId: user['uid'],  
+                        receiverId: user['uid'],
                       ),
                     ),
                   );
@@ -141,6 +242,7 @@ class _ChatsListScreenState extends State<ChatsListScreen> {
           );
         },
       ),
+
     );
   }
 }
