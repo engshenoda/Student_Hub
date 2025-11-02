@@ -1,12 +1,21 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:linkedin/core/theme/app_colors.dart';
-import 'package:linkedin/features/chat/data/models.dart';
-
-
+import 'package:linkedin/features/chat/Logic/cubit/cubit/search_chat.dart';
 import 'chat_screen.dart';
 
-class ChatsListScreen extends StatelessWidget {
+class ChatsListScreen extends StatefulWidget {
   const ChatsListScreen({super.key});
+
+  @override
+  State<ChatsListScreen> createState() => _ChatsListScreenState();
+}
+
+class _ChatsListScreenState extends State<ChatsListScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String searchQuery = '';
+
 
   @override
   Widget build(BuildContext context) {
@@ -24,29 +33,19 @@ class ChatsListScreen extends StatelessWidget {
                 colors: [AppColors.kLightGreen, Colors.white],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                stops: [0.0, 1.0],
               ),
             ),
-            padding: const EdgeInsets.fromLTRB(16.0, 40.0, 16.0, 8.0),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Chats',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.kDarkTeal,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.more_vert, color: AppColors.kDarkTeal),
-                      onPressed: () {},
-                    ),
-                  ],
+                const Text(
+                  'Chats',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.kDarkTeal,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 Container(
@@ -63,49 +62,80 @@ class ChatsListScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: const TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Search',
-                      prefixIcon: Icon(Icons.search, color: Colors.grey),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(vertical: 12.0),
-                    ),
-                  ),
+                  child: TextField(
+                   controller: _searchController,
+                    onChanged: (value) {
+                     setState(() {
+                      searchQuery = value;
+                        });
+                      },
+                        decoration: const InputDecoration(
+                        hintText: 'Search',
+                        prefixIcon: Icon(Icons.search, color: Colors.grey),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(vertical: 12.0),
+                        ),
+                          ),
+
                 ),
               ],
             ),
           ),
         ),
       ),
-      body: ListView.builder(
-        itemCount: dummyChats.length,
-        itemBuilder: (context, index) {
-          final chat = dummyChats[index];
-          return ListTile(
-            contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            leading: CircleAvatar(
-              radius: 30,
-              backgroundImage: NetworkImage(chat.avatarUrl),
-            ),
-            title: Text(
-              chat.name,
-              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
-            ),
-            subtitle: Text(
-              chat.subtitle,
-              style: TextStyle(color: Colors.grey[600]),
-            ),
-            trailing: Text(
-              chat.date,
-              style: TextStyle(color: Colors.grey[500], fontSize: 12),
-            ),
-            onTap: () {
-              // Pass a unique identifier (like the name) instead of the whole model
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChatScreen(chatName: chat.name, chatModel: null,), 
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('users').snapshots(),
+        builder: (context, snapshot) {
+         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(child: Text('No users found.'));
+          }
+
+           final docs = snapshot.data!.docs;
+           
+
+            final filteredDocs = ChatSearchLogic.filterUsers(
+                allUsers: docs,
+                searchQuery: searchQuery,
+                currentUser: FirebaseAuth.instance.currentUser,
+              );
+
+          
+
+          return ListView.builder(
+            itemCount: filteredDocs.length,
+            itemBuilder: (context, index) {
+            final user = filteredDocs[index].data() as Map<String, dynamic>;
+             
+              // تحقق من وجود uid
+              if (user['uid'] == null || user['uid'].toString().isEmpty) {
+               debugPrint('⚠️ Skipping user without UID: $user');
+                return const SizedBox.shrink();
+              }
+              
+               final currentUser = FirebaseAuth.instance.currentUser;
+              if (user['uid'] == currentUser?.uid) {
+              return const SizedBox.shrink(); // Hide current user
+              }
+
+
+              return ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: AppColors.kDarkTeal,
+                  child: Icon(Icons.person, color: Colors.white),
                 ),
+                title: Text(user['name'] ?? 'Unknown'),
+                subtitle: Text(user['email'] ?? ''),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatScreen(
+                        chatName: user['name'] ?? 'Chat',
+                        receiverId: user['uid'],  
+                      ),
+                    ),
+                  );
+                },
               );
             },
           );

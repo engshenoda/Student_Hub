@@ -12,6 +12,7 @@ class CreateAccountViewModel {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
 
   // Password Visibility
   // bool obscurePassword = true;
@@ -57,8 +58,8 @@ class CreateAccountViewModel {
 
   // Auth Logic (delegates to repo)
 
-  Future<UserModel> register(String email, String password) =>
-      _authRepo.signUp(email, password);
+  Future<UserModel> register(String email, String password, String displayName) =>
+      _authRepo.signUp(email, password, displayName);
 
   Future<UserModel> login(String email, String password) =>
       _authRepo.signIn(email, password);

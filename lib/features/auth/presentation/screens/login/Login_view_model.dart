@@ -41,7 +41,8 @@ class LoginViewModel {
 
   // Auth Logic
   Future<UserModel> login(String email, String password) =>
-      _authRepo.signIn(email, password);
+    _authRepo.signIn(email, password);
+
 
   void dispose() {
     emailController.dispose();

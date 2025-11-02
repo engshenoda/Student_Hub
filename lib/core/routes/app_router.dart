@@ -80,7 +80,7 @@ abstract class AppRoute {
       GoRoute(
         path: Routes.chatscreen,
 
-        builder: (context, state) => ChatScreen(chatModel: null, chatName: ''),
+        builder: (context, state) => ChatScreen(chatName: '', receiverId: '',),
       ),
       GoRoute(
         path: Routes.notifcation,
