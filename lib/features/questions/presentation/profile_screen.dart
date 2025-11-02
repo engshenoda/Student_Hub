@@ -4,10 +4,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:linkedin/core/routes/route.dart';
+import 'package:linkedin/core/theme/app_colors.dart';
 import 'package:linkedin/features/questions/Logic/cubit/profile_cubit.dart';
 import 'package:linkedin/features/questions/Logic/cubit/profile_state.dart';
 
-const Color kPrimary = Color(0xFF00B894);
+ 
 
 class ProfileQScreen extends StatelessWidget {
   const ProfileQScreen({super.key});
@@ -109,7 +110,7 @@ class _ProfileQBodyState extends State<_ProfileQBody> {
                 constraints: const BoxConstraints(maxWidth: 600),
                 child: Column(
                   children: [
-                    Container(height: 8, color: kPrimary, width: double.infinity),
+                    Container(height: 8, color: AppColors.primary, width: double.infinity),
                     Expanded(
                       child: SingleChildScrollView(
                         padding: EdgeInsets.symmetric(
@@ -238,7 +239,7 @@ class _ProfileQBodyState extends State<_ProfileQBody> {
                                     style: ElevatedButton.styleFrom(
                                       padding:
                                           EdgeInsets.symmetric(vertical: s(16)),
-                                      backgroundColor: kPrimary,
+                                      backgroundColor: AppColors.primary,
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(s(28)),
@@ -272,83 +273,80 @@ class _ProfileQBodyState extends State<_ProfileQBody> {
   }
 }
 
-class _StepHeader extends StatelessWidget {
-  final double Function(double) scale;
-  const _StepHeader({required this.scale});
+// class _StepHeader extends StatelessWidget {
+//   final double Function(double) scale;
+//   const _StepHeader({required this.scale});
+//   @override
+//   Widget build(BuildContext context) {
+//     final s = scale;
+//     return Row(
+//       children: [
+//         _Step(label: 'Profile', filled: true, s: s),
+//         _Connector(s),
+//         _Step(label: 'Career', filled: false, s: s),
+//         _Connector(s),
+//         _Step(label: 'Docs', filled: false, s: s),
+//       ],
+//     );
+//   }
+//   Widget _Connector(double Function(double) s) => Expanded(
+//         child: Container(
+//           height: s(1),
+//           margin: EdgeInsets.symmetric(horizontal: s(10)),
+//           color: Colors.grey.shade300,
+//         ),
+//       );
+// }
 
-  @override
-  Widget build(BuildContext context) {
-    final s = scale;
-    return Row(
-      children: [
-        _Step(label: 'Profile', filled: true, s: s),
-        _Connector(s),
-        _Step(label: 'Career', filled: false, s: s),
-        _Connector(s),
-        _Step(label: 'Docs', filled: false, s: s),
-      ],
-    );
-  }
-
-  Widget _Connector(double Function(double) s) => Expanded(
-        child: Container(
-          height: s(1),
-          margin: EdgeInsets.symmetric(horizontal: s(10)),
-          color: Colors.grey.shade300,
-        ),
-      );
-}
-
-class _Step extends StatelessWidget {
-  final String label;
-  final bool filled;
-  final double Function(double) s;
-  const _Step({required this.label, required this.filled, required this.s});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          width: s(28),
-          height: s(28),
-          decoration: BoxDecoration(
-            color: filled ? kPrimary : Colors.white,
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: filled ? kPrimary : Colors.grey.shade300,
-              width: 2,
-            ),
-            boxShadow: filled
-                ? [
-                    BoxShadow(
-                      color: kPrimary.withOpacity(0.18),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ]
-                : [],
-          ),
-          child: filled
-              ? Icon(Icons.check, color: Colors.white, size: s(16))
-              : null,
-        ),
-        SizedBox(height: s(6)),
-        Text(
-          label,
-          style: TextStyle(fontSize: s(12), color: Colors.grey[700]),
-        ),
-      ],
-    );
-  }
-}
+// class _Step extends StatelessWidget {
+//   final String label;
+//   final bool filled;
+//   final double Function(double) s;
+//   const _Step({required this.label, required this.filled, required this.s});
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       children: [
+//         Container(
+//           width: s(28),
+//           height: s(28),
+//           decoration: BoxDecoration(
+//             color: filled ? AppColors.primary : Colors.white,
+//             shape: BoxShape.circle,
+//             border: Border.all(
+//               color: filled ? AppColors.primary : Colors.grey.shade300,
+//               width: 2,
+//             ),
+//             boxShadow: filled
+//                 ? [
+//                     BoxShadow(
+//                       color: AppColors.primary.withOpacity(0.18),
+//                       blurRadius: 8,
+//                       offset: const Offset(0, 4),
+//                     ),
+//                   ]
+//                 : [],
+//           ),
+//           child: filled
+//               ? Icon(Icons.check, color: Colors.white, size: s(16))
+//               : null,
+//         ),
+//         SizedBox(height: s(6)),
+//         Text(
+//           label,
+//           style: TextStyle(fontSize: s(12), color: Colors.grey[700]),
+//         ),
+//       ],
+//     );
+//   }
+// }
 
 class InfoRecommendationCard extends StatelessWidget {
   final double Function(double) scale;
   final UserCubit cubit;
   final String userId;
 
-  const InfoRecommendationCard({
+  const InfoRecommendationCard({super.key, 
     required this.scale,
     required this.cubit,
     required this.userId,
@@ -375,8 +373,8 @@ class InfoRecommendationCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CircleAvatar(
-            backgroundColor: kPrimary.withOpacity(0.12),
-            child: Icon(Icons.info_outline, color: kPrimary),
+            backgroundColor: AppColors.primary.withOpacity(0.12),
+            child: Icon(Icons.info_outline, color: AppColors.primary),
           ),
           SizedBox(width: s(12)),
           Expanded(
@@ -401,7 +399,7 @@ class InfoRecommendationCard extends StatelessWidget {
                   child: Text(
                     'Use recommendation',
                     style: TextStyle(
-                      color: kPrimary,
+                      color: AppColors.primary,
                       fontWeight: FontWeight.w600,
                       fontSize: s(13),
                     ),
@@ -464,8 +462,8 @@ class _ProfileFieldState extends State<ProfileField> {
       child: Row(
         children: [
           CircleAvatar(
-            backgroundColor: kPrimary.withOpacity(0.12),
-            child: Icon(widget.leading, color: kPrimary),
+            backgroundColor: AppColors.primary.withOpacity(0.12),
+            child: Icon(widget.leading, color: AppColors.primary),
           ),
           SizedBox(width: s(12)),
           Expanded(
@@ -495,12 +493,12 @@ class _ProfileFieldState extends State<ProfileField> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(s(8)),
                             borderSide:
-                                const BorderSide(color: kPrimary, width: 1),
+                                const BorderSide(color: AppColors.primary, width: 1),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(s(8)),
                             borderSide: const BorderSide(
-                              color: kPrimary,
+                              color: AppColors.primary,
                               width: 1.5,
                             ),
                           ),
@@ -533,7 +531,7 @@ class _ProfileFieldState extends State<ProfileField> {
                 _isEditing
                     ? Icons.check_circle_outline
                     : Icons.edit_outlined,
-                color: _isEditing ? kPrimary : Colors.grey[600],
+                color: _isEditing ? AppColors.primary : Colors.grey[600],
                 size: s(20),
               ),
             ),
