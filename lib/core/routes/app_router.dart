@@ -20,8 +20,8 @@ import 'package:linkedin/features/notifications/presentation/screens/notificatio
 import 'package:linkedin/features/onbording/Onboarding_pages.dart';
 import 'package:linkedin/features/onbording/splash_screen.dart';
 import 'package:linkedin/features/profile/presentation/screens/profile_screen.dart';
-import 'package:linkedin/features/questions/data/career_next_screen.dart';
-import 'package:linkedin/features/questions/data/profile_screen.dart';
+import 'package:linkedin/features/questions/presentation/career_next_screen.dart';
+import 'package:linkedin/features/questions/presentation/profile_screen.dart';
 import 'package:linkedin/features/search_feature/search_screen.dart';
 import 'package:linkedin/features/settings/screens/about_us.dart';
 import 'package:linkedin/features/settings/screens/settings.dart';
@@ -63,10 +63,10 @@ abstract class AppRoute {
         path: Routes.passwordreset,
         builder: (context, state) => const PasswordResetScreen(),
       ),
-      GoRoute(
-        path: Routes.careerpreference,
-        builder: (context, state) => const CareerNextScreen(),
-      ),
+      // GoRoute(
+      //   path: Routes.careerpreference,
+      //   builder: (context, state) => const CareerNextScreen(),
+      // ),
       GoRoute(
         path: Routes.profileqscreen,
         builder: (context, state) => const ProfileQScreen(),

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -6,6 +7,7 @@ import 'package:linkedin/features/home/data/rebo/posr_repo.dart';
 import 'package:linkedin/features/home/data/service/post_service.dart';
 import 'package:linkedin/features/home/logic/post_cubit/post_cubt.dart';
 import 'package:linkedin/features/home/logic/post_cubit/post_state.dart';
+import 'package:linkedin/features/home/presentation/widgets/home_header.dart';
 import '../widgets/post_card.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -13,6 +15,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    final userName = currentUser?.displayName ?? 'User';
     return BlocProvider(
       create: (context) {
         final repo = PostRepository(PostService());
@@ -27,62 +31,7 @@ class HomeScreen extends StatelessWidget {
           body: Column(
             children: [
               // -------- Header Section --------
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFFB2DFDB), Colors.white],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 24),
-                    Row(
-                      children: [
-                        const CircleAvatar(
-                          radius: 22,
-                          backgroundImage: NetworkImage(
-                            'https://www.bing.com/th/id/OIP.EzA6vF2nER9bJEh6o1EHZAHaI7?w=174&h=211&c=8&rs=1&qlt=90&o=6&cb=12&dpr=1.3&pid=3.1&rm=2',
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Hi, Mera Mourad",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: Colors.teal[800],
-                              ),
-                            ),
-                            Text(
-                              "UI / UX Designer",
-                              style: TextStyle(
-                                color: Colors.teal[800],
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const Spacer(),
-                        IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.search, color: Colors.teal)),
-                        IconButton(
-                            onPressed: () {},
-                            icon: const Icon(Icons.notifications_none_rounded,
-                                color: Colors.teal, size: 26)),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+              HomeHeader(),
               const SizedBox(height: 10),
 
               // -------- Posts Section --------
@@ -99,33 +48,34 @@ class HomeScreen extends StatelessWidget {
                       return ListView.separated(
                         padding: EdgeInsets.zero,
                         itemCount: posts.length,
-                        separatorBuilder: (_, __) =>
-                            const SizedBox(height: 8),
+                        separatorBuilder: (_, __) => const SizedBox(height: 8),
                         itemBuilder: (context, index) {
                           final post = posts[index];
                           return PostCard(
                             post: post,
                             onLike: () {
                               final currentUserId = 'CURRENT_USER_ID';
-                              context
-                                  .read<PostCubit>()
-                                  .toggleLike(post.id, currentUserId);
+                              context.read<PostCubit>().toggleLike(
+                                post.id,
+                                currentUserId,
+                              );
                             },
                             onDelete: () {
                               context.read<PostCubit>().deletePost(post.id);
                             },
                             onEdit: () {
-                              
-  // نروح لصفحة Edit Post ونمرر البوست الحالي
-  context.push('/AddPost', extra: post);
-
-
+                              // نروح لصفحة Edit Post ونمرر البوست الحالي
+                              context.push('/AddPost', extra: post);
                             },
                             onAddComment: (text) {
                               final currentUserId = 'CURRENT_USER_ID';
                               final currentUserName = 'Mera Mourad';
                               context.read<PostCubit>().addComment(
-                                  post.id, currentUserId, currentUserName, text);
+                                post.id,
+                                currentUserId,
+                                currentUserName,
+                                text,
+                              );
                             },
                           );
                         },

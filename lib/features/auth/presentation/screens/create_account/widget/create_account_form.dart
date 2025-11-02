@@ -19,18 +19,18 @@ class CreateAccountForm extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // CustomInputField(
-          //   controller: viewModel.nameController,
-          //   label: "Name",
-          //   hint: "Enter your name",
-          //   validator: (value) {
-          //     if (value == null || value.isEmpty) {
-          //       return "Please enter your name";
-          //     }
-          //     return null;
-          //   },
-          //   keyboardType: TextInputType.text,
-          // ),
+          CustomInputField(
+            controller: viewModel.nameController,
+            label: "Name",
+            hint: "Enter your name",
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Please enter your name";
+              }
+              return null;
+            },
+            keyboardType: TextInputType.text,
+          ),
           CustomInputField(
             controller: viewModel.emailController,
             label: "Email",

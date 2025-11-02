@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:linkedin/core/constant/constant_collections.dart';
 import 'package:linkedin/features/home/data/models/comment_model.dart';
 import 'package:linkedin/features/home/data/models/post_model.dart';
-import 'package:uuid/uuid.dart';
 
 
 class PostService {
@@ -13,7 +14,21 @@ class PostService {
       : _firestore = firestore ?? FirebaseFirestore.instance,
         _storage = storage ?? FirebaseStorage.instance;
 
-  CollectionReference get _postsCol => _firestore.collection('posts');
+  CollectionReference get _postsCol => _firestore.collection(ConstantCollections.posts);
+
+ Future<Map<String, dynamic>?> getUserData() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser == null) return null;
+
+    final doc = await FirebaseFirestore.instance
+        .collection(ConstantCollections.users)
+        .doc(currentUser.uid)
+        .get();
+
+    return doc.data();
+  }
+
+
 
   Stream<List<Post>> postsStream() {
     return _postsCol.orderBy('createdAt', descending: true).snapshots().map((snap) {
@@ -32,8 +47,10 @@ Future<void> addPost({required Post post, File? imageFile}) async {
   // ✅ أضف البوست إلى Firestore
   final docRef = await _postsCol.add({
     ...post.toMap(),
+
     'imageUrl': imageUrl,
     'createdAt': DateTime.now(),
+
   });
 
   // ✅ حدّث الـ document علشان تضيف الـ id الحقيقي جوه البيانات

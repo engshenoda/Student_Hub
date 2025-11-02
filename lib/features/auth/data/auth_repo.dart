@@ -10,7 +10,13 @@ class AuthRepo {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   // 🔹 Email & Password Sign Up
-  Future<UserModel> signUp(String email, String password, String name) async {
+  Future<UserModel> signUp({
+    required String email,
+    required String password,
+    required String fullName,
+    String role = '',
+    String? photoUrl,
+  }) async {
     final result = await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
@@ -22,9 +28,14 @@ class AuthRepo {
       await _firestore.collection('users').doc(user.uid).set({
         'uid': user.uid,
         'email': user.email,
-        'name': name,
+        'name': fullName,
+        'role': role,
+        'photoUrl': photoUrl,
         'createdAt': FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true)); 
+      }, SetOptions(merge: true));
+
+      // 👇 ممكن تحدث displayName في FirebaseAuth كمان
+      await user.updateDisplayName(fullName);
     }
 
     return UserModel.fromFirebaseUser(user);
@@ -40,10 +51,10 @@ class AuthRepo {
     final user = result.user;
 
     if (user != null) {
+      // تحديث آخر دخول
       await _firestore.collection('users').doc(user.uid).set({
         'uid': user.uid,
         'email': user.email,
-        'name': user.displayName ?? 'User',
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
     }
@@ -56,8 +67,7 @@ class AuthRepo {
     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
     if (googleUser == null) throw Exception('Google sign-in cancelled');
 
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
+    final googleAuth = await googleUser.authentication;
 
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
@@ -72,6 +82,8 @@ class AuthRepo {
         'uid': user.uid,
         'email': user.email,
         'name': user.displayName ?? 'No Name',
+        'role': '',
+        'photoUrl': user.photoURL,
         'createdAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
     }
@@ -86,9 +98,7 @@ class AuthRepo {
       throw Exception('Facebook sign-in failed');
     }
 
-    final OAuthCredential credential =
-        FacebookAuthProvider.credential(result.accessToken!.tokenString);
-
+    final credential = FacebookAuthProvider.credential(result.accessToken!.tokenString);
     final userCredential = await _auth.signInWithCredential(credential);
     final user = userCredential.user;
 
@@ -97,6 +107,8 @@ class AuthRepo {
         'uid': user.uid,
         'email': user.email,
         'name': user.displayName ?? 'No Name',
+        'role': '',
+        'photoUrl': user.photoURL,
         'createdAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
     }

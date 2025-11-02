@@ -25,33 +25,23 @@ class UserModel {
     return UserModel(
       id: id,
       fullName: data['fullName'] ?? '',
-      whatsapp: (data['whatsapp'] is String)
-          ? int.tryParse(data['whatsapp']) ?? 0
-          : (data['whatsapp'] ?? 0),
+      whatsapp: data['whatsapp'] ?? 0,
       role: data['role'] ?? '',
       degreeYear: data['degreeYear'] ?? '',
-      minSalary: data['minSalary'] == null
-          ? 0.0
-          : (data['minSalary'] is num)
-              ? (data['minSalary'] as num).toDouble()
-              : double.tryParse(data['minSalary'].toString()) ?? 0.0,
-      createdAt: data['createdAt'] != null
-          ? (data['createdAt'] as Timestamp).toDate()
-          : null,
-      updatedAt: data['updatedAt'] != null
-          ? (data['updatedAt'] as Timestamp).toDate()
-          : null,
+      minSalary: (data['minSalary'] ?? 0).toDouble(),
+      createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
+      updatedAt: (data['updatedAt'] as Timestamp?)?.toDate(),
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toMap({bool forCreate = false}) {
     return {
       'fullName': fullName,
       'whatsapp': whatsapp,
       'role': role,
       'degreeYear': degreeYear,
       'minSalary': minSalary,
-      'createdAt': createdAt ?? FieldValue.serverTimestamp(),
+      if (forCreate) 'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     };
   }

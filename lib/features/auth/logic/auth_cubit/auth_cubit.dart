@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:linkedin/core/constant/constant_collections.dart';
 import 'package:linkedin/features/auth/data/auth_repo.dart';
 import 'package:linkedin/features/auth/data/models/auth_model.dart';
 import 'package:linkedin/features/auth/presentation/screens/create_account/create_account_view_model.dart';
@@ -51,17 +52,20 @@ class AuthCubit extends Cubit<AuthCubitState> {
       //   emit(LoginFailureState("Please fill in all fields."));
       //   return;
       // }
-     final user = await _authRepo.signUp(
-  createAuthViewModel!.emailController.text.trim(),
-  createAuthViewModel!.passwordController.text.trim(),
-  createAuthViewModel!.nameController.text.trim(),
-);
-await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-  'uid': user.uid,
-  'email': user.email,
-  'name': createAuthViewModel!.nameController.text.trim(),
-  'createdAt': FieldValue.serverTimestamp(),
-});
+      final user = await _authRepo.signUp(
+        email: createAuthViewModel!.emailController.text.trim(),
+        password: createAuthViewModel!.passwordController.text.trim(),
+        fullName: createAuthViewModel!.nameController.text.trim(),
+      );
+      await FirebaseFirestore.instance
+          .collection(ConstantCollections.users)
+          .doc(user.uid)
+          .set({
+            'uid': user.uid,
+            'email': user.email,
+            'name': createAuthViewModel!.nameController.text.trim(),
+            'createdAt': FieldValue.serverTimestamp(),
+          });
 
       emit(SignUpSuccsessState(user));
     } on FirebaseAuthException catch (e) {

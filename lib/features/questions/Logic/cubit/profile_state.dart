@@ -1,4 +1,4 @@
-import 'package:linkedin/features/questions/Model/ProfileModel.dart';
+import 'package:linkedin/features/questions/data/Model/ProfileModel.dart';
 import 'package:meta/meta.dart';
 
 @immutable

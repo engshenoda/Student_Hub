@@ -12,21 +12,7 @@ class CreateAccountViewModel {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-  final TextEditingController nameController = TextEditingController();
-
-  // Password Visibility
-  // bool obscurePassword = true;
-  // bool obscureConfirmPassword = true;
-
-
-  // void togglePasswordVisibility() {
-    
-  //   obscurePassword = !obscurePassword;
-  // }
-
-  // void toggleConfirmPasswordVisibility() {
-  //   obscureConfirmPassword = !obscureConfirmPassword;
-  // }
+  final nameController = TextEditingController();
 
   // Validation
   bool isValidPassword(String password) {
@@ -58,23 +44,23 @@ class CreateAccountViewModel {
 
   // Auth Logic (delegates to repo)
 
-  Future<UserModel> register(String email, String password, String displayName) =>
-      _authRepo.signUp(email, password, displayName);
+  Future<UserModel> register(
+    String email,
+    String password,
+    String displayName,
+  ) =>
+      _authRepo.signUp(email: email, password: password, fullName: displayName);
 
   Future<UserModel> login(String email, String password) =>
       _authRepo.signIn(email, password);
 
-
-
-Future<UserModel> signUpWithGoogle() async {
+  Future<UserModel> signUpWithGoogle() async {
     return await AuthRepo().signInWithGoogle();
   }
 
   Future<UserModel> signUpWithFacebook() async {
     return await _authRepo.signInWithFacebook();
   }
-
-
 
   // Cleanup
 

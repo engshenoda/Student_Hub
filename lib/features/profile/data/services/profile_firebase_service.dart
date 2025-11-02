@@ -12,7 +12,7 @@ class ProfileFirebaseService {
   ProfileFirebaseService({
     FirebaseFirestore? firestore,
     FirebaseStorage? storage,
-    this.collectionProfilePath = 'profile',
+    this.collectionProfilePath = 'profiles',
   })  : _firestore = firestore ?? FirebaseFirestore.instance,
         _storage = storage ?? FirebaseStorage.instance;
 
