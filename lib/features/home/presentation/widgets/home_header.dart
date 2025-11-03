@@ -26,10 +26,9 @@ class HomeHeader extends StatelessWidget {
 
         final userData = snapshot.data!;
         final fullName = userData['name'] ?? 'User';
-
-        final role = userData['role'] ?? 'No title';
-        final photo =
-            userData['photoUrl'] ??
+        final role = userData['role'] ?? 'No role';
+        final jobTitle = userData['jobTitle']; // 👈 ممكن تكون null
+        final photo = userData['photoUrl'] ??
             'https://www.bing.com/th/id/OIP.EzA6vF2nER9bJEh6o1EHZAHaI7?w=174&h=211&c=8&rs=1&qlt=90&o=6&cb=12&dpr=1.3&pid=3.1&rm=2';
 
         return Container(
@@ -57,8 +56,20 @@ class HomeHeader extends StatelessWidget {
                       color: Colors.teal[800],
                     ),
                   ),
+                  if (jobTitle != null && jobTitle.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      jobTitle, // 💼 Job Title
+                      style: TextStyle(
+                        color: Colors.teal[700],
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 2),
                   Text(
-                    role, // هنا جبنا الـ job title من Firestore
+                    role, // 🔹 Role
                     style: TextStyle(color: Colors.teal[800], fontSize: 12),
                   ),
                 ],

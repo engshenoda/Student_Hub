@@ -1,9 +1,12 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:linkedin/features/home/data/models/comment_model.dart';
 import 'package:linkedin/features/home/data/models/post_model.dart';
 import 'package:linkedin/features/home/data/service/post_service.dart';
 
+final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+final CollectionReference _postsCol = FirebaseFirestore.instance.collection('posts');
 
 
 class PostRepository {
@@ -23,6 +26,16 @@ class PostRepository {
 
   Future<void> addComment(String postId, String userId, String userName, String text) =>
       service.addComment(postId, userId, userName, text);
+
+
+
+// ✅ Like / Unlike Comment
+ Future<void> toggleCommentLike(String postId, String commentId, String userId) =>
+      service.toggleCommentLike(postId, commentId, userId);
+
+
+
+      
 
        Stream<List<CommentModel>> watchComments(String postId) =>
       service.getComments(postId);

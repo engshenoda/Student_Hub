@@ -19,6 +19,16 @@ class CommentCubit extends Cubit<CommentState> {
     });
   }
 
+  Future<void> toggleCommentLike(String postId, String commentId, String userId) async {
+    try {
+      await repo.toggleCommentLike(postId, commentId, userId);
+      // لا نعدل الحالة يدوياً لأن الـ stream هيحدّث تلقائياً
+    } catch (e) {
+      emit(CommentError(e.toString()));
+    }
+  }
+
+
   @override
   Future<void> close() {
     _sub?.cancel();

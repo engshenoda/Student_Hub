@@ -8,6 +8,7 @@ class CommentModel {
   final String userImage;
   final String text;
   final DateTime createdAt;
+  final Map<String, dynamic> likes; // ✅ جديد
 
   CommentModel({
     required this.id,
@@ -17,6 +18,7 @@ class CommentModel {
     required this.userImage,
     required this.text,
     required this.createdAt,
+    required this.likes,
   });
 
   factory CommentModel.fromDoc(DocumentSnapshot doc) {
@@ -36,6 +38,7 @@ class CommentModel {
       userImage: data['userImage'] ?? '',
       text: data['text'] ?? '',
       createdAt: created,
+      likes: Map<String, dynamic>.from(data['likes'] ?? {}), // ✅
     );
   }
 
@@ -46,7 +49,10 @@ class CommentModel {
       'userName': userName,
       'userImage': userImage,
       'text': text,
-      'createdAt': useServerTimestamp ? FieldValue.serverTimestamp() : Timestamp.fromDate(createdAt),
+      'likes': likes, // ✅
+      'createdAt': useServerTimestamp
+          ? FieldValue.serverTimestamp()
+          : Timestamp.fromDate(createdAt),
     };
   }
 }

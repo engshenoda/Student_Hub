@@ -17,6 +17,8 @@ class Post {
   var originalPost;
   
   var isRepost;
+
+  var authorJobTitle;
   
 
   Post({

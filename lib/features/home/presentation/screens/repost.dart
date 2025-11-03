@@ -1,7 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linkedin/features/home/data/models/post_model.dart';
-
 import 'package:linkedin/features/home/logic/post_cubit/post_cubt.dart';
 import 'package:linkedin/features/home/presentation/widgets/post_card_repost.dart';
 
@@ -11,6 +11,11 @@ class Repost extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    final currentUserId = currentUser?.uid ?? 'guest_user';
+    final currentUserName = currentUser?.displayName ?? 'Unknown User';
+    final currentUserAvatar = currentUser?.photoURL ??
+        'https://i.pravatar.cc/150?img=12'; // صورة افتراضية لو مفيش
     final TextEditingController captionController = TextEditingController();
 
     return Scaffold(
@@ -29,20 +34,13 @@ class Repost extends StatelessWidget {
                   end: Alignment.bottomCenter,
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  // 🔹 Top Bar
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: const Icon(Icons.cancel_outlined,
-                            size: 40, color: Colors.teal),
-                      ),
-                    ],
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.cancel_outlined,
+                        size: 40, color: Colors.teal),
                   ),
-                  const SizedBox(height: 25),
                 ],
               ),
             ),
@@ -55,18 +53,16 @@ class Repost extends StatelessWidget {
                   // 🔹 User Row
                   Row(
                     children: [
-                      const CircleAvatar(
+                      CircleAvatar(
                         radius: 22,
-                        backgroundImage: NetworkImage(
-                          'https://www.bing.com/th/id/OIP.EzA6vF2nER9bJEh6o1EHZAHaI7?w=174&h=211&c=8&rs=1&qlt=90&o=6&cb=12&dpr=1.3&pid=3.1&rm=2',
-                        ),
+                        backgroundImage: NetworkImage(currentUserAvatar),
                       ),
                       const SizedBox(width: 10),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Hi, Mera Mourad",
+                            currentUserName,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -74,7 +70,7 @@ class Repost extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "UI / UX Designer",
+                            "Sharing a post", // وصف بسيط بدل الـ role الثابت
                             style: TextStyle(
                               fontSize: 11,
                               color: Colors.teal[800],
@@ -84,18 +80,23 @@ class Repost extends StatelessWidget {
                       ),
                       const Spacer(),
                       ElevatedButton(
-                        onPressed: () {
-                          final currentUserId = "CURRENT_USER_ID";
-                          final currentUserName = "Mera Mourad";
-
-                          context.read<PostCubit>().repost(
+                        onPressed: () async {
+                          await context.read<PostCubit>().repost(
                                 originalPost: originalPost,
                                 userId: currentUserId,
                                 userName: currentUserName,
+                                userAvatar: currentUserAvatar,
                                 caption: captionController.text,
                               );
 
                           Navigator.pop(context);
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Post shared successfully!'),
+                              backgroundColor: Colors.teal,
+                            ),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF004D40),
@@ -116,16 +117,15 @@ class Repost extends StatelessWidget {
                   const SizedBox(height: 20),
 
                   // 🔹 Caption Field
-                  Row(
-                    children: [
-                      Text(
-                        "Share your thoughts",
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12,
-                        ),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Share your thoughts",
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
                       ),
-                    ],
+                    ),
                   ),
                   const SizedBox(height: 10),
 

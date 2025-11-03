@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:linkedin/features/home/data/models/post_model.dart';
+import 'package:share_plus/share_plus.dart';
 
 class PostCard extends StatefulWidget {
   final Post post;
@@ -25,20 +27,51 @@ class PostCard extends StatefulWidget {
 
 class _PostCardState extends State<PostCard> {
   bool isFollowing = true;
-  late bool isLiked; // 🔹 حالة اللايك لكل بوست
+  late bool isLiked;
+  late int likesCount;
+  late String currentUserId;
+  bool _isLiking = false; // 🔒 عشان نمنع السبام أو الضغط المزدوج
 
   @override
   void initState() {
     super.initState();
-    // هنا بنفترض إن عندك userId للمستخدم الحالي
-   final userId = "currentUserId"; // استبدلها بالـ ID الحقيقي للمستخدم
-  isLiked = widget.post.likes.containsKey(userId);
+
+    // ✅ جلب ID المستخدم الحالي
+    currentUserId = FirebaseAuth.instance.currentUser?.uid ?? "guest_user";
+
+    // ✅ حالة اللايك المبدئية
+    isLiked = widget.post.likes.containsKey(currentUserId);
+
+    // ✅ عدد اللايكات المبدئي
+    likesCount = widget.post.likes.length;
+  }
+
+  void _handleLike() async {
+    if (_isLiking) return; // 🛑 منع الضغط المكرر
+    _isLiking = true;
+
+    setState(() {
+      if (isLiked) {
+        likesCount--;
+        isLiked = false;
+      } else {
+        likesCount++;
+        isLiked = true;
+      }
+    });
+
+    // 🔹 نبلغ الكيوبت بالتغيير
+    if (widget.onLike != null) {
+      await Future.delayed(const Duration(milliseconds: 100)); // تأخير بسيط للتجربة السلسة
+      widget.onLike!();
+    }
+
+    _isLiking = false;
   }
 
   @override
   Widget build(BuildContext context) {
     final post = widget.post;
-    int likesCount = post.likes.length;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -57,7 +90,8 @@ class _PostCardState extends State<PostCard> {
               CircleAvatar(
                 radius: 20,
                 backgroundImage: NetworkImage(
-                    post.authorAvatar ?? 'https://i.pravatar.cc/150?img=12'),
+                  post.authorAvatar ?? 'https://i.pravatar.cc/150?img=12',
+                ),
               ),
               const SizedBox(width: 10),
               Column(
@@ -72,10 +106,7 @@ class _PostCardState extends State<PostCard> {
                     ),
                   ),
                   Text(
-                    post.createdAt
-                        .toLocal()
-                        .toString()
-                        .split('.')[0],
+                    post.createdAt.toLocal().toString().split('.')[0],
                     style: TextStyle(fontSize: 11, color: Colors.teal[800]),
                   ),
                 ],
@@ -109,43 +140,102 @@ class _PostCardState extends State<PostCard> {
           const SizedBox(height: 6),
 
           // 🔹 Text
-          Text(
-            post.text,
-            style: TextStyle(fontSize: 13.5, color: Colors.teal[800]),
-          ),
+      // ✅ Check if Repost or Normal Post
+if (!post.isRepost) ...[
+  // 🔹 Text (Normal Post)
+  Text(
+    post.text,
+    style: TextStyle(fontSize: 13.5, color: Colors.teal[800]),
+  ),
+  const SizedBox(height: 6),
 
-          const SizedBox(height: 6),
+  // 🔹 Image
+  if (post.imageUrl != null)
+    ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: post.imageUrl!.startsWith('/')
+          ? Image.file(File(post.imageUrl!), fit: BoxFit.cover)
+          : Image.network(post.imageUrl!, fit: BoxFit.cover),
+    ),
+] else ...[
+  // 🌀 Repost Layout
+  if (post.text.isNotEmpty)
+    Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Text(
+        post.text,
+        style: TextStyle(fontSize: 13.5, color: Colors.teal[800]),
+      ),
+    ),
 
-          // 🔹 Image (local or network)
-          if (post.imageUrl != null)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: post.imageUrl!.startsWith('/')
-                  ? Image.file(File(post.imageUrl!), fit: BoxFit.cover)
-                  : Image.network(post.imageUrl!, fit: BoxFit.cover),
+  Container(
+    margin: const EdgeInsets.only(top: 4),
+    padding: const EdgeInsets.all(8),
+    decoration: BoxDecoration(
+      color: Colors.grey[100],
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: Colors.grey.shade300),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            CircleAvatar(
+              radius: 16,
+              backgroundImage: NetworkImage(
+                post.originalPost?.authorAvatar ??
+                    'https://i.pravatar.cc/150?img=5',
+              ),
             ),
+            const SizedBox(width: 8),
+            Text(
+              post.originalPost?.authorName ?? "Unknown User",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.teal[800],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Text(
+          post.originalPost?.text ?? '',
+          style: TextStyle(fontSize: 13.5, color: Colors.teal[800]),
+        ),
+        const SizedBox(height: 6),
+        if (post.originalPost?.imageUrl != null)
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.network(
+              post.originalPost!.imageUrl!,
+              fit: BoxFit.cover,
+            ),
+          ),
+      ],
+    ),
+  ),
+]
+,
 
           const SizedBox(height: 6),
 
-          // 🔹 Bottom icons
+          // 🔹 Actions
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               // ❤️ Like
               Row(
                 children: [
-                 IconButton(
-  onPressed: () {
-    setState(() {
-      isLiked = !isLiked;
-    });
-    if (widget.onLike != null) widget.onLike!();
-  },
-  icon: Icon(
-    isLiked ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined,
-  ),
-  color: isLiked ? Colors.teal : Colors.teal[800],
-),
+                  IconButton(
+                    onPressed: _handleLike,
+                    icon: Icon(
+                      isLiked
+                          ? Icons.thumb_up_alt
+                          : Icons.thumb_up_alt_outlined,
+                    ),
+                    color: isLiked ? Colors.teal : Colors.teal[800],
+                  ),
                   Text(
                     '$likesCount',
                     style: TextStyle(color: Colors.teal[800], fontSize: 13),
@@ -173,19 +263,28 @@ class _PostCardState extends State<PostCard> {
               // 🔁 Repost
               IconButton(
                 onPressed: () {
-                 context.push('/repost', extra: widget.post);
-
+                  context.push('/repost', extra: widget.post);
                 },
                 icon: const Icon(Icons.swap_horiz_outlined),
                 color: Colors.teal[800],
               ),
 
               // ✉️ Send
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.send_outlined),
-                color: Colors.teal[800],
-              ),
+            IconButton(
+  onPressed: () {
+    String content = widget.post.text;
+    if (widget.post.imageUrl != null && widget.post.imageUrl!.isNotEmpty) {
+      // ✅ مشاركة نص + صورة
+      Share.share('${widget.post.text}\n\n${widget.post.imageUrl}');
+    } else {
+      // ✅ مشاركة النص فقط
+      Share.share(content);
+    }
+  },
+  icon: const Icon(Icons.send_outlined),
+  color: Colors.teal[800],
+),
+
             ],
           ),
         ],
