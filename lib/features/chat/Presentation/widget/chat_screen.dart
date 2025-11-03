@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:linkedin/features/chat/data/repo/chat_servure.dart';
 import 'package:linkedin/core/theme/app_colors.dart';
 
-
 class ChatScreen extends StatefulWidget {
   final String chatName;
   final String receiverId;
@@ -30,6 +29,11 @@ class _ChatScreenState extends State<ChatScreen> {
   void initState() {
     super.initState();
     receiverId = widget.receiverId;
+
+    final user = _auth.currentUser;
+    if (user != null) {
+      _chatService.markMessagesAsSeen(user.uid, receiverId);
+    }
   }
 
   void _sendMessage() async {
@@ -74,6 +78,12 @@ class _ChatScreenState extends State<ChatScreen> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
+                if (snapshot.hasData && snapshot.data!.docs.isNotEmpty) {
+                  Future.microtask(() {
+                    _chatService.markMessagesAsSeen(user.uid, receiverId);
+                  });
+                }
+
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return const Center(child: Text("No messages yet."));
                 }
@@ -94,19 +104,21 @@ class _ChatScreenState extends State<ChatScreen> {
                       timeText =
                           '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
                     }
+                    if (isMe) {
+                     final seen = data['isSeen'] == true;
+                     timeText += seen ? ' ✓✓' : ' ✓';
+                    }
 
                     return Align(
-                      alignment: isMe
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
+                      alignment:
+                          isMe ? Alignment.centerRight : Alignment.centerLeft,
                       child: Container(
                         margin: const EdgeInsets.symmetric(
                             vertical: 4, horizontal: 8),
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: isMe
-                              ? AppColors.kLightGreen
-                              : Colors.grey[300],
+                          color:
+                              isMe ? AppColors.kLightGreen : Colors.grey[300],
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(

@@ -9,20 +9,20 @@ class ChatSearchLogic {
   }) {
     if (searchQuery.isEmpty) {
       return allUsers.where((doc) {
-        final user = doc.data() as Map<String, dynamic>;
-        return user['uid'] != currentUser?.uid;
+        final user = doc.data() as Map<String, dynamic>? ?? {};
+        final uid = user['uid']?.toString() ?? '';
+        return uid.isNotEmpty && uid != currentUser?.uid;
       }).toList();
     }
 
     final lowerQuery = searchQuery.toLowerCase();
 
     return allUsers.where((doc) {
-      final user = doc.data() as Map<String, dynamic>;
-      final name = (user['name'] ?? '').toString().toLowerCase();
+      final user = doc.data() as Map<String, dynamic>? ?? {};
       final email = (user['email'] ?? '').toString().toLowerCase();
-
-      if (user['uid'] == currentUser?.uid) return false;
-      return name.contains(lowerQuery) || email.contains(lowerQuery);
+      final uid = (user['uid'] ?? '').toString();
+      if (uid.isEmpty || uid == currentUser?.uid) return false;
+      return email.contains(lowerQuery);
     }).toList();
   }
 }
