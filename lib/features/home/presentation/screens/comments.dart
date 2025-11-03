@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linkedin/features/home/data/models/comment_model.dart';
@@ -20,6 +21,11 @@ class _CommentsState extends State<Comments> {
 
   @override
   Widget build(BuildContext context) {
+    
+  final currentUser = FirebaseAuth.instance.currentUser;
+    final currentUserId = currentUser?.uid ?? 'guest_user';
+    final currentUserName = currentUser?.displayName ?? 'Unknown User';
+final currentUserImagrUrl= currentUser?.photoURL ?? 'https://i.pravatar.cc/150?img=3';
     return BlocProvider(
       create: (_) {
         final repo = PostRepository(PostService());
@@ -52,14 +58,17 @@ class _CommentsState extends State<Comments> {
                       itemBuilder: (context, index) {
                         final c = state.comments[index];
                         return CommentItem(
-                          imageUrl: c.userImage.isNotEmpty
-                              ? c.userImage
-                              : 'https://i.pravatar.cc/150?img=3',
-                          name: c.userName,
-                          job: '', // ممكن تضيف وظيفة لو عايز
-                          time: c.createdAt.toLocal().toString().split('.')[0],
-                          comment: c.text,
-                        );
+  imageUrl: c.userImage.isNotEmpty ? c.userImage : currentUserImagrUrl,
+  name: c.userName,
+  job: '',
+  time: c.createdAt.toLocal().toString().split('.')[0],
+  comment: c.text,
+  postId: widget.postId, // ✅ البوست الحالي
+  commentId: c.id,       // ✅ id الكومنت نفسه
+  likes: c.likes,        // ✅ خريطة اللايكات من الموديل
+  currentUserId: currentUserId, // ✅ المستخدم الحالي
+);
+
                       },
                     );
                   } else if (state is CommentError) {
@@ -97,8 +106,8 @@ class _CommentsState extends State<Comments> {
                         final postRepo = PostRepository(PostService());
                         postRepo.addComment(
                           widget.postId,
-                          'CURRENT_USER_ID',
-                          'Mera Mourad',
+                          currentUserId,
+                          currentUserName,
                           text,
                         );
 

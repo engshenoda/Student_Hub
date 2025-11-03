@@ -58,6 +58,34 @@ Future<void> addPost({required Post post, File? imageFile}) async {
 }
 
 
+
+
+
+  Future<void> toggleCommentLike(String postId, String commentId, String userId) async {
+    final commentRef = _postsCol.doc(postId).collection('comments').doc(commentId);
+    await _firestore.runTransaction((tx) async {
+      final snap = await tx.get(commentRef);
+      if (!snap.exists) return;
+      final data = snap.data() as Map<String, dynamic>? ?? {};
+      final likes = Map<String, dynamic>.from(data['likes'] ?? {});
+      if (likes.containsKey(userId)) {
+        likes.remove(userId);
+      } else {
+        likes[userId] = true;
+      }
+      tx.update(commentRef, {'likes': likes});
+    });
+  }
+
+
+
+
+
+
+
+
+
+
   Future<void> editPost({
   required String postId,
   required Map<String, dynamic> updateData,
@@ -78,21 +106,48 @@ Future<void> addPost({required Post post, File? imageFile}) async {
     await _postsCol.doc(postId).delete();
   }
 
-  Future<void> toggleLike(String postId, String userId) async {
-    final docRef = _postsCol.doc(postId);
-    await _firestore.runTransaction((tx) async {
-      final snapshot = await tx.get(docRef);
-      if (!snapshot.exists) return;
-      final data = snapshot.data() as Map<String, dynamic>;
-      final likes = Map<String, dynamic>.from(data['likes'] ?? {});
-      if (likes.containsKey(userId)) {
-        likes.remove(userId);
-      } else {
-        likes[userId] = true;
-      }
-      tx.update(docRef, {'likes': likes});
+ Future<void> toggleLike(String postId, String userId) async {
+  final docRef = _postsCol.doc(postId);
+
+  await _firestore.runTransaction((tx) async {
+    final snapshot = await tx.get(docRef);
+    if (!snapshot.exists) return;
+
+    final data = snapshot.data() as Map<String, dynamic>? ?? {};
+    final likes = Map<String, dynamic>.from(data['likes'] ?? {});
+    int likesCount = (data['likesCount'] ?? likes.length) as int;
+
+    if (likes.containsKey(userId)) {
+      // المستخدم بالفعل عامل لايك → نشيله
+      likes.remove(userId);
+      likesCount = (likesCount > 0) ? likesCount - 1 : 0;
+    } else {
+      // المستخدم بيدوس لايك جديد
+      likes[userId] = true;
+      likesCount++;
+    }
+
+    // تحديث البيانات في Firestore
+    tx.update(docRef, {
+      'likes': likes,
+      'likesCount': likesCount,
     });
-  }
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // Comment handling can be in subcollection 'posts/{id}/comments'
   Future<void> addComment(String postId, String userId, String userName, String text) async {
@@ -125,17 +180,18 @@ Future<void> addPost({required Post post, File? imageFile}) async {
   String? userAvatar,
   String? caption,
 }) async {
-  final newPost = Post(
-    id: '',
-    authorId: userId,
-    authorName: userName,
-    authorAvatar: userAvatar,
-    text: caption ?? '',
-    imageUrl: null,
-    createdAt: DateTime.now(),
-    isRepost: true,
-    originalPost: originalPost,
-  );
+ final newPost = Post(
+  id: '',
+  authorId: userId,
+  authorName: userName,
+  authorAvatar: userAvatar,
+  text: caption ?? '',
+  imageUrl: originalPost.imageUrl, // ✅ كده الصورة هتتنقل
+  createdAt: DateTime.now(),
+  isRepost: true,
+  originalPost: originalPost,
+);
+;
 
   await _postsCol.add(newPost.toMap());
 }

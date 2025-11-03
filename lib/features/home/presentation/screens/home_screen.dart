@@ -16,7 +16,9 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentUser = FirebaseAuth.instance.currentUser;
-    final userName = currentUser?.displayName ?? 'User';
+    final currentUserId = currentUser?.uid ?? 'guest_user';
+    final currentUserName = currentUser?.displayName ?? 'Unknown User';
+
     return BlocProvider(
       create: (context) {
         final repo = PostRepository(PostService());
@@ -25,13 +27,12 @@ class HomeScreen extends StatelessWidget {
         return cubit;
       },
       child: CustomBottomNavigationBar(
-        // خلى الـ Scaffold هنا جوه الـ CustomBottomNavigationBar مباشرة
         child: Scaffold(
           backgroundColor: Colors.white,
           body: Column(
             children: [
               // -------- Header Section --------
-              HomeHeader(),
+              const HomeHeader(),
               const SizedBox(height: 10),
 
               // -------- Posts Section --------
@@ -45,6 +46,7 @@ class HomeScreen extends StatelessWidget {
                       if (posts.isEmpty) {
                         return const Center(child: Text('No posts yet.'));
                       }
+
                       return ListView.separated(
                         padding: EdgeInsets.zero,
                         itemCount: posts.length,
@@ -53,29 +55,37 @@ class HomeScreen extends StatelessWidget {
                           final post = posts[index];
                           return PostCard(
                             post: post,
+
+                            // ❤️ Like
                             onLike: () {
-                              final currentUserId = 'CURRENT_USER_ID';
                               context.read<PostCubit>().toggleLike(
-                                post.id,
-                                currentUserId,
-                              );
+                                    post.id,
+                                    currentUserId,
+                                  );
                             },
-                            onDelete: () {
-                              context.read<PostCubit>().deletePost(post.id);
-                            },
+
+                            // 🗑️ Delete
+                            onDelete: () async {
+    await context.read<PostCubit>().deletePost(post.id);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Post deleted successfully'),
+      backgroundColor: Colors.teal,),
+    );
+  },
+
+                            // ✏️ Edit
                             onEdit: () {
-                              // نروح لصفحة Edit Post ونمرر البوست الحالي
                               context.push('/AddPost', extra: post);
                             },
+
+                            // 💬 Comment
                             onAddComment: (text) {
-                              final currentUserId = 'CURRENT_USER_ID';
-                              final currentUserName = 'Mera Mourad';
                               context.read<PostCubit>().addComment(
-                                post.id,
-                                currentUserId,
-                                currentUserName,
-                                text,
-                              );
+                                    post.id,
+                                    currentUserId,
+                                    currentUserName,
+                                    text,
+                                  );
                             },
                           );
                         },

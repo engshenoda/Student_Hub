@@ -1,19 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:linkedin/features/home/logic/comment_cubit/comment_cubit.dart';
 
 class CommentItem extends StatelessWidget {
-final String imageUrl ;
+  final String imageUrl;
   final String name;
   final String job;
   final String time;
-   final String comment;
+  final String comment;
+  final String postId;
+  final String commentId;
+  final Map<String, dynamic> likes; // userId -> true
+  final String currentUserId;
 
-  const CommentItem({super.key, required this.imageUrl, required this.name, required this.job, required this.time, required this.comment});
-
+  const CommentItem({
+    super.key,
+    required this.imageUrl,
+    required this.name,
+    required this.job,
+    required this.time,
+    required this.comment,
+    required this.postId,
+    required this.commentId,
+    required this.likes,
+    required this.currentUserId,
+  });
 
   @override
   Widget build(BuildContext context) {
-    
- {
+    final bool isLiked = likes.containsKey(currentUserId);
+    final int likeCount = likes.length;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -26,6 +43,7 @@ final String imageUrl ;
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Header (name + job + time)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -34,7 +52,7 @@ final String imageUrl ;
                     children: [
                       Text(
                         name,
-                        style:  TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                           color: Colors.teal[800],
@@ -42,7 +60,7 @@ final String imageUrl ;
                       ),
                       Text(
                         job,
-                        style:  TextStyle(
+                        style: TextStyle(
                           fontSize: 10,
                           color: Colors.teal[800],
                         ),
@@ -51,31 +69,74 @@ final String imageUrl ;
                   ),
                   Text(
                     time,
-                    style:  TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       color: Colors.grey,
                     ),
                   ),
                 ],
               ),
-               SizedBox(height: 6),
+
+              const SizedBox(height: 6),
+
+              // Comment text
               Text(
-                '$comment',
-                style:  TextStyle(
+                comment,
+                style: const TextStyle(
                   fontSize: 13,
                   color: Colors.black87,
                 ),
               ),
-               SizedBox(height: 6),
+
+              const SizedBox(height: 6),
+
+              // Actions (like button + count)
               Row(
-                children:  [
-                  Icon(Icons.thumb_up_alt_outlined, size: 18,color: Colors.teal[800],),
-                  SizedBox(width: 4),
-                  Text('Like', style: TextStyle(fontSize: 13)),
-                  SizedBox(width: 20),
-                  Icon(Icons.chat_bubble_outline, size: 18,color: Colors.teal[800],),
-                  SizedBox(width: 4),
-                  Text('Respond', style: TextStyle(fontSize: 13)),
+                children: [
+                  IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    icon: Icon(
+                      isLiked ? Icons.thumb_up : Icons.thumb_up_alt_outlined,
+                      size: 18,
+                      color: isLiked ? Colors.teal[800] : Colors.teal[800],
+                    ),
+                    onPressed: () {
+                      context.read<CommentCubit>().toggleCommentLike(
+                            postId,
+                            commentId,
+                            currentUserId,
+                          );
+                    },
+                  ),
+
+                  // 🔹 "Like" + عداد
+                  Row(
+                    children: [
+                      Text(
+                        'Like',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: isLiked ? Colors.teal[800] : Colors.teal[800],
+                        ),
+                      ),
+                      if (likeCount > 0) ...[
+                        const SizedBox(width: 4),
+                        Text(
+                          '($likeCount)',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.teal[800],
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+
+                  
+
+                 
+               
                 ],
               ),
             ],
@@ -83,6 +144,5 @@ final String imageUrl ;
         ),
       ],
     );
-  }
   }
 }

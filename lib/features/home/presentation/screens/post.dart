@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -17,6 +18,7 @@ class AddPost extends StatefulWidget {
 }
 
 class _AddPostState extends State<AddPost> {
+  
   final TextEditingController _controller = TextEditingController();
   File? _pickedImage;
   bool _isLoading = false;
@@ -53,11 +55,16 @@ class _AddPostState extends State<AddPost> {
 
     final cubit = context.read<PostCubit>();
 
+  final currentUser = FirebaseAuth.instance.currentUser;
+    final currentUserId = currentUser?.uid ?? 'guest_user';
+    final currentUserName = currentUser?.displayName ?? 'Unknown User';
+
+
     if (widget.existing == null) {
       final post = Post(
         id: '',
-        authorId: 'CURRENT_USER_ID', // TODO: replace with FirebaseAuth.uid
-        authorName: 'Mera Mourad', // TODO: replace with Firebase user name
+        authorId: currentUserId, // TODO: replace with FirebaseAuth.uid
+        authorName: currentUserName, // TODO: replace with Firebase user name
         authorAvatar: null,
         text: text,
         imageUrl: null,
@@ -75,6 +82,9 @@ class _AddPostState extends State<AddPost> {
 
   @override
   Widget build(BuildContext context) {
+      final currentUser = FirebaseAuth.instance.currentUser;
+    final currentUserId = currentUser?.uid ?? 'guest_user';
+    final currentUserName = currentUser?.displayName ?? 'Unknown User';
     return BlocConsumer<PostCubit, PostState>(
       listener: (context, state) {
         if (state is PostActionSuccess) {
@@ -151,26 +161,26 @@ class _AddPostState extends State<AddPost> {
                       children: [
                         // 🔹 Profile Section
                         Row(
-                          children: const [
-                            CircleAvatar(
+                          children: [
+                            const CircleAvatar(
                               radius: 22,
                               backgroundImage: NetworkImage(
                                 'https://www.bing.com/th/id/OIP.EzA6vF2nER9bJEh6o1EHZAHaI7?w=174&h=211&c=8&rs=1&qlt=90&o=6',
                               ),
                             ),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Hi, Mera Mourad",
-                                  style: TextStyle(
+                                  "Hi, $currentUserName",
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
                                     color: Colors.teal,
                                   ),
                                 ),
-                                Text(
+                                const Text(
                                   "UI / UX Designer",
                                   style: TextStyle(
                                     fontSize: 11,
