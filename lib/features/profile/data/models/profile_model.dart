@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 class ProfileModel extends Equatable {
   final String name;
-  final String title;
+  final String role;
   final String aboutMe;
   final List<String> skills;
   final Education education;
@@ -12,7 +12,7 @@ class ProfileModel extends Equatable {
 
   const ProfileModel({
     required this.name,
-    required this.title,
+    required this.role,
     required this.aboutMe,
     required this.skills,
     required this.education,
@@ -23,19 +23,19 @@ class ProfileModel extends Equatable {
 
   /// Empty factory useful for Cubit initial state
   factory ProfileModel.empty() => ProfileModel(
-        name: '',
-        title: '',
-        aboutMe: '',
-        skills: const [],
-        education: Education.empty(),
-        languages: const [],
-        experiences: const [],
-        photoUrl: '',
-      );
+    name: '',
+    role: '',
+    aboutMe: '',
+    skills: const [],
+    education: Education.empty(),
+    languages: const [],
+    experiences: const [],
+    photoUrl: '',
+  );
 
   ProfileModel copyWith({
     String? name,
-    String? title,
+    String? role,
     String? aboutMe,
     List<String>? skills,
     Education? education,
@@ -45,7 +45,7 @@ class ProfileModel extends Equatable {
   }) {
     return ProfileModel(
       name: name ?? this.name,
-      title: title ?? this.title,
+      role: role ?? this.role,
       aboutMe: aboutMe ?? this.aboutMe,
       skills: skills ?? List.unmodifiable(this.skills),
       education: education ?? this.education,
@@ -67,7 +67,7 @@ class ProfileModel extends Equatable {
 
     return ProfileModel(
       name: map['name'] ?? '',
-      title: map['title'] ?? '',
+      role: map['role'] ?? map['title'] ?? '',
       aboutMe: map['aboutMe'] ?? map['about'] ?? '',
       skills: _safeList(map['skills']),
       education: Education.fromMap(
@@ -76,7 +76,8 @@ class ProfileModel extends Equatable {
             : null,
       ),
       languages: _safeList(map['languages']),
-      experiences: (map['experiences'] as List<dynamic>?)
+      experiences:
+          (map['experiences'] as List<dynamic>?)
               ?.map((e) => Experience.fromMap(Map<String, dynamic>.from(e)))
               .toList() ??
           [],
@@ -85,15 +86,15 @@ class ProfileModel extends Equatable {
   }
 
   Map<String, dynamic> toMap() => {
-        'name': name,
-        'title': title,
-        'aboutMe': aboutMe,
-        'skills': skills,
-        'education': education.toMap(),
-        'languages': languages,
-        'experiences': experiences.map((e) => e.toMap()).toList(),
-        'photoUrl': photoUrl,
-      };
+    'name': name,
+    'title': role,
+    'aboutMe': aboutMe,
+    'skills': skills,
+    'education': education.toMap(),
+    'languages': languages,
+    'experiences': experiences.map((e) => e.toMap()).toList(),
+    'photoUrl': photoUrl,
+  };
 
   /// convenience helpers
   ProfileModel addSkill(String skill) {
@@ -108,15 +109,15 @@ class ProfileModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        name,
-        title,
-        aboutMe,
-        skills,
-        education,
-        languages,
-        experiences,
-        photoUrl,
-      ];
+    name,
+    role,
+    aboutMe,
+    skills,
+    education,
+    languages,
+    experiences,
+    photoUrl,
+  ];
 }
 
 class Education extends Equatable {
@@ -143,10 +144,10 @@ class Education extends Equatable {
   }
 
   Map<String, dynamic> toMap() => {
-        'university': university,
-        'year': year,
-        'degree': degree,
-      };
+    'university': university,
+    'year': year,
+    'degree': degree,
+  };
 
   @override
   List<Object?> get props => [university, year, degree];
@@ -156,25 +157,16 @@ class Experience extends Equatable {
   final String title;
   final String year;
 
-  const Experience({
-    required this.title,
-    required this.year,
-  });
+  const Experience({required this.title, required this.year});
 
   factory Experience.empty() => const Experience(title: '', year: '');
 
   factory Experience.fromMap(Map<String, dynamic>? map) {
     if (map == null) return Experience.empty();
-    return Experience(
-      title: map['title'] ?? '',
-      year: map['year'] ?? '',
-    );
+    return Experience(title: map['title'] ?? '', year: map['year'] ?? '');
   }
 
-  Map<String, dynamic> toMap() => {
-        'title': title,
-        'year': year,
-      };
+  Map<String, dynamic> toMap() => {'title': title, 'year': year};
 
   @override
   List<Object?> get props => [title, year];

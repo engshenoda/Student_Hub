@@ -1,20 +1,21 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:linkedin/core/constant/constant_collections.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:linkedin/features/profile/data/models/profile_model.dart';
 
 class ProfileFirebaseService {
   final FirebaseFirestore _firestore;
   final FirebaseStorage _storage;
-  final String collectionProfilePath;
+  // final String collectionProfilePath;
 
   ProfileFirebaseService({
     FirebaseFirestore? firestore,
     FirebaseStorage? storage,
-    this.collectionProfilePath = 'profiles',
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _storage = storage ?? FirebaseStorage.instance;
+  }) : _firestore = firestore ?? FirebaseFirestore.instance,
+       _storage = storage ?? FirebaseStorage.instance;
+  String collectionProfilePath = ConstantCollections.users;
 
   DocumentReference<Map<String, dynamic>> _docRef(String uid) =>
       _firestore.collection(collectionProfilePath).doc(uid);
@@ -33,7 +34,10 @@ class ProfileFirebaseService {
   }
 
   /// 🔹 Update user profile fields
-  Future<ProfileModel> updateProfile(String uid, Map<String, dynamic> data) async {
+  Future<ProfileModel> updateProfile(
+    String uid,
+    Map<String, dynamic> data,
+  ) async {
     try {
       await _docRef(uid).set(data, SetOptions(merge: true));
       return await getProfile(uid);
@@ -44,15 +48,15 @@ class ProfileFirebaseService {
 
   /// 🔹 Upload avatar to Firebase Storage (if possible)
   /// If fails, fallback to local storage
- Future<String> uploadAvatar(String uid, File file) async {
-  try {
-    final ref = FirebaseStorage.instance.ref().child('avatars/$uid.jpg');
-    await ref.putFile(file);
-    return await ref.getDownloadURL();
-  } catch (e) {
-    throw Exception('Failed to upload avatar: $e');
+  Future<String> uploadAvatar(String uid, File file) async {
+    try {
+      final ref = FirebaseStorage.instance.ref().child('avatars/$uid.jpg');
+      await ref.putFile(file);
+      return await ref.getDownloadURL();
+    } catch (e) {
+      throw Exception('Failed to upload avatar: $e');
+    }
   }
-}
 
   /// 🔹 Save avatar locally and return file path
   Future<String> saveAvatarLocally(String uid, File file) async {
@@ -65,7 +69,8 @@ class ProfileFirebaseService {
         await avatarDir.create(recursive: true);
       }
 
-      final fileName = '${DateTime.now().millisecondsSinceEpoch}_${file.uri.pathSegments.last}';
+      final fileName =
+          '${DateTime.now().millisecondsSinceEpoch}_${file.uri.pathSegments.last}';
       final savedFile = await file.copy('${avatarDir.path}/$fileName');
       return savedFile.path;
     } catch (e) {

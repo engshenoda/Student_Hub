@@ -18,7 +18,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       final profile = await repo.fetchProfile(uid);
       emit(ProfileSuccess(profile));
     } catch (e) {
-      emit(ProfileError('⚠️ فشل في تحميل الملف الشخصي: $e'));
+      emit(ProfileError('Failed to load profile: $e'));
     }
   }
 
