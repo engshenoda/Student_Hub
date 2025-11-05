@@ -1,3 +1,4 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:linkedin/core/routes/route.dart';
 import 'package:linkedin/features/auth/presentation/screens/create_account/create_account_screen.dart';
@@ -22,6 +23,8 @@ import 'package:linkedin/features/onbording/splash_screen.dart';
 import 'package:linkedin/features/profile/presentation/screens/profile_screen.dart';
 import 'package:linkedin/features/questions/presentation/career_next_screen.dart';
 import 'package:linkedin/features/questions/presentation/profile_screen.dart';
+import 'package:linkedin/features/search_feature/logic/cubit/search_cubit.dart';
+import 'package:linkedin/features/search_feature/repository/search_repo.dart';
 import 'package:linkedin/features/search_feature/search_screen.dart';
 import 'package:linkedin/features/settings/screens/about_us.dart';
 import 'package:linkedin/features/settings/screens/settings.dart';
@@ -102,10 +105,14 @@ abstract class AppRoute {
         path: Routes.settings,
         builder: (context, state) => const Settings(),
       ),
-      GoRoute(
-        path: Routes.search,
-        builder: (context, state) => const SearchPage(),
-      ),
+GoRoute(
+  path: Routes.search,
+  builder: (context, state) => BlocProvider(
+    create: (_) => SearchCubit(SearchRepository()),
+    child: SearchPage(),
+  ),
+),
+
       GoRoute(
         path: Routes.aboutUs,
         builder: (context, state) => const About_Us(),
