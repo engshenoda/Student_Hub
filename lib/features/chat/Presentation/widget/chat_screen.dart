@@ -118,7 +118,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color:
-                              isMe ? AppColors.kLightGreen : Colors.grey[300],
+                              isMe ? AppColors.kDarkTeal : Color(0xFFF7F7F7),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Column(
@@ -135,7 +135,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             Text(
                               timeText,
                               style: TextStyle(
-                                  color: Colors.grey[600], fontSize: 11),
+                                  color: Colors.grey[1000], fontSize: 11),
                             ),
                           ],
                         ),

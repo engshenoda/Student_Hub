@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:linkedin/features/home/data/service/post_service.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -76,11 +77,15 @@ class HomeHeader extends StatelessWidget {
               ),
               const Spacer(),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  GoRouter.of(context).push('/search');
+                },
                 icon: const Icon(Icons.search, color: Colors.teal),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  GoRouter.of(context).push('/notifcation');
+                },
                 icon: const Icon(
                   Icons.notifications_none_rounded,
                   color: Colors.teal,
