@@ -6,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:linkedin/core/theme/app_colors.dart';
 import 'package:linkedin/core/theme/app_text_styles.dart';
 import 'package:linkedin/features/profile/logic/profile_cubit/profile_cubit.dart';
-import 'package:linkedin/features/profile/presentation/widgets/custom_button_profile.dart';
 import 'package:linkedin/features/profile/presentation/widgets/show_custom_bottom_sheet.dart';
 
 class ProfileHeader extends StatelessWidget {

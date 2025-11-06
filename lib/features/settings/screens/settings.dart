@@ -133,7 +133,7 @@ class _DarkModeSwitchState extends State<_DarkModeSwitch> {
   Widget build(BuildContext context) {
     return Switch(
       value: value,
-      activeColor: AppColors.primary,
+      activeThumbColor: AppColors.primary,
       onChanged: (v) => setState(() => value = v),
     );
   }

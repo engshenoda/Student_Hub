@@ -6,7 +6,7 @@ class PostCardRepost extends StatefulWidget {
   final String text;
   final String image;
 
-   PostCardRepost({
+   const PostCardRepost({
     super.key,
    required this.name,
     required this.role,

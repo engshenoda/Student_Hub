@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:linkedin/features/home/data/models/post_model.dart';
 import 'package:linkedin/features/home/data/rebo/posr_repo.dart';
-import 'package:linkedin/features/home/data/service/post_service.dart';
 import 'package:linkedin/features/home/logic/post_cubit/post_state.dart';
 
 class PostCubit extends Cubit<PostState> {

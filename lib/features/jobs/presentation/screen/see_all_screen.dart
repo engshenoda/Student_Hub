@@ -1,8 +1,10 @@
-
 import 'package:flutter/material.dart';
-import '../widget/jop_card.dart';
-
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:linkedin/features/jobs/logic/cubit/all_jobs_cubit.dart';
+import 'package:linkedin/features/jobs/logic/cubit/all_jobs_state.dart';
+import '../widget/job_card.dart';
+import 'job_details.dart';
+import 'package:linkedin/features/jobs/logic/cubit/job_details_cubit.dart';
 class AllJobsScreen extends StatefulWidget {
   const AllJobsScreen({super.key});
 
@@ -13,35 +15,15 @@ class AllJobsScreen extends StatefulWidget {
 class _AllJobsScreenState extends State<AllJobsScreen> {
   final TextEditingController _searchController = TextEditingController();
 
-  final Map<String, dynamic> Jobs = {
-    "title": "Senior UI Designer",
-    "company": "Gojek - Jakarta, ID",
-    "salary": "\$70K - \$90K",
-    "tags": ["Illustrator", "Social media", "Content data"],
-  };
-  
-  final int jobCount = 5;
-  List<Map<String, dynamic>> filteredJobs = [];
-
   @override
   void initState() {
     super.initState();
-    filteredJobs = List.generate(jobCount, (_) => Jobs);
-    _searchController.addListener(_filterJobs);
+    context.read<AllJobsCubit>().loadJobs();
+    _searchController.addListener(_onSearch);
   }
 
-  void _filterJobs() {
-    final query = _searchController.text.toLowerCase();
-    setState(() {
-      filteredJobs = List.generate(
-        jobCount,
-        (_) => Jobs,
-      ).where((job) {
-        final title = job["title"].toString().toLowerCase();
-        final company = job["company"].toString().toLowerCase();
-        return title.contains(query) || company.contains(query);
-      }).toList();
-    });
+  void _onSearch() {
+    context.read<AllJobsCubit>().searchJobs(_searchController.text);
   }
 
   @override
@@ -53,37 +35,13 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: AppBar(
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new, color:Colors.green),
-            onPressed: () => Navigator.pop(context),
-          ),
-          title: Padding(
-            padding: const EdgeInsets.all(35.0),
-            child: const Text(
-              "Featured jobs",
-              style: TextStyle(color: Color.fromARGB(255, 0, 145, 73), fontWeight: FontWeight.bold),
-            ),
-          ),
-          backgroundColor: Colors.white,
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFFA8E6CF), Colors.white], 
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
-          ),
-        ),
+      appBar: AppBar(
+        title: const Text("All Jobs"),
+        backgroundColor: Colors.green,
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          // Search bar
+          // Search Bar
           Container(
             margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -102,29 +60,52 @@ class _AllJobsScreenState extends State<AllJobsScreen> {
             ),
           ),
 
+          // Jobs List
           Expanded(
-            child: filteredJobs.isEmpty
-                ? const Center(
-                    child: Text(
-                      "No jobs found",
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                  )
-        : ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            itemCount: filteredJobs.length,
-            itemBuilder: (context, index) {
-              final job = filteredJobs[index];
-              return JobCard(job: job);
-            },
+            child: BlocBuilder<AllJobsCubit, AllJobsState>(
+              builder: (context, state) {
+                if (state is AllJobsLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is AllJobsLoaded) {
+                  if (state.jobs.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        "No jobs found",
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                    );
+                  }
+                  return ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    itemCount: state.jobs.length,
+                    itemBuilder: (context, index) {
+                      final job = state.jobs[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => BlocProvider(
+                                create: (_) => JobDetailsCubit(),
+                                child: DetailsJobScreen(job: job),
+                              ),
+                            ),
+                          );
+                        },
+                        child: JobCard(job: job),
+                      );
+                    },
+                  );
+                } else if (state is AllJobsError) {
+                  return Center(child: Text(state.message));
+                } else {
+                  return const SizedBox.shrink();
+                }
+              },
+            ),
           ),
-          )
         ],
       ),
     );
   }
 }
-
-
-
-

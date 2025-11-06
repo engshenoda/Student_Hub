@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:linkedin/features/home/data/models/comment_model.dart';
 import 'package:linkedin/features/home/data/rebo/posr_repo.dart';
 import 'package:linkedin/features/home/data/service/post_service.dart';
 import 'package:linkedin/features/home/logic/comment_cubit/comment_cubit.dart';

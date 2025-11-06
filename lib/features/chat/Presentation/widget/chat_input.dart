@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:linkedin/core/theme/app_colors.dart';
 
 
 

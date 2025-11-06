@@ -67,16 +67,16 @@ class _About_UsState extends State<About_Us> {
               onPressed: () {
                 GoRouter.of(context).go('');
               },
-              child: Text(
-                "Explore More",
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFF008A6F),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12), // no rounding at all
                 ),
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+              ),
+              child: Text(
+                "Explore More",
+                style: TextStyle(fontSize: 16, color: Colors.white),
               ),
             ),
           ],

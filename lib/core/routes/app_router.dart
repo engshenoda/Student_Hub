@@ -1,3 +1,4 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:linkedin/core/routes/route.dart';
 import 'package:linkedin/features/auth/presentation/screens/create_account/create_account_screen.dart';
@@ -14,13 +15,13 @@ import 'package:linkedin/features/home/presentation/screens/comments.dart';
 import 'package:linkedin/features/home/presentation/screens/home_screen.dart';
 import 'package:linkedin/features/home/presentation/screens/post.dart';
 import 'package:linkedin/features/home/presentation/screens/repost.dart';
+import 'package:linkedin/features/jobs/logic/cubit/jobs_cubit.dart';
 import 'package:linkedin/features/jobs/presentation/screen/jobs_screen.dart';
 import 'package:linkedin/features/jobs/presentation/screen/see_all_screen.dart';
 import 'package:linkedin/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:linkedin/features/onbording/Onboarding_pages.dart';
 import 'package:linkedin/features/onbording/splash_screen.dart';
 import 'package:linkedin/features/profile/presentation/screens/profile_screen.dart';
-import 'package:linkedin/features/questions/presentation/career_next_screen.dart';
 import 'package:linkedin/features/questions/presentation/profile_screen.dart';
 import 'package:linkedin/features/search_feature/search_screen.dart';
 import 'package:linkedin/features/settings/screens/about_us.dart';
@@ -34,6 +35,16 @@ abstract class AppRoute {
         path: Routes.splash,
         builder: (context, state) => const SplashScreen(),
       ),
+      GoRoute(
+  path: '/jobs',
+  builder: (context, state) {
+    return BlocProvider(
+      create: (_) => JobsCubit()..fetchJobs(),
+      child: const JobScreen(),
+    );
+  },
+),
+
       GoRoute(
         path: Routes.onboardingScreen,
         builder: (context, state) => const OnboardingScreen(),

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:linkedin/core/widgets/custom_bottom_navigation.dart';
 import 'package:linkedin/features/home/data/models/post_model.dart';
 import 'package:linkedin/features/home/logic/post_cubit/post_cubt.dart';
 import 'package:linkedin/features/home/logic/post_cubit/post_state.dart';

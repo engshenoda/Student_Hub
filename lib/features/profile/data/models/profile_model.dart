@@ -58,7 +58,7 @@ class ProfileModel extends Equatable {
   factory ProfileModel.fromMap(Map<String, dynamic>? map) {
     if (map == null) return ProfileModel.empty();
 
-    List<String> _safeList(dynamic value) {
+    List<String> safeList(dynamic value) {
       if (value is List) {
         return value.map((e) => e.toString()).toList();
       }
@@ -69,13 +69,13 @@ class ProfileModel extends Equatable {
       name: map['name'] ?? '',
       title: map['title'] ?? '',
       aboutMe: map['aboutMe'] ?? map['about'] ?? '',
-      skills: _safeList(map['skills']),
+      skills: safeList(map['skills']),
       education: Education.fromMap(
         map['education'] != null
             ? Map<String, dynamic>.from(map['education'])
             : null,
       ),
-      languages: _safeList(map['languages']),
+      languages: safeList(map['languages']),
       experiences: (map['experiences'] as List<dynamic>?)
               ?.map((e) => Experience.fromMap(Map<String, dynamic>.from(e)))
               .toList() ??

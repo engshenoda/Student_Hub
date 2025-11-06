@@ -1,197 +1,154 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:linkedin/features/jobs/data/jobs_model.dart';
+import 'package:linkedin/features/jobs/logic/cubit/job_details_cubit.dart';
+import 'package:linkedin/features/jobs/logic/cubit/job_details_state.dart';
 
-class DetailsJobScreen extends StatefulWidget {
-  final Map<String, dynamic> job;
+class DetailsJobScreen extends StatelessWidget {
+  final JobModel job;
   const DetailsJobScreen({super.key, required this.job});
 
   @override
-  State<DetailsJobScreen> createState() => _DetailsJobScreenState();
-}
-
-class _DetailsJobScreenState extends State<DetailsJobScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  Widget _buildDescription() {
-    return const Padding(
-      padding: EdgeInsets.all(16),
-      child: Text(
-        "This is the job description. Here you can add all the job details such as responsibilities, working hours, and benefits.",
-        style: TextStyle(fontSize: 15, color: Colors.black87, height: 1.4),
-      ),
-    );
-  }
-  
-  Widget _buildRequirement() {
-    return const Padding(
-      padding: EdgeInsets.all(16),
-      child: Text(
-        "Requirements:\n• Bachelor's degree in related field\n• 2+ years experience\n• Good communication skills",
-        style: TextStyle(fontSize: 15, color: Colors.black87, height: 1.4),
-      ),
-    );
-  }
-
-  Widget _buildReviews() {
-    return const Padding(
-      padding: EdgeInsets.all(16),
-      child: Text(
-        "No reviews yet. Reviews will appear here once users start submitting feedback.",
-        style: TextStyle(fontSize: 15, color: Colors.black87, height: 1.4),
-      ),
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              
-              Container(
-                
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xFFA8E6CF), 
-                      Colors.white,
+    return BlocProvider(
+      create: (_) => JobDetailsCubit()..loadJob(job),
+      child: BlocBuilder<JobDetailsCubit, JobDetailsState>(
+        builder: (context, state) {
+          if (state is JobDetailsLoading) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          } else if (state is JobDetailsError) {
+            return Scaffold(
+              body: Center(child: Text(state.message)),
+            );
+          } else if (state is JobDetailsLoaded) {
+            return Scaffold(
+              backgroundColor: Colors.white,
+              floatingActionButton: FloatingActionButton.extended(
+                onPressed: state.isApplied
+                    ? null
+                    : () => context.read<JobDetailsCubit>().applyForJob(),
+                label: Text(
+                  state.isApplied ? "Applied" : "Apply Now",
+                  style: const TextStyle(color: Colors.white),
+                ),
+                backgroundColor:
+                    state.isApplied ? Colors.grey : const Color(0xFF00A86B),
+                icon: const Icon(Icons.work_outline, color: Colors.white),
+              ),
+              body: SafeArea(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 24),
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Color(0xFFA8E6CF), Colors.white],
+                          ),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(40),
+                            bottomRight: Radius.circular(40),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  icon: const Icon(Icons.arrow_back_ios_new,
+                                      color: Colors.green),
+                                ),
+                                const Spacer(),
+                                IconButton(
+                                  icon: Icon(
+                                    state.isSaved
+                                        ? Icons.bookmark
+                                        : Icons.bookmark_border,
+                                    color: Colors.green,
+                                  ),
+                                  onPressed: () => context
+                                      .read<JobDetailsCubit>()
+                                      .toggleSaveJob(),
+                                ),
+                              ],
+                            ),
+                            Center(
+                              child: Column(
+                                children: [
+                                  Text(job.title,
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold)),
+                                  const SizedBox(height: 4),
+                                  Text(job.company,
+                                      style: const TextStyle(color: Colors.grey)),
+                                  const SizedBox(height: 16),
+                                  Wrap(
+                                    spacing: 8,
+                                    children: job.tags
+                                        .map((tag) => Chip(label: Text(tag)))
+                                        .toList(),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      DefaultTabController(
+                        length: 3,
+                        child: Column(
+                          children: [
+                            TabBar(
+                              labelColor: Colors.green.shade700,
+                              unselectedLabelColor: Colors.grey,
+                              indicatorColor: Colors.green,
+                              tabs: const [
+                                Tab(text: "Description"),
+                                Tab(text: "Requirement"),
+                                Tab(text: "Reviews"),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 400,
+                              child: TabBarView(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Text(job.description),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Text(job.requirements.join('\n• ')),
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.all(16),
+                                    child: Text("No reviews yet."),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(40),
-                    bottomRight: Radius.circular(40),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () => Navigator.pop(context),
-                          icon: const Icon(Icons.arrow_back_ios_new,
-                              color:Colors.green ),
-                        ),
-                        SizedBox(width: 60,),
-                        Text(
-                          "Details Job",
-                          style: TextStyle(
-                            color: Colors.green.shade800,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    
-                    Center(
-                      child: Column(
-                        children: [
-                          Text(
-                            widget.job["title"] ?? "Job Title",
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            widget.job["company"] ??
-                                "Company - Location, Country",
-                            style: const TextStyle(color: Colors.grey),
-                          ),
-                          const SizedBox(height: 16),
-                          // Tags
-                          Wrap(
-                            spacing: 8,
-                            children: (widget.job["tags"] ??
-                                    ["Illustrator", "Social media", "Content data"])
-                                .map<Widget>((tag) => Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12, vertical: 6),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(color: Colors.grey),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                Colors.grey.withOpacity(0.2),
-                                            spreadRadius: 1,
-                                            blurRadius: 3,
-                                            offset: const Offset(0, 2),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Text(
-                                        tag,
-                                        style: const TextStyle(
-                                            fontSize: 13,
-                                            color: Colors.black87),
-                                      ),
-                                    ))
-                                .toList(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
                 ),
               ),
-
-              const SizedBox(height: 16),
-
-              // Tabs
-              TabBar(
-                controller: _tabController,
-                labelColor: Colors.green.shade700,
-                unselectedLabelColor: Colors.grey,
-                indicatorColor: Colors.green,
-                tabs: const [
-                  Tab(text: "Description"),
-                  Tab(text: "Requirement"),
-                  Tab(text: "Reviews"),
-                ],
-              ),
-
-              
-              SizedBox(
-                height: 400,
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    _buildDescription(),
-                    _buildRequirement(),
-                    _buildReviews(),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
       ),
     );
   }
-    }
-
+}

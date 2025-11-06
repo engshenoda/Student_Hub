@@ -78,7 +78,7 @@ class _ProfileQBodyState extends State<_ProfileQBody> {
 
   @override
   Widget build(BuildContext context) {
-    final s = (double px) => responsive(context, px);
+    double s(double px) => responsive(context, px);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7F9),

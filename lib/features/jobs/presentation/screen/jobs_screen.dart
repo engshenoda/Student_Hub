@@ -1,13 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:linkedin/core/routes/route.dart';
-import '../widget/jop_card.dart';
-import '../widget/jop_tile.dart';
+import 'package:linkedin/features/jobs/logic/cubit/jobs_cubit.dart';
+import 'package:linkedin/features/jobs/logic/cubit/jobs_state.dart';
+import 'package:linkedin/features/jobs/logic/cubit/all_jobs_cubit.dart';
+import 'package:linkedin/features/jobs/presentation/screen/see_all_screen.dart';
+import 'package:linkedin/features/jobs/presentation/screen/job_details.dart';
+import '../widget/job_card.dart';
+import '../widget/job_tile.dart';
+import 'package:linkedin/features/jobs/data/jobs_model.dart';
 
-class JobScreen extends StatelessWidget {
+class JobScreen extends StatefulWidget {
   const JobScreen({super.key});
 
-  Widget categoryButton(String text, {VoidCallback? onTap}) {
+  @override
+  State<JobScreen> createState() => _JobScreenState();
+}
+
+class _JobScreenState extends State<JobScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String selectedCategory = "All";
+
+  Widget categoryButton(String text, {VoidCallback? onTap, bool isSelected = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6.0),
       child: Material(
@@ -19,9 +33,12 @@ class JobScreen extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white70,
+              color: isSelected ? const Color(0xFF00A651).withOpacity(0.2) : Colors.white70,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey, width: 1.5),
+              border: Border.all(
+                color: isSelected ? const Color(0xFF00A651) : Colors.grey,
+                width: 1.5,
+              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.25),
@@ -34,9 +51,10 @@ class JobScreen extends StatelessWidget {
             child: Center(
               child: Text(
                 text,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
+                  color: isSelected ? const Color(0xFF00A651) : Colors.black87,
                 ),
               ),
             ),
@@ -48,6 +66,7 @@ class JobScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ✅ BlocProvider اتشال من هنا – اتحط برا الصفحة في GoRoute أو Navigator
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
@@ -67,7 +86,7 @@ class JobScreen extends StatelessWidget {
                 if (router.canPop()) {
                   router.pop();
                 } else {
-                  router.go('/'); // لو مفيش صفحة قبلها يرجع للهوم
+                  router.go('/');
                 }
               },
             ),
@@ -85,104 +104,254 @@ class JobScreen extends StatelessWidget {
         ),
       ),
 
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // 🔍 Search
-            Container(
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: TextField(
-                controller: TextEditingController(),
-                decoration: const InputDecoration(
-                  hintText: "Search ",
-                  border: InputBorder.none,
-                  icon: Icon(Icons.search),
-                ),
-              ),
-            ),
+      body: BlocBuilder<JobsCubit, JobsState>(
+        builder: (context, state) {
+          if (state is JobsLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is JobsError) {
+            return Center(child: Text(state.message));
+          } else if (state is JobsLoaded) {
+            final jobs = state.jobs;
 
-            // 🏆 Featured Jobs header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Text(
-                    "Featured jobs",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 19,
-                      color: Color.fromARGB(255, 0, 145, 73),
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  // 🔍 Search bar
+                  Container(
+                    margin: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: const InputDecoration(
+                        hintText: "Search for jobs...",
+                        border: InputBorder.none,
+                        icon: Icon(Icons.search),
+                      ),
+                      onChanged: (query) {
+                        final cubit = context.read<JobsCubit>();
+                        if (query.trim().isEmpty) {
+                          cubit.fetchJobs();
+                        } else {
+                          cubit.searchJobs(query.trim());
+                        }
+                      },
                     ),
                   ),
-                ),
-                TextButton(
-                  onPressed: () =>
-                      GoRouter.of(context).push(Routes.alljobsscreen),
-                  child: const Text(
-                    "See All",
-                    style: TextStyle(color: Color.fromARGB(255, 0, 145, 73)),
+
+                  // 🏆 Featured Jobs header
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 12.0),
+                        child: Text(
+                          "Featured jobs",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 19,
+                            color: Color.fromARGB(255, 0, 145, 73),
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => BlocProvider(
+                                create: (_) => AllJobsCubit(),
+                                child: const AllJobsScreen(),
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          "See All",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 0, 145, 73),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
 
-            // 💼 Featured Job Card full width
-            const JobCard(
-              job: {
-                "title": "Senior UI Designer",
-                "company": "Gojek - Jakarta, ID",
-                "salary": "\$70K - \$90K",
-                "tags": ["Illustrator", "Social media", "Content data"],
-              },
-            ),
+                  // 💼 Featured Job
+                  if (jobs.isNotEmpty)
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => DetailsJobScreen(job: jobs.first),
+                          ),
+                        );
+                      },
+                      child: JobCard(job: jobs.first),
+                    ),
 
-            const SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
-            // 🧩 Categories Buttons
-            Container(
-              height: 40,
-              color: Colors.white,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  categoryButton("All", onTap: () {}),
-                  categoryButton("Researcher", onTap: () {}),
-                  categoryButton("UI Designer", onTap: () {}),
-                  categoryButton("Developer", onTap: () {}),
+                  // 🧩 Categories Buttons
+                  Container(
+                    height: 40,
+                    color: Colors.white,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        categoryButton(
+                          "All",
+                          isSelected: selectedCategory == "All",
+                          onTap: () {
+                            setState(() => selectedCategory = "All");
+                            context.read<JobsCubit>().fetchJobs();
+                          },
+                        ),
+                        categoryButton(
+                          "Researcher",
+                          isSelected: selectedCategory == "Researcher",
+                          onTap: () {
+                            setState(() => selectedCategory = "Researcher");
+                            context.read<JobsCubit>().searchJobs("Researcher");
+                          },
+                        ),
+                        categoryButton(
+                          "UI Designer",
+                          isSelected: selectedCategory == "UI Designer",
+                          onTap: () {
+                            setState(() => selectedCategory = "UI Designer");
+                            context.read<JobsCubit>().searchJobs("UI Designer");
+                          },
+                        ),
+                        categoryButton(
+                          "Developer",
+                          isSelected: selectedCategory == "Developer",
+                          onTap: () {
+                            setState(() => selectedCategory = "Developer");
+                            context.read<JobsCubit>().searchJobs("Developer");
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // 🔷 Jobs list
+                  if (jobs.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.all(24.0),
+                      child: Text("No jobs found.", style: TextStyle(color: Colors.grey)),
+                    )
+                  else
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        children: jobs.map((job) {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => DetailsJobScreen(job: job),
+                                ),
+                              );
+                            },
+                            child: JobTile(
+                              title: job.title,
+                              icon: Icons.work_outline,
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
                 ],
               ),
-            ),
+            );
+          } else {
+            return const SizedBox();
+          }
+        },
+      ),
 
-            const SizedBox(height: 12),
+      // 🟢 Floating Action Button – Add Job
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color.fromARGB(255, 0, 145, 73),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              final titleController = TextEditingController();
+              final companyController = TextEditingController();
+              final salaryController = TextEditingController();
+              final descriptionController = TextEditingController();
 
-            // 🔷 Grid of Jobs with icons
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 2,
-                childAspectRatio: 1.2,
-                children: const [
-                  JobTile(title: "Machine Learning , AI", icon: Icons.memory),
-                  JobTile(title: "C# applications", icon: Icons.code),
-                  JobTile(
-                    title: "Figma UI/UX designer",
-                    icon: Icons.design_services,
+              return AlertDialog(
+                title: const Text("Add New Job"),
+                content: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      TextField(
+                        controller: titleController,
+                        decoration: const InputDecoration(labelText: "Job Title"),
+                      ),
+                      TextField(
+                        controller: companyController,
+                        decoration: const InputDecoration(labelText: "Company Name"),
+                      ),
+                      TextField(
+                        controller: salaryController,
+                        decoration: const InputDecoration(labelText: "Salary"),
+                      ),
+                      TextField(
+                        controller: descriptionController,
+                        decoration: const InputDecoration(labelText: "Description"),
+                      ),
+                    ],
                   ),
-                  JobTile(title: "Machine Learning , AI", icon: Icons.computer),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Cancel"),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 0, 145, 73),
+                    ),
+                    onPressed: () async {
+                      final job = JobModel(
+                        id: '',
+                        title: titleController.text.trim(),
+                        company: companyController.text.trim(),
+                        salary: salaryController.text.trim(),
+                        description: descriptionController.text.trim(),
+                        tags: [],
+                        requirements: [],
+                      );
+
+                      await context.read<JobsCubit>().addJob(job);
+                      Navigator.pop(context);
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('✅ Job added successfully!')),
+                      );
+
+                      context.read<JobsCubit>().fetchJobs();
+                    },
+                    child: const Text("Save"),
+                  ),
                 ],
-              ),
-            ),
-          ],
-        ),
+              );
+            },
+          );
+        },
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

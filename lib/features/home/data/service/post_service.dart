@@ -66,7 +66,7 @@ Future<void> addPost({required Post post, File? imageFile}) async {
     await _firestore.runTransaction((tx) async {
       final snap = await tx.get(commentRef);
       if (!snap.exists) return;
-      final data = snap.data() as Map<String, dynamic>? ?? {};
+      final data = snap.data() ?? {};
       final likes = Map<String, dynamic>.from(data['likes'] ?? {});
       if (likes.containsKey(userId)) {
         likes.remove(userId);
@@ -191,7 +191,6 @@ Future<void> addPost({required Post post, File? imageFile}) async {
   isRepost: true,
   originalPost: originalPost,
 );
-;
 
   await _postsCol.add(newPost.toMap());
 }
