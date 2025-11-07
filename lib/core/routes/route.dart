@@ -3,9 +3,9 @@ class Routes {
   static const careerpreference = '/careerpreference';
   static const profileqscreen = '/profileqscreen';
 
-  static const Home = '/home';
+  static const home = '/home';
   static const messahes = '/messages';
-  static const AddPost = '/AddPost';
+  static const addPostScreen = '/AddPostScreen';
   static const forgetpassword = '/forgetpassword';
   static const veryfypassword = '/veryfypassword';
   static const login = '/login';

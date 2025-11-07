@@ -8,8 +8,6 @@ import 'package:linkedin/core/theme/app_colors.dart';
 import 'package:linkedin/features/questions/Logic/cubit/profile_cubit.dart';
 import 'package:linkedin/features/questions/Logic/cubit/profile_state.dart';
 
- 
-
 class ProfileQScreen extends StatelessWidget {
   const ProfileQScreen({super.key});
 
@@ -110,7 +108,11 @@ class _ProfileQBodyState extends State<_ProfileQBody> {
                 constraints: const BoxConstraints(maxWidth: 600),
                 child: Column(
                   children: [
-                    Container(height: 8, color: AppColors.primary, width: double.infinity),
+                    Container(
+                      height: 8,
+                      color: AppColors.primary,
+                      width: double.infinity,
+                    ),
                     Expanded(
                       child: SingleChildScrollView(
                         padding: EdgeInsets.symmetric(
@@ -184,11 +186,13 @@ class _ProfileQBodyState extends State<_ProfileQBody> {
                                     onPressed: () =>
                                         Navigator.of(context).maybePop(),
                                     style: OutlinedButton.styleFrom(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: s(16)),
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: s(16),
+                                      ),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(s(28)),
+                                        borderRadius: BorderRadius.circular(
+                                          s(28),
+                                        ),
                                       ),
                                       side: BorderSide(
                                         color: Colors.grey.shade300,
@@ -209,40 +213,49 @@ class _ProfileQBodyState extends State<_ProfileQBody> {
                                   child: ElevatedButton(
                                     onPressed: () async {
                                       await cubit.updateUserField(
-                                          userId: widget.userId,
-                                          field: 'fullName',
-                                          newValue: _fullNameCtrl.text);
+                                        userId: widget.userId,
+                                        field: 'fullName',
+                                        newValue: _fullNameCtrl.text,
+                                      );
                                       await cubit.updateUserField(
-                                          userId: widget.userId,
-                                          field: 'whatsapp',
-                                          newValue:
-                                              int.tryParse(_whatsappCtrl.text) ??
-                                                  0);
+                                        userId: widget.userId,
+                                        field: 'whatsapp',
+                                        newValue:
+                                            int.tryParse(_whatsappCtrl.text) ??
+                                            0,
+                                      );
                                       await cubit.updateUserField(
-                                          userId: widget.userId,
-                                          field: 'role',
-                                          newValue: _roleCtrl.text);
+                                        userId: widget.userId,
+                                        field: 'role',
+                                        newValue: _roleCtrl.text,
+                                      );
                                       await cubit.updateUserField(
-                                          userId: widget.userId,
-                                          field: 'degreeYear',
-                                          newValue: _degreeYearCtrl.text);
+                                        userId: widget.userId,
+                                        field: 'degreeYear',
+                                        newValue: _degreeYearCtrl.text,
+                                      );
                                       await cubit.updateUserField(
-                                          userId: widget.userId,
-                                          field: 'minSalary',
-                                          newValue: double.tryParse(
-                                                  _minSalaryCtrl.text) ??
-                                              0.0);
+                                        userId: widget.userId,
+                                        field: 'minSalary',
+                                        newValue:
+                                            double.tryParse(
+                                              _minSalaryCtrl.text,
+                                            ) ??
+                                            0.0,
+                                      );
 
                                       if (!mounted) return;
-                                      GoRouter.of(context).push(Routes.Home);
+                                      GoRouter.of(context).push(Routes.home);
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: s(16)),
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: s(16),
+                                      ),
                                       backgroundColor: AppColors.primary,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(s(28)),
+                                        borderRadius: BorderRadius.circular(
+                                          s(28),
+                                        ),
                                       ),
                                       elevation: 4,
                                     ),
@@ -346,7 +359,8 @@ class InfoRecommendationCard extends StatelessWidget {
   final UserCubit cubit;
   final String userId;
 
-  const InfoRecommendationCard({super.key, 
+  const InfoRecommendationCard({
+    super.key,
     required this.scale,
     required this.cubit,
     required this.userId,
@@ -472,8 +486,7 @@ class _ProfileFieldState extends State<ProfileField> {
               children: [
                 Text(
                   widget.label,
-                  style:
-                      TextStyle(fontSize: s(12), color: Colors.grey[600]),
+                  style: TextStyle(fontSize: s(12), color: Colors.grey[600]),
                 ),
                 SizedBox(height: s(6)),
                 _isEditing
@@ -492,8 +505,10 @@ class _ProfileFieldState extends State<ProfileField> {
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(s(8)),
-                            borderSide:
-                                const BorderSide(color: AppColors.primary, width: 1),
+                            borderSide: const BorderSide(
+                              color: AppColors.primary,
+                              width: 1,
+                            ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(s(8)),
@@ -528,9 +543,7 @@ class _ProfileFieldState extends State<ProfileField> {
             InkWell(
               onTap: () => setState(() => _isEditing = !_isEditing),
               child: Icon(
-                _isEditing
-                    ? Icons.check_circle_outline
-                    : Icons.edit_outlined,
+                _isEditing ? Icons.check_circle_outline : Icons.edit_outlined,
                 color: _isEditing ? AppColors.primary : Colors.grey[600],
                 size: s(20),
               ),

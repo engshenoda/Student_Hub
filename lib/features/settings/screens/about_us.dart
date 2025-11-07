@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class About_Us extends StatefulWidget {
-  const About_Us({super.key});
+class AboutUs extends StatefulWidget {
+  const AboutUs({super.key});
 
   @override
-  State<About_Us> createState() => _About_UsState();
+  State<AboutUs> createState() => _AboutUsState();
 }
 
-class _About_UsState extends State<About_Us> {
+class _AboutUsState extends State<AboutUs> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -7,9 +7,9 @@ class CustomBottomNavigationBar extends StatefulWidget {
   const CustomBottomNavigationBar({super.key, required this.child});
 
   static const _routes = [
-    Routes.Home,
+    Routes.home,
     Routes.messahes,
-    Routes.AddPost,
+    Routes.addPostScreen,
     Routes.jobs,
     Routes.profile,
   ];
@@ -58,15 +58,15 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             currentIndex = index;
           });
           if (index == 0) {
-            GoRouter.of(context).push(Routes.Home);
+            GoRouter.of(context).push(Routes.home);
           } else if (index == 1) {
             GoRouter.of(context).push(Routes.messahes);
           } else if (index == 2) {
-            GoRouter.of(context).push(Routes.AddPost);
+            GoRouter.of(context).push(Routes.addPostScreen);
           } else if (index == 3) {
             GoRouter.of(context).push(Routes.jobs);
           } else if (index == 4) {
-            GoRouter.of(context).push(Routes.profile);
+            GoRouter.of(context).push(Routes.search);
           }
         },
         items: const [
@@ -83,10 +83,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             icon: Icon(Icons.work_outline),
             label: 'Jobs',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profile',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
         ],
       ),
     );
