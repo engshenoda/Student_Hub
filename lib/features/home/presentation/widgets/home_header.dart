@@ -43,7 +43,7 @@ class HomeHeader extends StatelessWidget {
 
         final userData = snapshot.data!.data() as Map<String, dynamic>;
         final fullName = userData['name'] ?? 'User';
-        final role = userData['role'] ?? 'No role';
+        final jobTitle = userData['jobTitle'] ?? 'No jobTitle';
         final degreeYear = userData['degreeYear'] ?? '';
         final photo = userData['photoUrl']; // ممكن تكون null
 
@@ -89,7 +89,7 @@ class HomeHeader extends StatelessWidget {
                   ),
 
                   Text(
-                    role,
+                    jobTitle,
                     style: TextStyle(color: Colors.teal[800], fontSize: 12),
                   ),
                 ],

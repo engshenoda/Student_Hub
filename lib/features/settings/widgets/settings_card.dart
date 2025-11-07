@@ -43,7 +43,7 @@ class SettingsCard extends StatelessWidget {
 
         final userData = snapshot.data!.data() as Map<String, dynamic>;
         final fullName = userData['name'] ?? 'User';
-        final role = userData['role'] ?? 'No role';
+        final jobTitle = userData['jobTitle'] ?? 'No jobTitle';
         final photo = userData['photoUrl'];
 
         return Card(
@@ -96,7 +96,10 @@ class SettingsCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 6),
-                      Text(role, style: const TextStyle(color: Colors.grey)),
+                      Text(
+                        jobTitle,
+                        style: const TextStyle(color: Colors.grey),
+                      ),
                     ],
                   ),
                 ),

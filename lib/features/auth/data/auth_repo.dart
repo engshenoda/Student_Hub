@@ -14,7 +14,7 @@ class AuthRepo {
     required String email,
     required String password,
     required String fullName,
-    String role = '',
+    String jobTitle = '',
     String? photoUrl,
   }) async {
     final result = await _auth.createUserWithEmailAndPassword(
@@ -29,7 +29,7 @@ class AuthRepo {
         'uid': user.uid,
         'email': user.email,
         'name': fullName,
-        'role': role,
+        'jobTitle': jobTitle,
         'photoUrl': photoUrl,
         'createdAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
@@ -82,7 +82,7 @@ class AuthRepo {
         'uid': user.uid,
         'email': user.email,
         'name': user.displayName ?? 'No Name',
-        'role': '',
+        'jobTitle': '',
         'photoUrl': user.photoURL,
         'createdAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
@@ -98,7 +98,9 @@ class AuthRepo {
       throw Exception('Facebook sign-in failed');
     }
 
-    final credential = FacebookAuthProvider.credential(result.accessToken!.tokenString);
+    final credential = FacebookAuthProvider.credential(
+      result.accessToken!.tokenString,
+    );
     final userCredential = await _auth.signInWithCredential(credential);
     final user = userCredential.user;
 
@@ -107,7 +109,7 @@ class AuthRepo {
         'uid': user.uid,
         'email': user.email,
         'name': user.displayName ?? 'No Name',
-        'role': '',
+        'jobTitle': '',
         'photoUrl': user.photoURL,
         'createdAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));

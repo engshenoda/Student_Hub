@@ -20,7 +20,7 @@ import 'package:linkedin/features/notifications/presentation/screens/notificatio
 import 'package:linkedin/features/onbording/Onboarding_pages.dart';
 import 'package:linkedin/features/onbording/splash_screen.dart';
 import 'package:linkedin/features/profile/presentation/screens/profile_screen.dart';
-import 'package:linkedin/features/questions/presentation/profile_screen.dart';
+import 'package:linkedin/features/questions/presentation/user_question_screen.dart';
 import 'package:linkedin/features/search_feature/search_screen.dart';
 import 'package:linkedin/features/settings/screens/about_us.dart';
 import 'package:linkedin/features/settings/screens/settings.dart';

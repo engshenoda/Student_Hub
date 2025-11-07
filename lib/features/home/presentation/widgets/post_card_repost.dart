@@ -2,14 +2,14 @@
 
 // class PostCardRepost extends StatefulWidget {
 //   final String name;
-//   final String role;
+//   final String jobTitle;
 //   final String text;
 //   final String image;
 
 //    PostCardRepost({
 //     super.key,
 //    required this.name,
-//     required this.role,
+//     required this.jobTitle,
 //     required this.text,
 //     required this.image, 
 //   });
@@ -56,7 +56,7 @@
 //                         fontWeight: FontWeight.bold, fontSize: 14,color: Colors.teal[800]),
 //                   ),
 //                   Text(
-//                     widget.role,
+//                     widget.jobTitle,
 //                     style: TextStyle(fontSize: 10, color: Colors.teal[800],),
 //                   ),
 //                 ],

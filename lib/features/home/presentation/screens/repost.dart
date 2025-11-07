@@ -74,7 +74,7 @@ class Repost extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "Sharing a post", // وصف بسيط بدل الـ role الثابت
+                            "Sharing a post", // وصف بسيط بدل الـ jobTitle الثابت
                             style: TextStyle(
                               fontSize: 11,
                               color: Colors.teal[800],
@@ -155,7 +155,7 @@ class Repost extends StatelessWidget {
                   // 🔹 Original Post Preview
                   // PostCardRepost(
                   //   name: originalPost.authorName,
-                  //   role: "Shared post",
+                  //   jobTitle: "Shared post",
                   //   text: originalPost.text,
                   //   image: originalPost.imageUrl ?? "",
                   // ),

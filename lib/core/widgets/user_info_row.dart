@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 class UserInfoRow extends StatelessWidget {
   final String name;
-  final String? role;
+  final String? jobTitle;
   final String? imageUrl;
   final Widget? trailing;
   final VoidCallback? onTap;
@@ -12,7 +12,7 @@ class UserInfoRow extends StatelessWidget {
   const UserInfoRow({
     super.key,
     required this.name,
-    this.role,
+    this.jobTitle,
     this.imageUrl,
     this.trailing,
     this.onTap,
@@ -46,9 +46,9 @@ class UserInfoRow extends StatelessWidget {
                   fontSize: 14,
                 ),
               ),
-              if (role != null && role!.isNotEmpty)
+              if (jobTitle != null && jobTitle!.isNotEmpty)
                 Text(
-                  role!,
+                  jobTitle!,
                   style: const TextStyle(fontSize: 11, color: Colors.grey),
                 ),
             ],
@@ -61,19 +61,11 @@ class UserInfoRow extends StatelessWidget {
   }
 }
 
-
-
-
-
 class UserInfoRowWithFetch extends StatelessWidget {
   final String userId;
   final Widget? trailing;
 
-  const UserInfoRowWithFetch({
-    super.key,
-    required this.userId,
-    this.trailing,
-  });
+  const UserInfoRowWithFetch({super.key, required this.userId, this.trailing});
 
   @override
   Widget build(BuildContext context) {
@@ -99,12 +91,12 @@ class UserInfoRowWithFetch extends StatelessWidget {
 
         final userData = snapshot.data!.data() as Map<String, dynamic>;
         final name = userData['name'] ?? 'Unknown';
-        final role = userData['role'] ?? '';
+        final jobTitle = userData['jobTitle'] ?? '';
         final imageUrl = userData['profileImage'] ?? '';
 
         return UserInfoRow(
           name: name,
-          role: role,
+          jobTitle: jobTitle,
           imageUrl: imageUrl.isNotEmpty ? imageUrl : null,
           trailing: trailing,
         );
@@ -112,4 +104,3 @@ class UserInfoRowWithFetch extends StatelessWidget {
     );
   }
 }
-

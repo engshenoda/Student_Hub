@@ -144,7 +144,9 @@ class ProfileHeader extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      profile.role.isNotEmpty ? profile.role : 'No Title',
+                      profile.jobTitle.isNotEmpty
+                          ? profile.jobTitle
+                          : 'No Title',
                       style: AppTextStyles.subtitle,
                     ),
                   ],
@@ -153,7 +155,7 @@ class ProfileHeader extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.edit, color: AppColors.primary),
                 onPressed: () =>
-                    _editProfile(context, profile.name, profile.role),
+                    _editProfile(context, profile.name, profile.jobTitle),
               ),
             ],
           );

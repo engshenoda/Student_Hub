@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 class ProfileModel extends Equatable {
   final String name;
-  final String role;
+  final String jobTitle;
   final String aboutMe;
   final List<String> skills;
   final Education education;
@@ -12,7 +12,7 @@ class ProfileModel extends Equatable {
 
   const ProfileModel({
     required this.name,
-    required this.role,
+    required this.jobTitle,
     required this.aboutMe,
     required this.skills,
     required this.education,
@@ -24,7 +24,7 @@ class ProfileModel extends Equatable {
   /// Empty factory useful for Cubit initial state
   factory ProfileModel.empty() => ProfileModel(
     name: '',
-    role: '',
+    jobTitle: '',
     aboutMe: '',
     skills: const [],
     education: Education.empty(),
@@ -35,7 +35,7 @@ class ProfileModel extends Equatable {
 
   ProfileModel copyWith({
     String? name,
-    String? role,
+    String? jobTitle,
     String? aboutMe,
     List<String>? skills,
     Education? education,
@@ -45,7 +45,7 @@ class ProfileModel extends Equatable {
   }) {
     return ProfileModel(
       name: name ?? this.name,
-      role: role ?? this.role,
+      jobTitle: jobTitle ?? this.jobTitle,
       aboutMe: aboutMe ?? this.aboutMe,
       skills: skills ?? List.unmodifiable(this.skills),
       education: education ?? this.education,
@@ -67,7 +67,7 @@ class ProfileModel extends Equatable {
 
     return ProfileModel(
       name: map['name'] ?? '',
-      role: map['role'] ?? map['title'] ?? '',
+      jobTitle: map['jobTitle'] ?? map['title'] ?? '',
       aboutMe: map['aboutMe'] ?? map['about'] ?? '',
       skills: _safeList(map['skills']),
       education: Education.fromMap(
@@ -87,7 +87,7 @@ class ProfileModel extends Equatable {
 
   Map<String, dynamic> toMap() => {
     'name': name,
-    'title': role,
+    'title': jobTitle,
     'aboutMe': aboutMe,
     'skills': skills,
     'education': education.toMap(),
@@ -110,7 +110,7 @@ class ProfileModel extends Equatable {
   @override
   List<Object?> get props => [
     name,
-    role,
+    jobTitle,
     aboutMe,
     skills,
     education,
