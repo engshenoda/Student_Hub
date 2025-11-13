@@ -158,11 +158,14 @@ class AuthCubit extends Cubit<AuthCubitState> {
   }
 
   Future<void> signInWithGoogle() async {
+    print('🔘 Google button pressed');
     emit(GoogleLoginLoadingState());
     try {
       final user = await AuthRepo().signInWithGoogle();
+      print('✅ Google login success');
       emit(GoogleLoginSuccessState(user));
     } catch (e) {
+      print('❌ Google login error: $e');
       emit(GoogleLoginFailureState(e.toString()));
     }
   }

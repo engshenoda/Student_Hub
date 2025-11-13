@@ -82,7 +82,7 @@ class LoginForm extends StatelessWidget {
                   CustomBottomSocialMedia(
                     icon: Icons.facebook,
                     color: Colors.blue,
-                    onPressed: () {
+                    onTap: () {
                       final state = context.read<AuthCubit>().state;
                       if (state is! FacebookLoginLoadingState) {
                         authCubit.signInWithFacebook();
@@ -92,12 +92,13 @@ class LoginForm extends StatelessWidget {
                   CustomBottomSocialMedia(
                     icon: Icons.g_mobiledata,
                     color: Colors.red,
-                    onPressed: () {
+                    onTap: () {
                       final state = context.read<AuthCubit>().state;
                       if (state is! GoogleLoginLoadingState) {
                         authCubit.signInWithGoogle();
                       }
                     },
+
                   ),
                 ],
               ),

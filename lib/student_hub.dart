@@ -10,10 +10,8 @@ class StudentHub extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 🧱 أنشئ FirestoreService
     final firestoreService = PostServices();
 
-    // 🧠 مرره داخل PostRepository
     final postRepository = PostRepository(firestoreService);
 
     return BlocProvider(

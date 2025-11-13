@@ -14,6 +14,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = LoginViewModel(AuthRepo());
+
     return BlocProvider(
       create: (_) => AuthCubit(loginauthAuthViewModel: viewModel),
       child: Scaffold(
@@ -23,12 +24,12 @@ class LoginScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Header(title: "Login"),
-
+                const Header(title: "Login"),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: BlocListener<AuthCubit, AuthCubitState>(
                     listener: (context, state) {
+                      // 👇 حالات تسجيل الدخول بالبريد
                       if (state is LoginLoadingState) {
                         showDialog(
                           context: context,
@@ -37,15 +38,41 @@ class LoginScreen extends StatelessWidget {
                               const Center(child: CircularProgressIndicator()),
                         );
                       } else if (state is LoginSuccsessState) {
+                        Navigator.of(context).pop(); // close loader
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("Welcome back!")),
                         );
                         GoRouter.of(context).go(Routes.home);
                       } else if (state is LoginFailureState) {
                         Navigator.of(context).pop();
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(SnackBar(content: Text(state.failure)));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(state.failure)),
+                        );
+                      }
+
+                      // 👇 حالات تسجيل الدخول بجوجل
+                      else if (state is GoogleLoginLoadingState) {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (_) =>
+                              const Center(child: CircularProgressIndicator()),
+                        );
+                      } else if (state is GoogleLoginSuccessState) {
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content:
+                                  Text("✅ Logged in successfully with Google!")),
+                        );
+                        GoRouter.of(context).go(Routes.home);
+                      } else if (state is GoogleLoginFailureState) {
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content:
+                                  Text("❌ Google login failed: ${state.error}")),
+                        );
                       }
                     },
                     child: LoginForm(viewModel: viewModel),
