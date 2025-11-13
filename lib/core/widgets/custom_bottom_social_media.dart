@@ -4,16 +4,17 @@ class CustomBottomSocialMedia extends StatelessWidget {
   const CustomBottomSocialMedia({
     super.key,
     required this.icon,
-    required this.color, required Null Function() onPressed,
+    required this.color,
+    this.onTap,
   });
   final IconData icon;
   final Color color;
+  final void Function()? onTap;
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        ////////////////////////
-      },
+      onTap: onTap,
+
       child: Container(
         height: 40,
         width: 80,
