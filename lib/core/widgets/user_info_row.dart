@@ -11,6 +11,8 @@ class UserInfoRow extends StatelessWidget {
 
   const UserInfoRow({
     super.key,
+
+    
     required this.name,
     this.jobTitle,
     this.imageUrl,

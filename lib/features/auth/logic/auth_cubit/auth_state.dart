@@ -54,19 +54,15 @@ final class ResetPasswordFailureState extends AuthCubitState {
   final String failure;
   ResetPasswordFailureState(this.failure);
 }
-
-final class GoogleLoginLoadingState extends AuthCubitState {}
-
-final class GoogleLoginSuccessState extends AuthCubitState {
+class GoogleLoginLoadingState extends AuthCubitState {}
+class GoogleLoginSuccessState extends AuthCubitState {
   final UserModel user;
   GoogleLoginSuccessState(this.user);
 }
-
-final class GoogleLoginFailureState extends AuthCubitState {
-  final String failure;
-  GoogleLoginFailureState(this.failure);
+class GoogleLoginFailureState extends AuthCubitState {
+  final String error;
+  GoogleLoginFailureState(this.error);
 }
-
 
 final class FacebookLoginLoadingState extends AuthCubitState {}
 

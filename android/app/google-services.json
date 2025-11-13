@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "564726691203",
+    "firebase_url": "https://student-hub-7c50c-default-rtdb.firebaseio.com",
     "project_id": "student-hub-7c50c",
     "storage_bucket": "student-hub-7c50c.firebasestorage.app"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "564726691203-pvbedlj8gkjrr0i8asd7oqrgetnvnddl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.linkedin",
+            "certificate_hash": "c7a0cef27ec8a5f44bb9fe747c0df48345c39d7e"
+          }
+        },
         {
           "client_id": "564726691203-jesk0vqj12g7icooimeks713dirr4d23.apps.googleusercontent.com",
           "client_type": 3
@@ -49,6 +58,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "564726691203-0t4ciq2muvfvllv17jaar183gha35p6v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.studenthub.app",
+            "certificate_hash": "c7a0cef27ec8a5f44bb9fe747c0df48345c39d7e"
+          }
+        },
         {
           "client_id": "564726691203-jesk0vqj12g7icooimeks713dirr4d23.apps.googleusercontent.com",
           "client_type": 3

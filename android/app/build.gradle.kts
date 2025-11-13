@@ -1,17 +1,22 @@
 plugins {
     id("com.android.application")
-    // START: FlutterFire Configuration
-    id("com.google.gms.google-services")
-    // END: FlutterFire Configuration
-    id("kotlin-android")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id("org.jetbrains.kotlin.android")
     id("dev.flutter.flutter-gradle-plugin")
+    // ✅ أضف هنا الـ Google services plugin
+    id("com.google.gms.google-services")
 }
 
 android {
     namespace = "com.example.linkedin"
-    compileSdk = flutter.compileSdkVersion
     compileSdk = 35
+
+    defaultConfig {
+        applicationId = "com.example.linkedin"
+        minSdk = 23
+        targetSdk = 34
+        versionCode = 1
+        versionName = "1.0"
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -22,21 +27,8 @@ android {
         jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
-    defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.linkedin"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 23
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
-    }
-
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
         }
     }
@@ -45,4 +37,13 @@ android {
 flutter {
     source = "../.."
 }
-apply(plugin = "com.google.gms.google-services")
+
+dependencies {
+    // ✅ Firebase BoM (بيخلي كل المكتبات متوافقة)
+    implementation(platform("com.google.firebase:firebase-bom:34.5.0"))
+
+    // ✅ أضف هنا الـ SDK اللي هتستخدمه
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
+}

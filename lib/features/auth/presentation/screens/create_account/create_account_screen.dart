@@ -61,7 +61,7 @@ class CreateAccountScreen extends StatelessWidget {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(
                           context,
-                        ).showSnackBar(SnackBar(content: Text(state.failure)));
+                        ).showSnackBar(SnackBar(content: Text(state.error)));
                       } else if (state is FacebookLoginLoadingState) {
                         showDialog(
                           context: context,

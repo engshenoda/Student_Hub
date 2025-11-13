@@ -71,7 +71,6 @@ class CreateAccountForm extends StatelessWidget {
             },
           ),
 
-   
           CustomBottom(
             title: "Create Account",
             onPressed: () {
@@ -99,31 +98,26 @@ class CreateAccountForm extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              CustomBottomSocialMedia(icon: Icons.facebook, color: Colors.blue,  onPressed: () {
-  
-  
-final state =context.read<AuthCubit>().state;
-    if (state is! FacebookLoginLoadingState 
-                  ) {
-                authCubit.signInWithFacebook();
-              }
-
-
-
-
-  }),
+              CustomBottomSocialMedia(
+                icon: Icons.facebook,
+                color: Colors.blue,
+                onTap: () {
+                  final state = context.read<AuthCubit>().state;
+                  if (state is! FacebookLoginLoadingState) {
+                    authCubit.signInWithFacebook();
+                  }
+                },
+              ),
               CustomBottomSocialMedia(
                 icon: Icons.g_mobiledata,
-                color: Colors.red,  onPressed: () {
-    final state =context.read<AuthCubit>().state;
-    if (state is! GoogleLoginLoadingState 
-                  ) {
-                authCubit.signInWithGoogle();
-              }
-    
-  },
+                color: Colors.red,
+                onTap: () {
+                  final state = context.read<AuthCubit>().state;
+                  if (state is! GoogleLoginLoadingState) {
+                    authCubit.signInWithGoogle();
+                  }
+                },
               ),
-              
             ],
           ),
           const SizedBox(height: 10),
