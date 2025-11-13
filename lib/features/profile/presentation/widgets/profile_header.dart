@@ -6,7 +6,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:linkedin/core/theme/app_colors.dart';
 import 'package:linkedin/core/theme/app_text_styles.dart';
 import 'package:linkedin/features/profile/logic/profile_cubit/profile_cubit.dart';
-import 'package:linkedin/features/profile/presentation/widgets/custom_button_profile.dart';
 import 'package:linkedin/features/profile/presentation/widgets/show_custom_bottom_sheet.dart';
 
 class ProfileHeader extends StatelessWidget {
@@ -20,55 +19,59 @@ class ProfileHeader extends StatelessWidget {
         final uid = FirebaseAuth.instance.currentUser?.uid;
         if (uid != null) {
           await context.read<ProfileCubit>().updateAvatar(
-                uid,
-                File(pickedFile.path),
-              );
+            uid,
+            File(pickedFile.path),
+          );
         }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to pick image: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to pick image: $e')));
     }
   }
 
-Future<void> _editProfile(BuildContext context, String currentName, String currentTitle) async {
-  final nameController = TextEditingController(text: currentName);
-  final titleController = TextEditingController(text: currentTitle);
+  Future<void> _editProfile(
+    BuildContext context,
+    String currentName,
+    String currentTitle,
+  ) async {
+    final nameController = TextEditingController(text: currentName);
+    final titleController = TextEditingController(text: currentTitle);
 
-  await showCustomBottomSheet(
-    context: context,
-    title: 'Edit Profile',
-    children: [
-      TextField(
-        controller: nameController,
-        decoration: const InputDecoration(labelText: 'Name'),
-      ),
-      const SizedBox(height: 8),
-      TextField(
-        controller: titleController,
-        decoration: const InputDecoration(labelText: 'Title'),
-      ),
-    ],
-    onSaveAsync: () async {
-      final newName = nameController.text.trim();
-      final newTitle = titleController.text.trim();
-      if (newName.isEmpty && newTitle.isEmpty) {
-        // nothing to save
-        return false;
-      }
-      final uid = FirebaseAuth.instance.currentUser?.uid;
-      if (uid == null) throw Exception('User not logged in');
+    await showCustomBottomSheet(
+      context: context,
+      title: 'Edit Profile',
+      children: [
+        TextField(
+          controller: nameController,
+          decoration: const InputDecoration(labelText: 'Name'),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: titleController,
+          decoration: const InputDecoration(labelText: 'Title'),
+        ),
+      ],
+      onSaveAsync: () async {
+        final newName = nameController.text.trim();
+        final newTitle = titleController.text.trim();
+        if (newName.isEmpty && newTitle.isEmpty) {
+          // nothing to save
+          return false;
+        }
+        final uid = FirebaseAuth.instance.currentUser?.uid;
+        if (uid == null) throw Exception('User not logged in');
 
-      final success = await context.read<ProfileCubit>().updateHeader(
-        uid,
-        name: newName.isEmpty ? null : newName,
-        title: newTitle.isEmpty ? null : newTitle,
-      );
-      return success;
-    },
-  );
-}
+        final success = await context.read<ProfileCubit>().updateHeader(
+          uid,
+          name: newName.isEmpty ? null : newName,
+          title: newTitle.isEmpty ? null : newTitle,
+        );
+        return success;
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +94,10 @@ Future<void> _editProfile(BuildContext context, String currentName, String curre
                         width: 88,
                         height: 88,
                         decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.primary, width: 2),
+                          border: Border.all(
+                            color: AppColors.primary,
+                            width: 2,
+                          ),
                         ),
                         child: profile.photoUrl.isEmpty
                             ? const Icon(
@@ -103,7 +109,7 @@ Future<void> _editProfile(BuildContext context, String currentName, String curre
                                 image: profile.photoUrl.startsWith('http')
                                     ? NetworkImage(profile.photoUrl)
                                     : FileImage(File(profile.photoUrl))
-                                        as ImageProvider,
+                                          as ImageProvider,
                                 fit: BoxFit.cover,
                               ),
                       ),
@@ -138,7 +144,9 @@ Future<void> _editProfile(BuildContext context, String currentName, String curre
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      profile.title.isNotEmpty ? profile.title : 'No Title',
+                      profile.jobTitle.isNotEmpty
+                          ? profile.jobTitle
+                          : 'No Title',
                       style: AppTextStyles.subtitle,
                     ),
                   ],
@@ -147,7 +155,7 @@ Future<void> _editProfile(BuildContext context, String currentName, String curre
               IconButton(
                 icon: const Icon(Icons.edit, color: AppColors.primary),
                 onPressed: () =>
-                    _editProfile(context, profile.name, profile.title),
+                    _editProfile(context, profile.name, profile.jobTitle),
               ),
             ],
           );

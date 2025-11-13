@@ -1,19 +1,19 @@
 // import 'package:bloc/bloc.dart';
 // import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:linkedin/features/questions/Model/career_role.dart';
+// import 'package:linkedin/features/questions/Model/career_jobTitle.dart';
 
-// class CareerRoleCubit extends Cubit<String?> {
+// class CareerjobTitleCubit extends Cubit<String?> {
 //   final FirebaseFirestore firestore = FirebaseFirestore.instance;
-//   final String collectionPath = "career_roles";
+//   final String collectionPath = "career_jobTitles";
 
-//   CareerRoleCubit() : super(null);
+//   CareerjobTitleCubit() : super(null);
 
-//   Future<void> fetchCareerRole(String userId) async {
+//   Future<void> fetchCareerjobTitle(String userId) async {
 //     try {
 //       final doc = await firestore.collection(collectionPath).doc(userId).get();
 //       if (doc.exists && doc.data() != null) {
-//         final model = CareerRoleModel.fromMap(doc.data()!);
-//         emit(model.selectedRole);
+//         final model = CareerjobTitleModel.fromMap(doc.data()!);
+//         emit(model.selectedjobTitle);
 //       } else {
 //         emit(null);
 //       }
@@ -22,17 +22,17 @@
 //     }
 //   }
 
-//   Future<void> updateCareerRole(String userId, String selectedRole) async {
+//   Future<void> updateCareerjobTitle(String userId, String selectedjobTitle) async {
 //     try {
-//       final model = CareerRoleModel(
-//         selectedRole: selectedRole,
+//       final model = CareerjobTitleModel(
+//         selectedjobTitle: selectedjobTitle,
 //         lastUpdated: DateTime.now(),
 //       );
 //       await firestore
 //           .collection(collectionPath)
 //           .doc(userId)
 //           .set(model.toMap(), SetOptions(merge: true));
-//       emit(selectedRole);
+//       emit(selectedjobTitle);
 //     } catch (_) {}
 //   }
 // }

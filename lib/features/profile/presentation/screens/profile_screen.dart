@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:linkedin/core/routes/route.dart';
 import 'package:linkedin/core/theme/app_colors.dart';
 import 'package:linkedin/features/profile/data/repo/profile_repo.dart';
 import 'package:linkedin/features/profile/data/services/profile_firebase_service.dart';
@@ -57,12 +59,13 @@ class ProfileScreen extends StatelessWidget {
               ),
               actions: [
                 IconButton(
-                  icon: const Icon(Icons.refresh, color: AppColors.primary),
+                  icon: const Icon(Icons.settings, color: AppColors.primary),
                   onPressed: () {
-                    final uid = FirebaseAuth.instance.currentUser?.uid;
-                    if (uid != null) {
-                      context.read<ProfileCubit>().loadProfile(uid);
-                    }
+                    GoRouter.of(context).push(Routes.settings);
+                    // final uid = FirebaseAuth.instance.currentUser?.uid;
+                    // if (uid != null) {
+                    //   context.read<ProfileCubit>().loadProfile(uid);
+                    // }
                   },
                 ),
                 const SizedBox(width: 8),
@@ -122,7 +125,6 @@ class ProfileScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         child: Column(
           children: [
-            // Remove const to allow rebuilding
             ProfileHeader(),
             const SizedBox(height: 20),
             AboutMeSection(),

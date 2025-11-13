@@ -3,7 +3,7 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:linkedin/features/questions/Logic/cubit/cubit/career_role_cubit.dart';
+// import 'package:linkedin/features/questions/Logic/cubit/cubit/career_jobTitle_cubit.dart';
 // import 'career_final.dart'; // Your final destination
 
 // const Color kPrimary = Color(0xFF00B894);
@@ -37,7 +37,7 @@
 //     final s = (double px) => responsive(context, px);
 
 //     return BlocProvider(
-//       create: (_) => CareerRoleCubit(),
+//       create: (_) => CareerjobTitleCubit(),
 //       child: Builder(
 //         builder: (context) => Scaffold(
 //           backgroundColor: const Color(0xFFF7F7F9),
@@ -126,7 +126,7 @@
 //                       Align(
 //                         alignment: Alignment.centerLeft,
 //                         child: Text(
-//                           'What kind of roles are you open to?',
+//                           'What kind of jobTitles are you open to?',
 //                           style: TextStyle(
 //                             fontSize: s(20),
 //                             fontWeight: FontWeight.w700,
@@ -245,8 +245,8 @@
 //                                 onPressed: selectedOption != -1
 //                                     ? () async {
 //                                         final userId = FirebaseAuth.instance.currentUser?.uid ?? "demo_user";
-//                                         final cubit = context.read<CareerRoleCubit>();
-//                                         await cubit.updateCareerRole(userId, options[selectedOption]);
+//                                         final cubit = context.read<CareerjobTitleCubit>();
+//                                         await cubit.updateCareerjobTitle(userId, options[selectedOption]);
 //                                         if (!mounted) return;
 //                                         Navigator.push(
 //                                           context,

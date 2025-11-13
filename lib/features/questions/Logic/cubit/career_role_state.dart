@@ -1,20 +1,20 @@
 // import 'package:meta/meta.dart';
 
 // @immutable
-// abstract class CareerRoleState {}
+// abstract class CareerjobTitleState {}
 
-// class CareerRoleInitial extends CareerRoleState {}
+// class CareerjobTitleInitial extends CareerjobTitleState {}
 
-// class CareerRoleLoading extends CareerRoleState {}
+// class CareerjobTitleLoading extends CareerjobTitleState {}
 
-// class CareerRoleLoaded extends CareerRoleState {
-//   final String? selectedRole;
-//   CareerRoleLoaded(this.selectedRole);
+// class CareerjobTitleLoaded extends CareerjobTitleState {
+//   final String? selectedjobTitle;
+//   CareerjobTitleLoaded(this.selectedjobTitle);
 // }
 
-// class CareerRoleUploading extends CareerRoleState {}
+// class CareerjobTitleUploading extends CareerjobTitleState {}
 
-// class CareerRoleError extends CareerRoleState {
+// class CareerjobTitleError extends CareerjobTitleState {
 //   final String message;
-//   CareerRoleError(this.message);
+//   CareerjobTitleError(this.message);
 // }

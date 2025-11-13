@@ -40,7 +40,7 @@ class LoginScreen extends StatelessWidget {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("Welcome back!")),
                         );
-                        GoRouter.of(context).go(Routes.Home);
+                        GoRouter.of(context).go(Routes.home);
                       } else if (state is LoginFailureState) {
                         Navigator.of(context).pop();
                         ScaffoldMessenger.of(

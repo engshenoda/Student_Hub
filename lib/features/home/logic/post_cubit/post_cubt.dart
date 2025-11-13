@@ -1,131 +1,104 @@
-import 'dart:async';
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linkedin/features/home/data/models/post_model.dart';
-import 'package:linkedin/features/home/data/rebo/posr_repo.dart';
-import 'package:linkedin/features/home/data/service/post_service.dart';
-import 'package:linkedin/features/home/logic/post_cubit/post_state.dart';
+import 'package:linkedin/features/home/data/models/comment_model.dart';
+import 'package:linkedin/features/home/data/repo/post_repository.dart';
+import 'post_state.dart';
 
+/// 🎯 PostCubit - Handles all post-related logic
 class PostCubit extends Cubit<PostState> {
-  final PostRepository repo;
-  StreamSubscription<List<Post>>? _sub;
+  final PostRepository _repository;
 
-  PostCubit({required this.repo}) : super(PostInitial());
+  PostCubit(this._repository) : super(PostInitial());
 
-  void start() {
+  /// 🟢 Add new post
+  Future<void> addPost(PostModel post) async {
     emit(PostLoading());
-    _sub = repo.watchPosts().listen((posts) {
-      emit(PostLoaded(posts: posts));
-    }, onError: (e) {
-      emit(PostError(message: e.toString()));
-    });
-  }
-
-  Future<void> addPost({required Post post, required dynamic imageFile}) async {
-    emit(PostActionInProgress());
     try {
-      await repo.createPost(post: post, imageFile: imageFile);
-      emit(PostActionSuccess());
+      await _repository.addPost(post);
+      emit(PostSuccess('Post uploaded successfully ✅'));
     } catch (e) {
-      emit(PostActionFailure(e.toString()));
+      emit(PostError('Failed to upload post: $e'));
     }
   }
 
-  Future<void> editPost({
-    required String postId,
-    required Map<String, dynamic> updates,
-    dynamic newImage,
-  }) async {
-    emit(PostActionInProgress());
+  /// 🟡 Update post
+  Future<void> updatePost(PostModel post) async {
+    emit(PostLoading());
     try {
-      await repo.updatePost(postId: postId, updates: updates, newImage: newImage);
-      emit(PostActionSuccess());
+      await _repository.updatePost(post);
+      emit(PostSuccess('Post updated successfully ✅'));
     } catch (e) {
-      emit(PostActionFailure(e.toString()));
+      emit(PostError('Failed to update post: $e'));
     }
   }
 
+  /// 🔴 Delete post
   Future<void> deletePost(String postId) async {
-    final currentState = state;
-    if (currentState is PostLoaded) {
-      final updatedPosts = currentState.posts.where((p) => p.id != postId).toList();
-      emit(PostLoaded(posts: updatedPosts)); // 🔥 تحديث محلي فوري
-    }
-
+    emit(PostLoading());
     try {
-      await repo.removePost(postId);
-      // الـ stream هيتكفل بتحديث الحالة تلقائيًا
+      await _repository.deletePost(postId);
+      emit(PostSuccess('Post deleted successfully ✅'));
     } catch (e) {
-      emit(PostActionFailure(e.toString()));
+      emit(PostError('Failed to delete post: $e'));
     }
   }
 
-  Future<void> repost({
-    required Post originalPost,
-    required String userId,
-    required String userName,
-    String? userAvatar,
-    String? caption,
-  }) async {
-    emit(PostActionInProgress());
+  /// 👀 Watch posts in real-time
+  void watchPosts() {
+    emit(PostLoading());
+    _repository.watchPosts().listen(
+      (posts) {
+        emit(PostsLoaded(posts));
+      },
+      onError: (e) => emit(PostError('Error loading posts: $e')),
+    );
+  }
+
+  /// 💬 Add comment to a post
+  Future<void> addComment(String postId, CommentModel comment) async {
     try {
-      await repo.repostPost(
-        originalPost: originalPost,
-        userId: userId,
-        userName: userName,
-        userAvatar: userAvatar,
-        caption: caption,
-      );
-      emit(PostActionSuccess());
+      await _repository.addComment(postId, comment);
+      emit(PostSuccess('Comment added successfully 💬'));
     } catch (e) {
-      emit(PostActionFailure(e.toString()));
+      emit(PostError('Failed to add comment: $e'));
     }
   }
 
-  // ✅ تعديل toggleLike بحيث يحدث فورًا في الواجهة
-  Future<void> toggleLike(String postId, String userId) async {
+  /// 💬 Update comment
+  Future<void> updateComment(String postId, CommentModel comment) async {
     try {
-      final currentState = state;
-      if (currentState is PostLoaded) {
-        // نعمل نسخة جديدة من الليست
-        final updatedPosts = currentState.posts.map((post) {
-          if (post.id == postId) {
-            final updatedLikes = Map<String, bool>.from(post.likes);
-            if (updatedLikes.containsKey(userId)) {
-              updatedLikes.remove(userId);
-            } else {
-              updatedLikes[userId] = true;
-            }
-            // نرجع نسخة جديدة من البوست بعد التحديث
-            return post.copyWith(likes: updatedLikes);
-          }
-          return post;
-        }).toList();
-
-        // 🔹 نحدث الواجهة فورًا
-        emit(PostLoaded(posts: updatedPosts));
-
-        // 🔹 نحدث Firestore بعدين
-        await repo.toggleLike(postId, userId);
-      }
+      await _repository.updateComment(postId, comment);
+      emit(PostSuccess('Comment updated successfully ✏️'));
     } catch (e) {
-      emit(PostActionFailure(e.toString()));
+      emit(PostError('Failed to update comment: $e'));
     }
   }
 
-  Future<void> addComment(String postId, String userId, String userName, String text) =>
-      repo.addComment(postId, userId, userName, text);
+  /// 👀 Watch comments of a post
+  void watchComments(String postId) {
+    _repository.watchComments(postId).listen(
+      (comments) {
+        emit(CommentsLoaded(comments));
+      },
+      onError: (e) => emit(PostError('Error loading comments: $e')),
+    );
+  }
 
-      
+  /// ❤️ Like or unlike a post
+  Future<void> toggleLike(PostModel post, bool isLiked) async {
+    try {
+      await _repository.toggleLike(post: post, isLiked: isLiked);
+    } catch (e) {
+      emit(PostError('Failed to toggle like: $e'));
+    }
+  }
 
-
-
-
-
-      
-
-  @override
-  Future<void> close() {
-    _sub?.cancel();
-    return super.close();
+  /// ❤️ Like or unlike a comment
+  Future<void> toggleCommentLike(String postId, CommentModel comment, bool isLiked) async {
+    try {
+      await _repository.toggleCommentLike(postId: postId, comment: comment, isLiked: isLiked);
+    } catch (e) {
+      emit(PostError('Failed to toggle comment like: $e'));
+    }
   }
 }

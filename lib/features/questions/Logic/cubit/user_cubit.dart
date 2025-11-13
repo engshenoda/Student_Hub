@@ -2,21 +2,19 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:linkedin/core/constant/constant_collections.dart';
-import 'package:linkedin/features/questions/data/Model/ProfileModel.dart';
-import 'profile_state.dart';
+import 'package:linkedin/features/questions/data/Model/user_model.dart';
+import 'user_state.dart';
 
-class UserCubit extends Cubit<ProfileState> {
+class UserCubit extends Cubit<UserState> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   StreamSubscription<DocumentSnapshot>? _userSubscription;
 
-  UserCubit() : super(ProfileInitial());
+  UserCubit() : super(UserInitial());
 
-  final String _collectionPath = ConstantCollections.users;
+  final String _collectionPath = 'users';
 
-  /// 🔹 الاستماع لبيانات المستخدم وتحديثها في الوقت الحقيقي
   Future<void> listenToUser(String userId) async {
-    emit(ProfileLoading());
+    emit(UserLoading());
     _userSubscription?.cancel();
 
     try {
@@ -28,19 +26,18 @@ class UserCubit extends Cubit<ProfileState> {
             if (doc.exists && doc.data() != null) {
               emit(UserLoaded(UserModel.fromMap(userId, doc.data()!)));
             } else {
-              // إنشاء مستخدم جديد في حالة عدم وجوده
               final firebaseUser = FirebaseAuth.instance.currentUser;
 
               final newUser = UserModel(
                 id: userId,
-                fullName: firebaseUser?.displayName ?? '',
+                gender: '',
                 whatsapp: 0,
-                role: '',
-                degreeYear: '',
-                minSalary: 0.0,
+                jobTitle: '',
+                birthday: null,
+                isClient: true,
               );
 
-              await _firestore.collection('users').doc(userId).set({
+              await _firestore.collection(_collectionPath).doc(userId).set({
                 ...newUser.toMap(forCreate: true),
                 'email': firebaseUser?.email,
                 'uid': firebaseUser?.uid,
@@ -54,28 +51,22 @@ class UserCubit extends Cubit<ProfileState> {
     }
   }
 
-  /// 🔹 تحديث أي حقل للمستخدم في Firestore
   Future<void> updateUserField({
     required String userId,
     required String field,
     required dynamic newValue,
   }) async {
     try {
-      await _firestore.collection('users').doc(userId).update({
-        field: newValue,
+      dynamic valueToUpdate = newValue;
+      if (field == 'birthday' && newValue is DateTime) {
+        valueToUpdate = Timestamp.fromDate(newValue);
+      }
+
+      await _firestore.collection(_collectionPath).doc(userId).update({
+        field: valueToUpdate,
       });
     } catch (e) {
       emit(UserError('Failed to update $field: $e'));
-    }
-  }
-
-  /// 🔹 حذف بيانات المستخدم من Firestore
-  Future<void> deleteUser(String userId) async {
-    try {
-      await _firestore.collection('users').doc(userId).delete();
-      emit(ProfileInitial());
-    } catch (e) {
-      emit(UserError('Delete failed: $e'));
     }
   }
 

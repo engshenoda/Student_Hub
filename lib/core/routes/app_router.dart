@@ -10,10 +10,10 @@ import 'package:linkedin/features/auth/presentation/screens/verification/verify.
 import 'package:linkedin/features/chat/Presentation/widget/chat_screen.dart';
 import 'package:linkedin/features/chat/Presentation/widget/chats_list_screen.dart';
 import 'package:linkedin/features/home/data/models/post_model.dart';
-import 'package:linkedin/features/home/presentation/screens/comments.dart';
+import 'package:linkedin/features/home/presentation/screens/comments_screen.dart';
 
 import 'package:linkedin/features/home/presentation/screens/home_screen.dart';
-import 'package:linkedin/features/home/presentation/screens/post.dart';
+import 'package:linkedin/features/home/presentation/screens/add_post.dart';
 import 'package:linkedin/features/home/presentation/screens/repost.dart';
 import 'package:linkedin/features/jobs/presentation/screen/jobs_screen.dart';
 import 'package:linkedin/features/jobs/presentation/screen/see_all_screen.dart';
@@ -21,10 +21,8 @@ import 'package:linkedin/features/notifications/presentation/screens/notificatio
 import 'package:linkedin/features/onbording/Onboarding_pages.dart';
 import 'package:linkedin/features/onbording/splash_screen.dart';
 import 'package:linkedin/features/profile/presentation/screens/profile_screen.dart';
-import 'package:linkedin/features/questions/presentation/career_next_screen.dart';
-import 'package:linkedin/features/questions/presentation/profile_screen.dart';
-import 'package:linkedin/features/search_feature/logic/cubit/search_cubit.dart';
-import 'package:linkedin/features/search_feature/repository/search_repo.dart';
+
+import 'package:linkedin/features/questions/presentation/user_question_screen.dart';
 import 'package:linkedin/features/search_feature/search_screen.dart';
 import 'package:linkedin/features/settings/screens/about_us.dart';
 import 'package:linkedin/features/settings/screens/settings.dart';
@@ -75,7 +73,7 @@ abstract class AppRoute {
         builder: (context, state) => const ProfileQScreen(),
       ),
       GoRoute(
-        path: Routes.Home,
+        path: Routes.home,
         builder: (context, state) => const HomeScreen(),
       ),
       GoRoute(
@@ -86,7 +84,7 @@ abstract class AppRoute {
       GoRoute(
         path: Routes.chatscreen,
 
-        builder: (context, state) => ChatScreen(chatName: '', receiverId: '',),
+        builder: (context, state) => ChatScreen(chatName: '', receiverId: ''),
       ),
       GoRoute(
         path: Routes.notifcation,
@@ -115,7 +113,7 @@ GoRoute(
 
       GoRoute(
         path: Routes.aboutUs,
-        builder: (context, state) => const About_Us(),
+        builder: (context, state) => const AboutUs(),
       ),
       GoRoute(
         path: Routes.termsandconditions,
@@ -130,29 +128,25 @@ GoRoute(
         builder: (context, state) => const AllJobsScreen(),
       ),
       GoRoute(
-  path: '/AddPost',
-  builder: (context, state) {
-    final post = state.extra as Post?;
-    return AddPost(existing: post);
-  },
-),
-GoRoute(
-  path: '/repost',
-  builder: (context, state) {
-    final originalPost = state.extra as Post;
-    return Repost(originalPost: originalPost);
-  },
-),
+        path: Routes.addPostScreen,
+        builder: (context, state) {
+          return AddPostScreen();
+        },
+      ),
+      GoRoute(
+        path: '/repost',
+        builder: (context, state) {
+          final originalPost = state.extra as PostModel;
+          return Repost(originalPost: originalPost);
+        },
+      ),
 
-    GoRoute(
-  path: '/comments',
-  builder: (context, state) {
-    final postId = state.extra as String;
-    return Comments(postId: postId);
-  },
-),
-
-
+      GoRoute(
+        path: Routes.comments,
+        builder: (context, state) {
+          return CommentsScreen();
+        },
+      ),
     ],
   );
 }

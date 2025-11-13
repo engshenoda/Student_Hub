@@ -6,7 +6,7 @@ import 'package:linkedin/features/home/logic/post_cubit/post_cubt.dart';
 import 'package:linkedin/features/home/presentation/widgets/post_card_repost.dart';
 
 class Repost extends StatelessWidget {
-  final Post originalPost;
+  final PostModel originalPost;
   const Repost({super.key, required this.originalPost});
 
   @override
@@ -14,7 +14,8 @@ class Repost extends StatelessWidget {
     final currentUser = FirebaseAuth.instance.currentUser;
     final currentUserId = currentUser?.uid ?? 'guest_user';
     final currentUserName = currentUser?.displayName ?? 'Unknown User';
-    final currentUserAvatar = currentUser?.photoURL ??
+    final currentUserAvatar =
+        currentUser?.photoURL ??
         'https://i.pravatar.cc/150?img=12'; // صورة افتراضية لو مفيش
     final TextEditingController captionController = TextEditingController();
 
@@ -38,8 +39,11 @@ class Repost extends StatelessWidget {
                 children: [
                   IconButton(
                     onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.cancel_outlined,
-                        size: 40, color: Colors.teal),
+                    icon: const Icon(
+                      Icons.cancel_outlined,
+                      size: 40,
+                      color: Colors.teal,
+                    ),
                   ),
                 ],
               ),
@@ -70,7 +74,7 @@ class Repost extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "Sharing a post", // وصف بسيط بدل الـ role الثابت
+                            "Sharing a post", // وصف بسيط بدل الـ jobTitle الثابت
                             style: TextStyle(
                               fontSize: 11,
                               color: Colors.teal[800],
@@ -81,13 +85,13 @@ class Repost extends StatelessWidget {
                       const Spacer(),
                       ElevatedButton(
                         onPressed: () async {
-                          await context.read<PostCubit>().repost(
-                                originalPost: originalPost,
-                                userId: currentUserId,
-                                userName: currentUserName,
-                                userAvatar: currentUserAvatar,
-                                caption: captionController.text,
-                              );
+                          // await context.read<PostCubit>().repost(
+                          //   originalPost: originalPost,
+                          //   userId: currentUserId,
+                          //   userName: currentUserName,
+                          //   userAvatar: currentUserAvatar,
+                          //   caption: captionController.text,
+                          // );
 
                           Navigator.pop(context);
 
@@ -101,7 +105,9 @@ class Repost extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF004D40),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
+                            horizontal: 20,
+                            vertical: 10,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -121,10 +127,7 @@ class Repost extends StatelessWidget {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       "Share your thoughts",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -139,8 +142,10 @@ class Repost extends StatelessWidget {
                       contentPadding: const EdgeInsets.all(12),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide:
-                            const BorderSide(color: Colors.teal, width: 0.5),
+                        borderSide: const BorderSide(
+                          color: Colors.teal,
+                          width: 0.5,
+                        ),
                       ),
                     ),
                   ),
@@ -148,12 +153,12 @@ class Repost extends StatelessWidget {
                   const SizedBox(height: 20),
 
                   // 🔹 Original Post Preview
-                  PostCardRepost(
-                    name: originalPost.authorName,
-                    role: "Shared post",
-                    text: originalPost.text,
-                    image: originalPost.imageUrl ?? "",
-                  ),
+                  // PostCardRepost(
+                  //   name: originalPost.authorName,
+                  //   jobTitle: "Shared post",
+                  //   text: originalPost.text,
+                  //   image: originalPost.imageUrl ?? "",
+                  // ),
                 ],
               ),
             ),
