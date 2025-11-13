@@ -11,7 +11,7 @@ class SearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -63,7 +63,6 @@ class SearchPage extends StatelessWidget {
             indicatorColor: Colors.teal,
             tabs: [
               Tab(text: "People"),
-              Tab(text: "Posts"),
               Tab(text: "Jobs"),
             ],
           ),
@@ -77,7 +76,6 @@ class SearchPage extends StatelessWidget {
               return TabBarView(
                 children: [
                   _buildList(state.people.map((u) => u.name).toList(), query, Icons.person),
-                  _buildList(state.posts.map((p) => p.title).toList(), query, Icons.article),
                   _buildList(state.jobs.map((j) => j.title).toList(), query, Icons.work),
                 ],
               );

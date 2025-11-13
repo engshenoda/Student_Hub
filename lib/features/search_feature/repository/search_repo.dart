@@ -17,18 +17,7 @@ class SearchRepository {
   }
 
   
-  Stream<List<PostModel>> streamPosts(String query) {
-    return _firestore
-        .collection('posts')
-        .where('title', isGreaterThanOrEqualTo: query)
-        .where('title', isLessThan: '${query}z')
-        .snapshots()
-        .map((snapshot) => snapshot.docs
-            .map((doc) => PostModel.fromMap(doc.data(), id: doc.id))
-            .toList());
-  }
 
-  
   Stream<List<JobModel>> streamJobs(String query) {
     return _firestore
         .collection('jobs')

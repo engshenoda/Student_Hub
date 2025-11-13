@@ -12,17 +12,15 @@ class SearchLoading extends SearchState {}
 
 class SearchLoaded extends SearchState {
   final List<UserModel> people;
-  final List<PostModel> posts;
   final List<JobModel> jobs;
 
   SearchLoaded({
     this.people = const [],
-    this.posts = const [],
     this.jobs = const [],
   });
 
   @override
-  List<Object?> get props => [people, posts, jobs];
+  List<Object?> get props => [people, jobs];
 }
 
 class SearchError extends SearchState {
