@@ -1,53 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:linkedin/features/search_feature/logic/cubit/search_cubit.dart';
+import 'package:linkedin/features/search_feature/logic/cubit/search_state.dart';
 
-class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
+class SearchPage extends StatelessWidget {
+  SearchPage({super.key});
 
-  @override
-  State<SearchPage> createState() => _SearchPageState();
-}
-
-class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchController = TextEditingController();
-
-  final List<String> _people = [
-    'Alice Johnson',
-    'Bob Smith',
-    'Charlie Adams',
-    'David Wright',
-    'Emma Brown',
-  ];
-
-  final List<String> _posts = [
-    'Flutter 3.24 released!',
-    'New Dart features you should know',
-    'How to design better UIs',
-    'Understanding Bloc pattern',
-    'Top Flutter packages 2025',
-  ];
-
-  final List<String> _jobs = [
-    'Flutter Developer - Remote',
-    'UI/UX Designer - Cairo',
-    'Mobile App Engineer',
-    'Frontend Developer',
-    'Backend Python Engineer',
-  ];
-
-  final List<String> _companies = [
-    'Google',
-    'Microsoft',
-    'Apple',
-    'Amazon',
-    'Meta',
-  ];
-
-  String query = '';
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           elevation: 0,
@@ -74,7 +38,7 @@ class _SearchPageState extends State<SearchPage> {
                     icon: const Icon(Icons.clear, color: Colors.grey),
                     onPressed: () {
                       _searchController.clear();
-                      setState(() => query = '');
+                      context.read<SearchCubit>().searchAll('');
                     },
                   ),
                   filled: true,
@@ -89,9 +53,7 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                 ),
                 onChanged: (value) {
-                  setState(() {
-                    query = value.toLowerCase();
-                  });
+                  context.read<SearchCubit>().searchAll(value.trim().toLowerCase());
                 },
               ),
             ),
@@ -103,23 +65,43 @@ class _SearchPageState extends State<SearchPage> {
               Tab(text: "People"),
               Tab(text: "Posts"),
               Tab(text: "Jobs"),
-              Tab(text: "Companies"),
             ],
           ),
         ),
-        body: TabBarView(
-          children: [
-            _buildList(_people),
-            _buildList(_posts),
-            _buildList(_jobs),
-            _buildList(_companies),
-          ],
+        body: BlocBuilder<SearchCubit, SearchState>(
+          builder: (context, state) {
+            if (state is SearchLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is SearchLoaded) {
+              final query = _searchController.text.toLowerCase();
+              return TabBarView(
+                children: [
+                  _buildList(state.people.map((u) => u.name).toList(), query, Icons.person),
+                  _buildList(state.posts.map((p) => p.title).toList(), query, Icons.article),
+                  _buildList(state.jobs.map((j) => j.title).toList(), query, Icons.work),
+                ],
+              );
+            } else if (state is SearchError) {
+              return Center(
+                child: Text(
+                  state.message,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              );
+            }
+            return const Center(
+              child: Text(
+                "Start typing to search...",
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildList(List<String> items) {
+  Widget _buildList(List<String> items, String query, IconData icon) {
     final filtered = items
         .where((item) => item.toLowerCase().contains(query))
         .toList();
@@ -139,17 +121,17 @@ class _SearchPageState extends State<SearchPage> {
       separatorBuilder: (_, __) => const Divider(),
       itemBuilder: (context, index) {
         return ListTile(
-          leading: const CircleAvatar(
+          leading: CircleAvatar(
             backgroundColor: Colors.teal,
-            child: Icon(Icons.person, color: Colors.white),
+            child: Icon(icon, color: Colors.white),
           ),
           title: Text(
             filtered[index],
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
-          subtitle: Text(
+          subtitle: const Text(
             "Tap to view details",
-            style: TextStyle(color: Colors.grey.shade600),
+            style: TextStyle(color: Colors.grey),
           ),
           trailing: const Icon(Icons.arrow_forward_ios, size: 16),
           onTap: () {

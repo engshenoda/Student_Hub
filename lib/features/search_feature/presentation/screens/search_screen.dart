@@ -1,117 +1,146 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:linkedin/features/search_feature/logic/cubit/search_cubit.dart';
+import 'package:linkedin/features/search_feature/logic/cubit/search_state.dart';
 
-import '../widgets/list_view.dart';
-import '../widgets/search_widget.dart';
+class SearchPage extends StatelessWidget {
+  SearchPage({super.key});
 
-class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
-
-  @override
-  State<SearchPage> createState() => _SearchPageState();
-}
-
-class _SearchPageState extends State<SearchPage> {
   final TextEditingController _searchController = TextEditingController();
-  String query = '';
-
-  final List<String> _people = [
-    'Alice Johnson',
-    'Bob Smith',
-    'Charlie Adams',
-    'David Wright',
-    'Emma Brown',
-  ];
-
-  final List<String> _posts = [
-    'Flutter 3.24 released!',
-    'New Dart features',
-    'How to design better UIs',
-    'Understanding Bloc pattern',
-    'Top Flutter packages 2025',
-  ];
-
-  final List<String> _jobs = [
-    'Flutter Developer - Remote',
-    'UI/UX Designer - Cairo',
-    'Mobile App Engineer',
-    'Frontend Developer',
-    'Backend Python Engineer',
-  ];
-
-  final List<String> _companies = [
-    'Google',
-    'Microsoft',
-    'Apple',
-    'Amazon',
-    'Meta',
-  ];
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Search"),
-          centerTitle: true,
+          elevation: 0,
+          backgroundColor: Colors.transparent,
           flexibleSpace: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Color(0xFFAAE7DB), Color(0xFFFBF9FC)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
             ),
           ),
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(Icons.arrow_back_ios),
+          title: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: SizedBox(
+              height: 45,
+              child: TextFormField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: "Search...",
+                  prefixIcon: const Icon(Icons.qr_code, color: Colors.grey),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.clear, color: Colors.grey),
+                    onPressed: () {
+                      _searchController.clear();
+                      context.read<SearchCubit>().searchAll('');
+                    },
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 0,
+                    horizontal: 16,
+                  ),
+                ),
+                onChanged: (value) {
+                  context.read<SearchCubit>().searchAll(value.trim().toLowerCase());
+                },
+              ),
+            ),
           ),
-
           bottom: const TabBar(
-            indicatorColor: Colors.black,
             labelColor: Colors.black,
+            indicatorColor: Colors.teal,
             tabs: [
               Tab(text: "People"),
               Tab(text: "Posts"),
               Tab(text: "Jobs"),
-              Tab(text: "Companies"),
             ],
           ),
         ),
-        body: Column(
-          children: [
-            SearchWidget(
-              controller: _searchController,
-              onChanged: (value) => setState(() => query = value.toLowerCase()),
-            ),
-            Expanded(
-              child: TabBarView(
+        body: BlocBuilder<SearchCubit, SearchState>(
+          builder: (context, state) {
+            if (state is SearchLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is SearchLoaded) {
+              final query = _searchController.text.toLowerCase();
+              return TabBarView(
                 children: [
-                  TabsListView(
-                    items: _people,
-                    icon: Icons.person,
-                    query: query,
-                  ),
-                  TabsListView(
-                    items: _posts,
-                    icon: Icons.article,
-                    query: query,
-                  ),
-                  TabsListView(items: _jobs, icon: Icons.work, query: query),
-                  TabsListView(
-                    items: _companies,
-                    icon: Icons.business,
-                    query: query,
-                  ),
+                  _buildList(state.people.map((u) => u.name).toList(), query, Icons.person),
+                  _buildList(state.posts.map((p) => p.title).toList(), query, Icons.article),
+                  _buildList(state.jobs.map((j) => j.title).toList(), query, Icons.work),
                 ],
+              );
+            } else if (state is SearchError) {
+              return Center(
+                child: Text(
+                  state.message,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              );
+            }
+            return const Center(
+              child: Text(
+                "Start typing to search...",
+                style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
-            ),
-          ],
+            );
+          },
         ),
       ),
+    );
+  }
+
+  Widget _buildList(List<String> items, String query, IconData icon) {
+    final filtered = items
+        .where((item) => item.toLowerCase().contains(query))
+        .toList();
+
+    if (filtered.isEmpty) {
+      return const Center(
+        child: Text(
+          "No results found",
+          style: TextStyle(fontSize: 16, color: Colors.grey),
+        ),
+      );
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.all(12),
+      itemCount: filtered.length,
+      separatorBuilder: (_, __) => const Divider(),
+      itemBuilder: (context, index) {
+        return ListTile(
+          leading: CircleAvatar(
+            backgroundColor: Colors.teal,
+            child: Icon(icon, color: Colors.white),
+          ),
+          title: Text(
+            filtered[index],
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+          subtitle: const Text(
+            "Tap to view details",
+            style: TextStyle(color: Colors.grey),
+          ),
+          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+          onTap: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("You tapped on: ${filtered[index]}")),
+            );
+          },
+        );
+      },
     );
   }
 }
