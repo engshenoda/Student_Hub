@@ -16,6 +16,9 @@ allprojects {
         mavenCentral()
     }
 }
+android {
+    compileSdk = 36
+}
 
 
 

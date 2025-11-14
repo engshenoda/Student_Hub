@@ -17,7 +17,9 @@ static const Color kPrimaryTextColor = Colors.black87;
 static const Color kSecondaryTextColor = Colors.grey;
 static const Color kMessageTimeColor = Colors.grey;
 
-
+static const Color tealDark = Color(0xFF006D77); // فيروزي غامق
+  static const Color tealLight = Color(0xFF83C5BE); // فيروزي فاتح
+ 
 
 
   // Neutral Colors
