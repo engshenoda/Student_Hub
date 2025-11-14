@@ -37,6 +37,12 @@ class SearchCubit extends Cubit<SearchState> {
         jobs: jobs,
       ));
     });
+  } // 💡 تم إضافة القوس الناقص هنا
+
+  // 💡 الدالة التي تستدعيها الشاشة لإصدار إشارة التنقل
+  void selectProfile(String uid, String name) {
+    emit(SearchNavigateToProfile(uid, name));
+  }
 
 
   @override
@@ -45,6 +51,4 @@ class SearchCubit extends Cubit<SearchState> {
     _jobsSub?.cancel();
     return super.close();
   }
-}
-
 }

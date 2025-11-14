@@ -16,3 +16,11 @@ final class ProfileError extends ProfileState {
   final String message;
   ProfileError(this.message);
 }
+final class ProfileLoaded extends ProfileState {
+  final UserModel user;
+
+
+  ProfileLoaded({
+    required this.user,
+  });
+}

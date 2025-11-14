@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:bloc/bloc.dart';
+import 'package:linkedin/features/auth/data/models/auth_model.dart';
 import 'package:meta/meta.dart';
 import 'package:linkedin/features/profile/data/models/profile_model.dart';
 import 'package:linkedin/features/profile/data/repo/profile_repo.dart';

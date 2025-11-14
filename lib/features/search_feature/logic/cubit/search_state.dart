@@ -31,3 +31,14 @@ class SearchError extends SearchState {
   @override
   List<Object?> get props => [message];
 }
+
+// 💡 الحالة الجديدة لإصدار إشارة التنقل بالـ UID و Name
+class SearchNavigateToProfile extends SearchState {
+  final String uid;
+  final String name; 
+
+  SearchNavigateToProfile(this.uid, this.name);
+
+  @override
+  List<Object?> get props => [uid, name];
+}
