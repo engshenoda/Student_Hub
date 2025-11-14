@@ -1,188 +1,134 @@
+import 'package:fluttem/screens/job_card.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:linkedin/core/routes/route.dart';
-import '../widget/jop_card.dart';
-import '../widget/jop_tile.dart';
+import '../constants/constants.dart';
+import 'job_details_screen.dart';
 
-class JobScreen extends StatelessWidget {
-  const JobScreen({super.key});
+class JobsScreen extends StatefulWidget {
+  const JobsScreen({super.key});
 
-  Widget categoryButton(String text, {VoidCallback? onTap}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6.0),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
-        child: InkWell(
-          onTap: onTap ?? () {},
-          borderRadius: BorderRadius.circular(16),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white70,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey, width: 1.5),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.25),
-                  spreadRadius: 1,
-                  blurRadius: 5,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Center(
-              child: Text(
-                text,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+  @override
+  State<JobsScreen> createState() => _JobsScreenState();
+}
+
+class _JobsScreenState extends State<JobsScreen> {
+  final TextEditingController _searchController = TextEditingController();
+
+  final List<Map<String, dynamic>> _allJobs = [
+    {
+      "title": "Flutter Developer",
+      "company": "Tech Co.",
+      "icon": Icons.mobile_screen_share_rounded,
+      "description":
+          "Develop and maintain cross-platform mobile applications using Flutter and Dart. Collaborate with designers to deliver elegant UI experiences."
+    },
+    {
+      "title": "UI/UX Designer",
+      "company": "Creative Studio",
+      "icon": Icons.design_services,
+      "description":
+          "Design clean, modern, and user-friendly interfaces for mobile and web platforms."
+    },
+    {
+      "title": "Backend Engineer",
+      "company": "Cloud Corp",
+      "icon": Icons.cloud,
+      "description":
+          "Develop scalable REST APIs and manage cloud infrastructure using Firebase or AWS."
+    },
+    {
+      "title": "Data Analyst",
+      "company": "Insight AI",
+      "icon": Icons.analytics,
+      "description":
+          "Analyze business data, visualize insights, and generate detailed reports."
+    },
+  ];
+
+  List<Map<String, dynamic>> _filteredJobs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredJobs = _allJobs;
+    _searchController.addListener(_filterJobs);
+  }
+
+  void _filterJobs() {
+    final query = _searchController.text.toLowerCase();
+    setState(() {
+      _filteredJobs = _allJobs
+          .where((job) =>
+              job["title"].toLowerCase().contains(query) ||
+              job["company"].toLowerCase().contains(query))
+          .toList();
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFFA8E6CF), Colors.white],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-          child: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.green),
-              onPressed: () {
-                final router = GoRouter.of(context);
-                if (router.canPop()) {
-                  router.pop();
-                } else {
-                  router.go('/'); // لو مفيش صفحة قبلها يرجع للهوم
-                }
-              },
-            ),
-            title: const Text(
-              "Jobs",
-              style: TextStyle(
-                color: Color.fromARGB(255, 0, 145, 73),
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            centerTitle: true,
-          ),
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.tealDark,
+        centerTitle: true,
+        elevation: 0,
+        title: const Text(
+          "Available Jobs",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
-
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // 🔍 Search
-            Container(
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: TextField(
-                controller: TextEditingController(),
-                decoration: const InputDecoration(
-                  hintText: "Search ",
-                  border: InputBorder.none,
-                  icon: Icon(Icons.search),
+      body: Column(
+        children: [
+     
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: "Search for jobs...",
+                prefixIcon: const Icon(Icons.search, color: AppColors.tealDark),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide: const BorderSide(color: AppColors.tealDark),
                 ),
               ),
             ),
-
-            // 🏆 Featured Jobs header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 12.0),
-                  child: Text(
-                    "Featured jobs",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 19,
-                      color: Color.fromARGB(255, 0, 145, 73),
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () =>
-                      GoRouter.of(context).push(Routes.alljobsscreen),
-                  child: const Text(
-                    "See All",
-                    style: TextStyle(color: Color.fromARGB(255, 0, 145, 73)),
-                  ),
-                ),
-              ],
-            ),
-
-            // 💼 Featured Job Card full width
-            const JobCard(
-              job: {
-                "title": "Senior UI Designer",
-                "company": "Gojek - Jakarta, ID",
-                "salary": "\$70K - \$90K",
-                "tags": ["Illustrator", "Social media", "Content data"],
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _filteredJobs.length,
+              itemBuilder: (context, index) {
+                final job = _filteredJobs[index];
+                return JobCard(
+                  title: job["title"]!,
+                  company: job["company"]!,
+                  icon: job["icon"] as IconData,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => JobDetailsScreen(
+                          title: job["title"]!,
+                          company: job["company"]!,
+                          description: job["description"]!,
+                          icon: job["icon"] as IconData,
+                        ),
+                      ),
+                    );
+                  },
+                );
               },
             ),
-
-            const SizedBox(height: 12),
-
-            // 🧩 Categories Buttons
-            Container(
-              height: 40,
-              color: Colors.white,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  categoryButton("All", onTap: () {}),
-                  categoryButton("Researcher", onTap: () {}),
-                  categoryButton("UI Designer", onTap: () {}),
-                  categoryButton("Developer", onTap: () {}),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            // 🔷 Grid of Jobs with icons
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: GridView.count(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 2,
-                childAspectRatio: 1.2,
-                children: const [
-                  JobTile(title: "Machine Learning , AI", icon: Icons.memory),
-                  JobTile(title: "C# applications", icon: Icons.code),
-                  JobTile(
-                    title: "Figma UI/UX designer",
-                    icon: Icons.design_services,
-                  ),
-                  JobTile(title: "Machine Learning , AI", icon: Icons.computer),
-                ],
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
