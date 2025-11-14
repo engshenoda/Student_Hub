@@ -23,6 +23,8 @@ import 'package:linkedin/features/onbording/splash_screen.dart';
 import 'package:linkedin/features/profile/presentation/screens/profile_screen.dart';
 
 import 'package:linkedin/features/questions/presentation/user_question_screen.dart';
+import 'package:linkedin/features/search_feature/logic/cubit/search_cubit.dart';
+import 'package:linkedin/features/search_feature/repository/search_repo.dart';
 import 'package:linkedin/features/search_feature/search_screen.dart';
 import 'package:linkedin/features/settings/screens/about_us.dart';
 import 'package:linkedin/features/settings/screens/settings.dart';
@@ -91,11 +93,12 @@ abstract class AppRoute {
         builder: (context, state) => const NotificationScreen(),
       ),
       GoRoute(
-        path: Routes.profile,
+        path: Routes.profile, 
         name: 'profile',
         builder: (context, state) {
-          // final uid = state.pathParameters['uid']!;
-          return ProfileScreen();
+          final uid = state.pathParameters['uid']; 
+          final name = state.extra as String?; 
+          return ProfileScreen(uid: uid, name: name); 
         },
       ),
 

@@ -32,44 +32,6 @@ class UserModel {
 }
 
 
-class PostModel {
-  final String id;
-  final String title;
-  final String content;
-  final String authorId;
-  final DateTime? createdAt;
-
-  PostModel({
-    required this.id,
-    required this.title,
-    required this.content,
-    required this.authorId,
-    this.createdAt,
-  });
-
-  factory PostModel.fromMap(Map<String, dynamic> map, {String? id}) {
-    return PostModel(
-      id: id ?? map['id'] ?? '',
-      title: map['title'] ?? '',
-      content: map['content'] ?? '',
-      authorId: map['authorId'] ?? '',
-      createdAt: map['createdAt'] != null
-          ? (map['createdAt'] as Timestamp).toDate()
-          : null,
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      'title': title,
-      'content': content,
-      'authorId': authorId,
-      'createdAt': createdAt,
-    };
-  }
-}
-
-
 class JobModel {
   final String id;
   final String title;

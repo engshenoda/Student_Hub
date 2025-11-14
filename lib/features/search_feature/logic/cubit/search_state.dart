@@ -12,17 +12,15 @@ class SearchLoading extends SearchState {}
 
 class SearchLoaded extends SearchState {
   final List<UserModel> people;
-  final List<PostModel> posts;
   final List<JobModel> jobs;
 
   SearchLoaded({
     this.people = const [],
-    this.posts = const [],
     this.jobs = const [],
   });
 
   @override
-  List<Object?> get props => [people, posts, jobs];
+  List<Object?> get props => [people, jobs];
 }
 
 class SearchError extends SearchState {
@@ -32,4 +30,15 @@ class SearchError extends SearchState {
 
   @override
   List<Object?> get props => [message];
+}
+
+// 💡 الحالة الجديدة لإصدار إشارة التنقل بالـ UID و Name
+class SearchNavigateToProfile extends SearchState {
+  final String uid;
+  final String name; 
+
+  SearchNavigateToProfile(this.uid, this.name);
+
+  @override
+  List<Object?> get props => [uid, name];
 }

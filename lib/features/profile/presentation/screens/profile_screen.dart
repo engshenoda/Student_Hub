@@ -7,6 +7,7 @@ import 'package:linkedin/core/theme/app_colors.dart';
 import 'package:linkedin/features/profile/data/repo/profile_repo.dart';
 import 'package:linkedin/features/profile/data/services/profile_firebase_service.dart';
 import 'package:linkedin/features/profile/logic/profile_cubit/profile_cubit.dart';
+// افترض أنك تستخدم ProfileState وجميع الـ Widgets الفرعية
 import 'package:linkedin/features/profile/presentation/widgets/about_me_section.dart';
 import 'package:linkedin/features/profile/presentation/widgets/education_section.dart';
 import 'package:linkedin/features/profile/presentation/widgets/languages_section.dart';
@@ -15,16 +16,28 @@ import 'package:linkedin/features/profile/presentation/widgets/skills_section.da
 import 'package:linkedin/features/profile/presentation/widgets/work_experience_section.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  // 💡 يجب استقبال UID و Name من شاشة البحث
+  final String? uid;
+  final String? name;
+
+  const ProfileScreen({super.key, this.uid, this.name});
 
   @override
   Widget build(BuildContext context) {
+    final currentAuthUid = FirebaseAuth.instance.currentUser?.uid;
+
+    // 💡 1. الأولوية: UID المُمرَّر (بروفايل الصديق). إذا لم يُمرَّر، يكون بروفايل المستخدم الحالي.
+    final targetUid = uid ?? currentAuthUid;
+
+    // 💡 2. تحديد ما إذا كان البروفايل المعروض هو بروفايل المستخدم الحالي أم لا.
+    final isCurrentUserProfile = targetUid == currentAuthUid;
+
     return BlocProvider(
       create: (context) {
         final cubit = ProfileCubit(ProfileRepo(ProfileFirebaseService()));
-        final uid = FirebaseAuth.instance.currentUser?.uid;
-        if (uid != null) {
-          cubit.loadProfile(uid);
+        if (targetUid != null) {
+          // 🎯 التحميل يتم باستخدام targetUid (بروفايل الصديق أو أنا)
+          cubit.loadProfile(targetUid);
         }
         return cubit;
       },
@@ -40,13 +53,27 @@ class ProfileScreen extends StatelessWidget {
           }
         },
         builder: (context, state) {
+          // 💡 3. منطق تحديد العنوان (لحل مشكلة "عبده")
+          String appBarTitle = 'Profile';
+          if (state is ProfileLoaded) {
+            // الأولوية الأولى: الاسم المحمل من بيانات الصديق
+            // [افتراض: ProfileLoaded يحتوي على 'user.name']
+            appBarTitle = state.user.name;
+          } else if (name != null && name!.isNotEmpty) {
+            // الأولوية الثانية: الاسم الممرر من قائمة البحث (أثناء التحميل)
+            appBarTitle = name!;
+          } else if (isCurrentUserProfile) {
+            // القيمة الافتراضية إذا كان بروفايلي ولم يتم تحميل الاسم بعد
+            appBarTitle = "My Profile";
+          }
+
           return Scaffold(
             backgroundColor: Colors.grey[50],
             appBar: AppBar(
               centerTitle: true,
-              title: const Text(
-                'Profile',
-                style: TextStyle(
+              title: Text(
+                "profile", // استخدام العنوان الديناميكي الصحيح
+                style: const TextStyle(
                   color: AppColors.primary,
                   fontWeight: FontWeight.bold,
                 ),
@@ -58,27 +85,30 @@ class ProfileScreen extends StatelessWidget {
                 onPressed: () => Navigator.pop(context),
               ),
               actions: [
-                IconButton(
-                  icon: const Icon(Icons.settings, color: AppColors.primary),
-                  onPressed: () {
-                    GoRouter.of(context).push(Routes.settings);
-                    // final uid = FirebaseAuth.instance.currentUser?.uid;
-                    // if (uid != null) {
-                    //   context.read<ProfileCubit>().loadProfile(uid);
-                    // }
-                  },
-                ),
+                // زر الإعدادات يظهر فقط إذا كان هذا بروفايل المستخدم الحالي
+                if (isCurrentUserProfile)
+                  IconButton(
+                    icon: const Icon(Icons.settings, color: AppColors.primary),
+                    onPressed: () {
+                      GoRouter.of(context).push(Routes.settings);
+                    },
+                  ),
                 const SizedBox(width: 8),
               ],
             ),
-            body: _buildBody(context, state),
+            body: _buildBody(context, state, targetUid),
           );
         },
       ),
     );
   }
 
-  Widget _buildBody(BuildContext context, ProfileState state) {
+  // ... (بقية الدالة _buildBody كما هي)
+  Widget _buildBody(
+    BuildContext context,
+    ProfileState state,
+    String? targetUid,
+  ) {
     if (state is ProfileLoading) {
       return const Center(
         child: CircularProgressIndicator(color: AppColors.primary),
@@ -100,9 +130,9 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                final uid = FirebaseAuth.instance.currentUser?.uid;
-                if (uid != null) {
-                  context.read<ProfileCubit>().loadProfile(uid);
+                // المحاولة مجدداً تتم باستخدام targetUid (بروفايل الصديق)
+                if (targetUid != null) {
+                  context.read<ProfileCubit>().loadProfile(targetUid);
                 }
               },
               child: const Text('Retry'),
@@ -115,9 +145,9 @@ class ProfileScreen extends StatelessWidget {
     // Success state or initial state
     return RefreshIndicator(
       onRefresh: () async {
-        final uid = FirebaseAuth.instance.currentUser?.uid;
-        if (uid != null) {
-          await context.read<ProfileCubit>().loadProfile(uid);
+        // Refresh يتم باستخدام targetUid
+        if (targetUid != null) {
+          await context.read<ProfileCubit>().loadProfile(targetUid);
         }
       },
       child: SingleChildScrollView(
@@ -125,6 +155,7 @@ class ProfileScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         child: Column(
           children: [
+            // يجب تمرير البيانات إلى هذه الـ Widgets
             ProfileHeader(),
             const SizedBox(height: 20),
             AboutMeSection(),
