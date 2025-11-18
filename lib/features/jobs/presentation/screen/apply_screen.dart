@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../constants/constants.dart';
+import 'package:linkedin/core/theme/app_colors.dart';
 import 'success_screen.dart';
 
 class ApplyScreen extends StatefulWidget {

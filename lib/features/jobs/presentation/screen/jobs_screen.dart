@@ -1,6 +1,6 @@
-import 'package:fluttem/screens/job_card.dart';
 import 'package:flutter/material.dart';
-import '../constants/constants.dart';
+import 'package:linkedin/core/theme/app_colors.dart';
+import 'package:linkedin/features/jobs/presentation/screen/job_card.dart';
 import 'job_details_screen.dart';
 
 class JobsScreen extends StatefulWidget {

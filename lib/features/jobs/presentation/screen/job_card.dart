@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../constants/constants.dart';
+import 'package:linkedin/core/theme/app_colors.dart';
 
 class JobCard extends StatelessWidget {
   final String title;

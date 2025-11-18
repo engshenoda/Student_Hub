@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "D:/team dpai/Student_Hub/windows/flutter"
+    "cmake.sourceDirectory": "D:/team dpai/Student_Hub/windows/flutter",
+    "cmake.ignoreCMakeListsMissing": true
 }

@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:linkedin/core/constant/constant_collections.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:linkedin/features/profile/data/models/profile_model.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ProfileFirebaseService {
   final FirebaseFirestore _firestore;

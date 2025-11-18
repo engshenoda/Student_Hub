@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../constants/constants.dart';
+import 'package:linkedin/core/theme/app_colors.dart';
 
 class SuccessScreen extends StatefulWidget {
   const SuccessScreen({super.key});
@@ -48,7 +48,10 @@ class _SuccessScreenState extends State<SuccessScreen>
           builder: (context, child) {
             double scale = Tween<double>(begin: 0.0, end: 1.0)
                 .animate(
-                  CurvedAnimation(parent: _circleController, curve: Curves.easeOutBack),
+                  CurvedAnimation(
+                    parent: _circleController,
+                    curve: Curves.easeOutBack,
+                  ),
                 )
                 .value;
             return Transform.scale(
@@ -69,8 +72,15 @@ class _SuccessScreenState extends State<SuccessScreen>
                     ),
                   ),
                   ScaleTransition(
-                    scale: CurvedAnimation(parent: _checkController, curve: Curves.elasticOut),
-                    child: const Icon(Icons.check_rounded, color: Colors.white, size: 80),
+                    scale: CurvedAnimation(
+                      parent: _checkController,
+                      curve: Curves.elasticOut,
+                    ),
+                    child: const Icon(
+                      Icons.check_rounded,
+                      color: Colors.white,
+                      size: 80,
+                    ),
                   ),
                 ],
               ),
@@ -85,7 +95,11 @@ class _SuccessScreenState extends State<SuccessScreen>
           children: [
             const Text(
               "Application Submitted!",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.tealDark),
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: AppColors.tealDark,
+              ),
             ),
             const SizedBox(height: 8),
             const Text(
@@ -94,22 +108,25 @@ class _SuccessScreenState extends State<SuccessScreen>
               style: TextStyle(fontSize: 16, color: Colors.black54),
             ),
             const SizedBox(height: 20),
-ElevatedButton.icon(
-  icon: const Icon(Icons.home, color: Colors.white), 
-  label: const Text(
-    "Back to Home",
-    style: TextStyle(color: Colors.white), 
-  ),
-  style: ElevatedButton.styleFrom(
-    backgroundColor: Color(0xFF006D77) , 
-    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(30),
-    ),
-  ),
-  onPressed: () => Navigator.popUntil(context, (route) => route.isFirst),
-),
-
+            ElevatedButton.icon(
+              icon: const Icon(Icons.home, color: Colors.white),
+              label: const Text(
+                "Back to Home",
+                style: TextStyle(color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color(0xFF006D77),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              onPressed: () =>
+                  Navigator.popUntil(context, (route) => route.isFirst),
+            ),
           ],
         ),
       ),
