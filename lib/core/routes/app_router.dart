@@ -16,12 +16,11 @@ import 'package:linkedin/features/home/presentation/screens/home_screen.dart';
 import 'package:linkedin/features/home/presentation/screens/add_post.dart';
 import 'package:linkedin/features/home/presentation/screens/repost.dart';
 import 'package:linkedin/features/jobs/presentation/screen/jobs_screen.dart';
-import 'package:linkedin/features/jobs/presentation/screen/see_all_screen.dart';
+
 import 'package:linkedin/features/notifications/presentation/screens/notifications_screen.dart';
 import 'package:linkedin/features/onbording/Onboarding_pages.dart';
 import 'package:linkedin/features/onbording/splash_screen.dart';
 import 'package:linkedin/features/profile/presentation/screens/profile_screen.dart';
-
 import 'package:linkedin/features/questions/presentation/user_question_screen.dart';
 import 'package:linkedin/features/search_feature/logic/cubit/search_cubit.dart';
 import 'package:linkedin/features/search_feature/repository/search_repo.dart';
@@ -124,12 +123,9 @@ GoRoute(
       ),
       GoRoute(
         path: Routes.jobs,
-        builder: (context, state) => const JobScreen(),
+        builder: (context, state) => const JobsScreen(),
       ),
-      GoRoute(
-        path: Routes.alljobsscreen,
-        builder: (context, state) => const AllJobsScreen(),
-      ),
+  
       GoRoute(
         path: Routes.addPostScreen,
         builder: (context, state) {
