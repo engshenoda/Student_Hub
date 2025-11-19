@@ -81,7 +81,7 @@ class SearchPage extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) => ProfileScreen(
                     uid: state.uid, // تمرير UID الصديق
-                    name: state.name, // تمرير اسمه
+                    name: state.name,  // تمرير اسمه
                   ),
                 ),
               );
@@ -153,7 +153,7 @@ class SearchPage extends StatelessWidget {
           ),
           // 💡 عرض الـ ID في الـ Subtitle للتأكيد فقط.
           subtitle: Text(
-            "ID: ${user.id}", 
+            "Tap on the person to view profile", 
             style: const TextStyle(color: Colors.grey),
           ),
           trailing: const Icon(Icons.arrow_forward_ios, size: 16),
