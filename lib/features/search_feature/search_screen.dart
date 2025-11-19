@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// 💡 استيراد شاشة البروفايل للتنقل المباشر
+// 💡 استيراد شاشة البروفايل
 import 'package:linkedin/features/profile/presentation/screens/profile_screen.dart'; 
 import 'package:linkedin/features/search_feature/logic/cubit/search_cubit.dart';
 import 'package:linkedin/features/search_feature/logic/cubit/search_state.dart';
+// 💡 استيراد UserModel
 import 'package:linkedin/features/search_feature/model/search_model.dart'; 
 
 class SearchPage extends StatelessWidget {
@@ -80,7 +81,7 @@ class SearchPage extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) => ProfileScreen(
                     uid: state.uid, // تمرير UID الصديق
-                    name: state.name, // تمرير اسمه (للعنوان المبدئي)
+                    name: state.name, // تمرير اسمه
                   ),
                 ),
               );
@@ -93,8 +94,10 @@ class SearchPage extends StatelessWidget {
               final query = _searchController.text.toLowerCase();
               return TabBarView(
                 children: [
-                  _buildListPeople(context, state.people, query), 
-                  _buildListJobs(state.jobs.map((j) => j.title).toList(), query, Icons.work),
+                  // 💡 دالة عرض قائمة الأشخاص الجديدة
+                  _buildListPeople(context, state.people, query),
+                  // استخدام الدالة القديمة للوظائف
+                  _buildList(state.jobs.map((j) => j.title).toList(), query, Icons.work),
                 ],
               );
             } else if (state is SearchError) {
@@ -117,7 +120,7 @@ class SearchPage extends StatelessWidget {
     );
   }
   
-  // 💡 الدالة التي تحتوي على منطق الضغط (onTap)
+  // 💡 الدالة الجديدة: تصل إلى UserModel لتمرير الـ UID والـ Name
   Widget _buildListPeople(BuildContext context, List<UserModel> users, String query) {
     // تصفية بناءً على الاسم
     final filtered = users
@@ -148,8 +151,9 @@ class SearchPage extends StatelessWidget {
             user.name, 
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
+          // 💡 عرض الـ ID في الـ Subtitle للتأكيد فقط.
           subtitle: Text(
-            "ID: ${user.id}", 
+            "Tap on the person to view profile", 
             style: const TextStyle(color: Colors.grey),
           ),
           trailing: const Icon(Icons.arrow_forward_ios, size: 16),
@@ -162,9 +166,8 @@ class SearchPage extends StatelessWidget {
     );
   }
 
-
-  // 💡 الدالة لعرض نتائج الوظائف (بقية الكود...)
-  Widget _buildListJobs(List<String> items, String query, IconData icon) {
+  // 💡 دالة عرض قائمة الوظائف القديمة (محتفظ بها)
+  Widget _buildList(List<String> items, String query, IconData icon) {
     final filtered = items
         .where((item) => item.toLowerCase().contains(query))
         .toList();
@@ -172,7 +175,7 @@ class SearchPage extends StatelessWidget {
     if (filtered.isEmpty) {
       return const Center(
         child: Text(
-          "No job results found",
+          "No results found",
           style: TextStyle(fontSize: 16, color: Colors.grey),
         ),
       );

@@ -7,7 +7,8 @@ import 'package:linkedin/core/theme/app_colors.dart';
 import 'package:linkedin/features/profile/data/repo/profile_repo.dart';
 import 'package:linkedin/features/profile/data/services/profile_firebase_service.dart';
 import 'package:linkedin/features/profile/logic/profile_cubit/profile_cubit.dart';
-// افترض أنك تستخدم ProfileState وجميع الـ Widgets الفرعية
+
+// Import sub-widgets for profile display
 import 'package:linkedin/features/profile/presentation/widgets/about_me_section.dart';
 import 'package:linkedin/features/profile/presentation/widgets/education_section.dart';
 import 'package:linkedin/features/profile/presentation/widgets/languages_section.dart';
@@ -16,7 +17,6 @@ import 'package:linkedin/features/profile/presentation/widgets/skills_section.da
 import 'package:linkedin/features/profile/presentation/widgets/work_experience_section.dart';
 
 class ProfileScreen extends StatelessWidget {
-  // 💡 يجب استقبال UID و Name من شاشة البحث
   final String? uid;
   final String? name;
 
@@ -25,18 +25,13 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentAuthUid = FirebaseAuth.instance.currentUser?.uid;
-
-    // 💡 1. الأولوية: UID المُمرَّر (بروفايل الصديق). إذا لم يُمرَّر، يكون بروفايل المستخدم الحالي.
     final targetUid = uid ?? currentAuthUid;
-
-    // 💡 2. تحديد ما إذا كان البروفايل المعروض هو بروفايل المستخدم الحالي أم لا.
     final isCurrentUserProfile = targetUid == currentAuthUid;
 
     return BlocProvider(
       create: (context) {
         final cubit = ProfileCubit(ProfileRepo(ProfileFirebaseService()));
         if (targetUid != null) {
-          // 🎯 التحميل يتم باستخدام targetUid (بروفايل الصديق أو أنا)
           cubit.loadProfile(targetUid);
         }
         return cubit;
@@ -53,17 +48,13 @@ class ProfileScreen extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          // 💡 3. منطق تحديد العنوان (لحل مشكلة "عبده")
+          // Dynamically set AppBar title
           String appBarTitle = 'Profile';
           if (state is ProfileLoaded) {
-            // الأولوية الأولى: الاسم المحمل من بيانات الصديق
-            // [افتراض: ProfileLoaded يحتوي على 'user.name']
             appBarTitle = state.user.name;
           } else if (name != null && name!.isNotEmpty) {
-            // الأولوية الثانية: الاسم الممرر من قائمة البحث (أثناء التحميل)
             appBarTitle = name!;
           } else if (isCurrentUserProfile) {
-            // القيمة الافتراضية إذا كان بروفايلي ولم يتم تحميل الاسم بعد
             appBarTitle = "My Profile";
           }
 
@@ -72,7 +63,7 @@ class ProfileScreen extends StatelessWidget {
             appBar: AppBar(
               centerTitle: true,
               title: Text(
-                "profile", // استخدام العنوان الديناميكي الصحيح
+                "profile screen", 
                 style: const TextStyle(
                   color: AppColors.primary,
                   fontWeight: FontWeight.bold,
@@ -85,7 +76,7 @@ class ProfileScreen extends StatelessWidget {
                 onPressed: () => Navigator.pop(context),
               ),
               actions: [
-                // زر الإعدادات يظهر فقط إذا كان هذا بروفايل المستخدم الحالي
+                // Settings/edit button should appear only if this is the current user's profile
                 if (isCurrentUserProfile)
                   IconButton(
                     icon: const Icon(Icons.settings, color: AppColors.primary),
@@ -96,19 +87,19 @@ class ProfileScreen extends StatelessWidget {
                 const SizedBox(width: 8),
               ],
             ),
-            body: _buildBody(context, state, targetUid),
+            body: _buildBody(context, state, targetUid, isCurrentUserProfile),
           );
         },
       ),
     );
   }
 
-  // ... (بقية الدالة _buildBody كما هي)
   Widget _buildBody(
-    BuildContext context,
-    ProfileState state,
-    String? targetUid,
-  ) {
+      BuildContext context,
+      ProfileState state,
+      String? targetUid,
+      bool isCurrentUserProfile,
+      ) {
     if (state is ProfileLoading) {
       return const Center(
         child: CircularProgressIndicator(color: AppColors.primary),
@@ -130,7 +121,6 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                // المحاولة مجدداً تتم باستخدام targetUid (بروفايل الصديق)
                 if (targetUid != null) {
                   context.read<ProfileCubit>().loadProfile(targetUid);
                 }
@@ -145,7 +135,6 @@ class ProfileScreen extends StatelessWidget {
     // Success state or initial state
     return RefreshIndicator(
       onRefresh: () async {
-        // Refresh يتم باستخدام targetUid
         if (targetUid != null) {
           await context.read<ProfileCubit>().loadProfile(targetUid);
         }
@@ -155,8 +144,8 @@ class ProfileScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         child: Column(
           children: [
-            // يجب تمرير البيانات إلى هذه الـ Widgets
-            ProfileHeader(),
+            // Pass isCurrentUserProfile to any widget that has editable actions
+            ProfileHeader(isCurrentUserProfile: isCurrentUserProfile),
             const SizedBox(height: 20),
             AboutMeSection(),
             const SizedBox(height: 16),
