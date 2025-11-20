@@ -1,3 +1,4 @@
+// features/home/data/models/comment_model.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CommentModel {
@@ -8,20 +9,18 @@ class CommentModel {
   final DateTime createdAt;
   final DateTime? updatedAt;
   final int likeCount;
-  final String? parentCommentId; // for reply
+  final String? parentCommentId;
 
-CommentModel({
-  required this.id,
-  required this.postId,
-  required this.authorId,
-  required this.content,
-  required this.createdAt,
-  this.updatedAt,
-  this.likeCount = 0,
-  this.parentCommentId,
-});
-
-  
+  CommentModel({
+    required this.id,
+    required this.postId,
+    required this.authorId,
+    required this.content,
+    required this.createdAt,
+    this.updatedAt,
+    this.likeCount = 0,
+    this.parentCommentId,
+  });
 
   factory CommentModel.fromJson(Map<String, dynamic> json, {String? id}) {
     return CommentModel(
@@ -48,6 +47,7 @@ CommentModel({
   }
 
   Map<String, dynamic> toJson() => {
+        'id': id,
         'postId': postId,
         'authorId': authorId,
         'content': content,
@@ -64,7 +64,7 @@ CommentModel({
     int? likeCount,
   }) {
     return CommentModel(
-      id: id?? this.id,
+      id: id ?? this.id,
       postId: postId,
       authorId: authorId,
       content: content ?? this.content,

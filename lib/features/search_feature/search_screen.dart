@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// 💡 استيراد شاشة البروفايل
 import 'package:linkedin/features/profile/presentation/screens/profile_screen.dart'; 
 import 'package:linkedin/features/search_feature/logic/cubit/search_cubit.dart';
 import 'package:linkedin/features/search_feature/logic/cubit/search_state.dart';
-// 💡 استيراد UserModel
 import 'package:linkedin/features/search_feature/model/search_model.dart'; 
 
 class SearchPage extends StatelessWidget {

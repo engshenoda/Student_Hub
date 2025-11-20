@@ -58,6 +58,25 @@ class _PostCardState extends State<PostCard> {
     FocusScope.of(context).unfocus();
   }
 
+  Widget _buildLinkPreview() {
+    if (widget.post.links.isEmpty) return const SizedBox.shrink();
+    
+    return Column(
+      children: widget.post.links.map((link) {
+        return Card(
+          margin: const EdgeInsets.only(top: 8),
+          child: ListTile(
+            leading: const Icon(Icons.link, color: Colors.teal),
+            title: Text(link, overflow: TextOverflow.ellipsis),
+            onTap: () {
+              // يمكن فتح الرابط في متصفح
+            },
+          ),
+        );
+      }).toList(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final post = widget.post;
@@ -69,8 +88,9 @@ class _PostCardState extends State<PostCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // استخدم UserInfoRowWithFetch لجلب بيانات المستخدم من Firestore
             UserInfoRowWithFetch(
-              userId: post.authorId,
+              userId: post.authorId, // ✅ هذا هو الحل الصحيح
               trailing: (widget.onEdit != null || widget.onDelete != null)
                   ? PopupMenuButton<String>(
                       onSelected: (v) {
@@ -86,15 +106,10 @@ class _PostCardState extends State<PostCard> {
             ),
             const SizedBox(height: 10),
             if (post.content.isNotEmpty) Text(post.content),
-            if (post.media.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              // show first media image if exists (simple)
-              if (post.media.first.type == 'image')
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.network(post.media.first.url),
-                ),
-            ],
+            
+            // عرض الروابط
+            _buildLinkPreview(),
+            
             const SizedBox(height: 10),
             Row(
               children: [
@@ -130,27 +145,28 @@ class _PostCardState extends State<PostCard> {
               ],
             ),
             const SizedBox(height: 8),
-            // quick add comment (small)
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _quickCtrl,
-                    decoration: const InputDecoration(
-                      hintText: 'Write a comment...',
-                      isDense: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.zero,
+            if (widget.onAddQuickComment != null) ...[
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _quickCtrl,
+                      decoration: const InputDecoration(
+                        hintText: 'Write a comment...',
+                        isDense: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.zero,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                IconButton(
-                  onPressed: _submitQuickComment,
-                  icon: const Icon(Icons.send, color: Colors.teal),
-                ),
-              ],
-            ),
+                  IconButton(
+                    onPressed: _submitQuickComment,
+                    icon: const Icon(Icons.send, color: Colors.teal),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),

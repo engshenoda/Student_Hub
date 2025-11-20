@@ -1,7 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:linkedin/core/routes/route.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -44,8 +44,7 @@ class HomeHeader extends StatelessWidget {
         final userData = snapshot.data!.data() as Map<String, dynamic>;
         final fullName = userData['name'] ?? 'User';
         final jobTitle = userData['jobTitle'] ?? 'No jobTitle';
-        final degreeYear = userData['degreeYear'] ?? '';
-        final photo = userData['photoUrl']; // ممكن تكون null
+        final photo = userData['photoUrl'];
 
         return Container(
           width: double.infinity,
@@ -59,45 +58,54 @@ class HomeHeader extends StatelessWidget {
           ),
           child: Row(
             children: [
-              /// 🧍‍♂️ صورة المستخدم أو أيقونة شخص
+              /// 🧍‍♂️ صورة المستخدم
               GestureDetector(
                 onTap: () {
-                  // الانتقال إلى صفحة البروفايل
-                  GoRouter.of(context).push(Routes.profile, extra: userId);
+                  // الانتقال إلى البروفايل الشخصي بدون uid
+                  GoRouter.of(context).push(
+                    Routes.profile, // استخدام Route الأساسي
+                    extra: fullName, // إرسال الاسم كـ extra
+                  );
                 },
                 child: CircleAvatar(
                   radius: 22,
                   backgroundColor: Colors.teal[100],
                   child: photo != null && photo.isNotEmpty
-                      ? ClipOval(child: Image.network(photo, fit: BoxFit.cover))
+                      ? ClipOval(
+                          child: Image.network(
+                            photo,
+                            fit: BoxFit.cover,
+                            width: 44,
+                            height: 44,
+                          ),
+                        )
                       : const Icon(Icons.person, color: Colors.teal, size: 28),
                 ),
               ),
               const SizedBox(width: 10),
 
               /// 📝 معلومات المستخدم
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Hi, $fullName",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Colors.teal[800],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Hi, $fullName",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.teal[800],
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-
-                  Text(
-                    jobTitle,
-                    style: TextStyle(color: Colors.teal[800], fontSize: 12),
-                  ),
-                ],
+                    Text(
+                      jobTitle,
+                      style: TextStyle(color: Colors.teal[800], fontSize: 12),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
-
-              const Spacer(),
-
-              /// 🔍 زر البحث
 
               /// 🔔 زر الإشعارات
               IconButton(

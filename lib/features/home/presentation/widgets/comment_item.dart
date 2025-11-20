@@ -8,6 +8,7 @@ class CommentItem extends StatelessWidget {
   final bool isOwner;
   final VoidCallback onLike;
   final void Function(String newText) onEdit;
+  final VoidCallback? onDelete;
 
   const CommentItem({
     super.key,
@@ -15,6 +16,7 @@ class CommentItem extends StatelessWidget {
     required this.isOwner,
     required this.onLike,
     required this.onEdit,
+    this.onDelete,
   });
 
   @override
@@ -24,17 +26,14 @@ class CommentItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          UserInfoRow(
-            name: comment.authorId, // replace with authorName if available
-            jobTitle: '',
-            imageUrl: null,
+          // استخدم UserInfoRowWithFetch لجلب بيانات كاتب التعليق
+          UserInfoRowWithFetch(
+            userId: comment.authorId, // ✅ هذا هو الحل الصحيح
             trailing: isOwner
                 ? PopupMenuButton<String>(
                     onSelected: (v) {
                       if (v == 'edit') {
-                        final ctrl = TextEditingController(
-                          text: comment.content,
-                        );
+                        final ctrl = TextEditingController(text: comment.content);
                         showDialog(
                           context: context,
                           builder: (_) => AlertDialog(
@@ -55,10 +54,32 @@ class CommentItem extends StatelessWidget {
                             ],
                           ),
                         );
+                      } else if (v == 'delete') {
+                        showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: const Text('Delete Comment'),
+                            content: const Text('Are you sure you want to delete this comment?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  onDelete?.call();
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                              ),
+                            ],
+                          ),
+                        );
                       }
                     },
-                    itemBuilder: (_) => const [
-                      PopupMenuItem(value: 'edit', child: Text('Edit')),
+                    itemBuilder: (_) => [
+                      const PopupMenuItem(value: 'edit', child: Text('Edit')),
+                      const PopupMenuItem(value: 'delete', child: Text('Delete')),
                     ],
                   )
                 : null,

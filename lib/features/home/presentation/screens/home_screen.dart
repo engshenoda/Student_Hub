@@ -19,13 +19,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late final PostCubit _cubit;
-
   @override
   void initState() {
     super.initState();
-    _cubit = context.read<PostCubit>();
-    _cubit.watchPosts(); // تشغيل المراقبة
+    context.read<PostCubit>().watchPosts();
   }
 
   @override
@@ -38,10 +35,8 @@ class _HomeScreenState extends State<HomeScreen> {
         body: SafeArea(
           child: Column(
             children: [
-              // 🟢 Header
-              HomeHeader(),
+              const HomeHeader(),
               const SizedBox(height: 8),
-              // 🟣 Posts Section
               Expanded(
                 child: BlocBuilder<PostCubit, PostState>(
                   builder: (context, state) {
@@ -59,50 +54,47 @@ class _HomeScreenState extends State<HomeScreen> {
                       }
 
                       return RefreshIndicator(
-                        onRefresh: () async => _cubit.watchPosts(),
+                        onRefresh: () async {
+                          context.read<PostCubit>().watchPosts();
+                        },
                         child: ListView.separated(
                           padding: const EdgeInsets.symmetric(
                             vertical: 8,
                             horizontal: 12,
                           ),
                           itemCount: posts.length,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(height: 8),
+                          separatorBuilder: (_, __) => const SizedBox(height: 8),
                           itemBuilder: (context, idx) {
                             final post = posts[idx];
-                            final isLiked = (post.likes ?? []).contains(
-                              currentUserId,
-                            );
+                            final isLiked = post.likes.contains(currentUserId);
 
                             return PostCard(
                               post: post,
                               isLiked: isLiked,
-                              onLike: (liked) => _cubit.toggleLike(post, liked),
-                              onTapComments: () =>
-                                  context.push(Routes.comments, extra: post),
+                              onLike: (liked) => context.read<PostCubit>().toggleLike(
+                                postId: post.id,
+                                userId: currentUserId,
+                                isLiked: liked,
+                              ),
+                              onTapComments: () => context.push(Routes.comments, extra: post),
                               onAddQuickComment: (text) {
                                 if (text.trim().isEmpty) return;
                                 final newComment = CommentModel(
-                                  id: DateTime.now().millisecondsSinceEpoch
-                                      .toString(),
+                                  id: DateTime.now().millisecondsSinceEpoch.toString(),
                                   postId: post.id,
                                   authorId: currentUserId,
                                   content: text.trim(),
                                   createdAt: DateTime.now(),
-                                  updatedAt: null,
-                                  likeCount: 0,
-                                  parentCommentId: null,
                                 );
-                                _cubit.addComment(post.id, newComment);
+                                context.read<PostCubit>().addComment(post.id, newComment);
                               },
                               onDelete: () async {
-                                await _cubit.deletePost(post.id);
+                                await context.read<PostCubit>().deletePost(post.id);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(content: Text('Post deleted')),
                                 );
                               },
-                              onEdit: () =>
-                                  context.push('/AddPost', extra: post),
+                              onEdit: () => context.push(Routes.addPostScreen, extra: post),
                             );
                           },
                         ),

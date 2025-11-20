@@ -1,6 +1,6 @@
-// features/home/presentation/widgets/user_info_row.dart
-import 'package:cloud_firestore/cloud_firestore.dart';
+// core/widgets/user_info_row.dart
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class UserInfoRow extends StatelessWidget {
   final String name;
@@ -11,8 +11,6 @@ class UserInfoRow extends StatelessWidget {
 
   const UserInfoRow({
     super.key,
-
-    
     required this.name,
     this.jobTitle,
     this.imageUrl,
@@ -94,7 +92,7 @@ class UserInfoRowWithFetch extends StatelessWidget {
         final userData = snapshot.data!.data() as Map<String, dynamic>;
         final name = userData['name'] ?? 'Unknown';
         final jobTitle = userData['jobTitle'] ?? '';
-        final imageUrl = userData['profileImage'] ?? '';
+        final imageUrl = userData['photoUrl'] ?? '';
 
         return UserInfoRow(
           name: name,
