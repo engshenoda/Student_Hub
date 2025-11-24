@@ -3,6 +3,7 @@ import 'package:linkedin/core/theme/app_colors.dart';
 import 'apply_screen.dart';
 
 class JobDetailsScreen extends StatelessWidget {
+  final String jobId;        // <-- 🔥 إضافة jobId
   final String title;
   final String company;
   final String description;
@@ -10,6 +11,7 @@ class JobDetailsScreen extends StatelessWidget {
 
   const JobDetailsScreen({
     super.key,
+    required this.jobId,     // <-- 🔥 required
     required this.title,
     required this.company,
     required this.description,
@@ -30,7 +32,7 @@ class JobDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // 🔹 الأيقونة بدل الصورة
+            // 🔹 Icon circle
             Container(
               width: 120,
               height: 120,
@@ -41,6 +43,7 @@ class JobDetailsScreen extends StatelessWidget {
               child: Icon(icon, size: 70, color: AppColors.tealDark),
             ),
             const SizedBox(height: 20),
+
             Text(
               company,
               style: const TextStyle(
@@ -49,7 +52,9 @@ class JobDetailsScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
+
             const SizedBox(height: 10),
+
             Text(
               description,
               textAlign: TextAlign.center,
@@ -59,7 +64,9 @@ class JobDetailsScreen extends StatelessWidget {
                 height: 1.5,
               ),
             ),
+
             const Spacer(),
+
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.tealDark,
@@ -71,7 +78,9 @@ class JobDetailsScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const ApplyScreen()),
+                  MaterialPageRoute(
+                    builder: (_) => ApplyScreen(jobId: jobId), // <-- 🔥 تم التمرير
+                  ),
                 );
               },
               child: const Text(
@@ -79,6 +88,7 @@ class JobDetailsScreen extends StatelessWidget {
                 style: TextStyle(color: Colors.white, fontSize: 16),
               ),
             ),
+
             const SizedBox(height: 30),
           ],
         ),
