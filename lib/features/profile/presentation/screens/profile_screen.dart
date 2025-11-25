@@ -80,7 +80,8 @@ class ProfileScreen extends StatelessWidget {
     ProfileState state,
     String? currentAuthUid,
   ) {
-    if (state is ProfileLoading) {
+    // ✅ إضافة معالجة للحالة الأولية
+    if (state is ProfileInitial || state is ProfileLoading) {
       return const Center(
         child: CircularProgressIndicator(color: AppColors.primary),
       );
@@ -139,7 +140,12 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 30),
           ],
         ),
-      ),
+      );
+    }
+
+    // Fallback للدول الأخرى
+    return const Center(
+      child: CircularProgressIndicator(color: AppColors.primary),
     );
   }
 }

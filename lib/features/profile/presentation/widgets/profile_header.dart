@@ -9,7 +9,7 @@ import 'package:linkedin/features/profile/logic/profile_cubit/profile_cubit.dart
 import 'package:linkedin/features/profile/presentation/widgets/show_custom_bottom_sheet.dart';
 
 class ProfileHeader extends StatelessWidget {
-  const ProfileHeader({super.key});
+  const ProfileHeader({super.key, required bool isCurrentUserProfile});
 
   Future<void> _pickImage(BuildContext context) async {
     final picker = ImagePicker();

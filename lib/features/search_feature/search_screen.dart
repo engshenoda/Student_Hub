@@ -149,6 +149,7 @@ class SearchPage extends StatelessWidget {
             user.name, 
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
+          // 💡 عرض الـ ID في الـ Subtitle للتأكيد فقط.
           subtitle: Text(
             "View Profile", 
             style: const TextStyle(color: Colors.grey),
@@ -173,7 +174,7 @@ class SearchPage extends StatelessWidget {
     if (filtered.isEmpty) {
       return const Center(
         child: Text(
-          "No job results found",
+          "No results found",
           style: TextStyle(fontSize: 16, color: Colors.grey),
         ),
       );

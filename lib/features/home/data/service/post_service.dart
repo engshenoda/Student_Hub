@@ -1,3 +1,4 @@
+// features/home/data/service/post_service.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:linkedin/features/home/data/models/post_model.dart';
 import 'package:linkedin/features/home/data/models/comment_model.dart';
@@ -5,21 +6,24 @@ import 'package:linkedin/features/home/data/models/comment_model.dart';
 class PostServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  /// 🟢 Add new post
-  Future<void> addPost(PostModel post) async {
-    try {
-      final docRef = post.id.isEmpty
-          ? _firestore.collection('posts').doc()
-          : _firestore.collection('posts').doc(post.id);
+Future<void> addPost(PostModel post) async {
+  try {
+    final docRef = post.id.isEmpty
+        ? _firestore.collection('posts').doc()
+        : _firestore.collection('posts').doc(post.id);
 
-      final postWithId = post.id.isEmpty ? post.copyWith(id: docRef.id) : post;
-      await docRef.set(postWithId.toJson());
-    } catch (e) {
-      throw Exception('❌ Failed to add post: $e');
-    }
+    final postWithId = post.id.isEmpty ? post.copyWith(id: docRef.id) : post;
+    
+    // تأكد أن الـ Post يحفظ authorName و authorImage
+    print('🎯 Saving post with author: ${postWithId.authorName}');
+    print('🎯 Author image: ${postWithId.authorImage}');
+    
+    await docRef.set(postWithId.toJson());
+    print('✅ Post saved successfully with author data');
+  } catch (e) {
+    throw Exception('❌ Failed to add post: $e');
   }
-
-  /// 🟡 Update an existing post
+}
   Future<void> updatePost(PostModel post) async {
     try {
       await _firestore.collection('posts').doc(post.id).update(post.toJson());
@@ -28,7 +32,6 @@ class PostServices {
     }
   }
 
-  /// 🔴 Delete a post by ID
   Future<void> deletePost(String postId) async {
     try {
       await _firestore.collection('posts').doc(postId).delete();
@@ -37,7 +40,6 @@ class PostServices {
     }
   }
 
-  /// 👀 Stream all posts (ordered by date)
   Stream<List<PostModel>> watchPosts() {
     try {
       return _firestore
@@ -54,7 +56,6 @@ class PostServices {
     }
   }
 
-  /// 💬 Add comment to a post (subcollection)
   Future<void> addComment(String postId, CommentModel comment) async {
     try {
       final commentRef = comment.id.isEmpty
@@ -79,7 +80,6 @@ class PostServices {
     }
   }
 
-  /// 🟡 Update a comment
   Future<void> updateComment(String postId, CommentModel comment) async {
     try {
       await _firestore
@@ -93,7 +93,19 @@ class PostServices {
     }
   }
 
-  /// 👀 Stream comments for a specific post
+  Future<void> deleteComment(String postId, String commentId) async {
+    try {
+      await _firestore
+          .collection('posts')
+          .doc(postId)
+          .collection('comments')
+          .doc(commentId)
+          .delete();
+    } catch (e) {
+      throw Exception('❌ Failed to delete comment: $e');
+    }
+  }
+
   Stream<List<CommentModel>> watchComments(String postId) {
     try {
       return _firestore
@@ -112,24 +124,23 @@ class PostServices {
     }
   }
 
-  /// ❤️ Toggle Like (increment/decrement likeCount only)
-  Future<void> toggleLike(String postId, bool isLiked) async {
+  Future<void> toggleLike(String postId, String userId, bool isLiked) async {
     try {
       await _firestore.collection('posts').doc(postId).update({
         'likeCount': FieldValue.increment(isLiked ? -1 : 1),
+        'likes': isLiked 
+            ? FieldValue.arrayRemove([userId])
+            : FieldValue.arrayUnion([userId]),
       });
     } catch (e) {
-      throw Exception('Failed to update like count: $e');
+      throw Exception('Failed to update like: $e');
     }
   }
 
-  // 👇 ✅ الوظيفة الجديدة: جلب بيانات المستخدم من Firestore
   Future<Map<String, dynamic>?> getUserInfo(String userId) async {
     try {
       final userDoc = await _firestore.collection('users').doc(userId).get();
-
       if (!userDoc.exists) return null;
-
       return userDoc.data();
     } catch (e) {
       print('⚠️ Failed to fetch user info for $userId: $e');

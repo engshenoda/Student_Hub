@@ -1,7 +1,6 @@
 // features/home/presentation/screens/comments_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:linkedin/features/home/logic/post_cubit/post_cubt.dart';
 import 'package:linkedin/features/home/logic/post_cubit/post_state.dart';
@@ -12,8 +11,9 @@ import 'package:linkedin/features/home/presentation/widgets/add_comment_field.da
 import 'package:linkedin/features/home/presentation/widgets/post_card.dart';
 
 class CommentsScreen extends StatefulWidget {
-  // post will arrive via GoRouter extra
-  const CommentsScreen({super.key});
+  final PostModel post;
+  
+  const CommentsScreen({super.key, required this.post});
 
   @override
   State<CommentsScreen> createState() => _CommentsScreenState();
@@ -21,26 +21,16 @@ class CommentsScreen extends StatefulWidget {
 
 class _CommentsScreenState extends State<CommentsScreen> {
   late final PostCubit _cubit;
-  late final PostModel post;
   late final String currentUserId;
 
   @override
   void initState() {
     super.initState();
     _cubit = context.read<PostCubit>();
-    // get post from extra
-    final extra = GoRouterState.of(context).extra;
-    if (extra != null && extra is PostModel) {
-      post = extra;
-    } else {
-      // fallback: route should always pass post
-      throw Exception('CommentsScreen requires a PostModel in extra');
-    }
     final user = FirebaseAuth.instance.currentUser;
     currentUserId = user?.uid ?? '';
 
-    // start listening comments for this post
-    _cubit.watchComments(post.id);
+    _cubit.watchComments(widget.post.id);
   }
 
   @override
@@ -54,16 +44,16 @@ class _CommentsScreenState extends State<CommentsScreen> {
       ),
       body: Column(
         children: [
-          // show post summary on top
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: PostCard(
-              post: post,
-              isLiked:
-                  (post is dynamic &&
-                  (post.likes != null &&
-                      (post.likes as List).contains(currentUserId))),
-              onLike: (isLiked) => _cubit.toggleLike(post, isLiked),
+              post: widget.post,
+              isLiked: widget.post.likes.contains(currentUserId),
+              onLike: (isLiked) => _cubit.toggleLike(
+                postId: widget.post.id,
+                userId: currentUserId,
+                isLiked: isLiked,
+              ),
               onTapComments: () {},
               onAddQuickComment: (_) {},
               onEdit: () {},
@@ -74,7 +64,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
           Expanded(
             child: BlocBuilder<PostCubit, PostState>(
               builder: (context, state) {
-                if (state is PostLoading || state is PostInitial) {
+                if (state is PostLoading) {
                   return const Center(child: CircularProgressIndicator());
                 }
 
@@ -90,24 +80,24 @@ class _CommentsScreenState extends State<CommentsScreen> {
                     itemCount: comments.length,
                     separatorBuilder: (_, __) => const Divider(height: 0),
                     itemBuilder: (context, index) {
-                      final CommentModel comment = comments[index];
+                      final comment = comments[index];
                       final isOwner = comment.authorId == currentUserId;
                       return CommentItem(
                         comment: comment,
                         isOwner: isOwner,
                         onLike: () => _cubit.toggleCommentLike(
-                          post.id,
-                          comment,
-                          comment.likeCount > 0 ? true : false,
+                          postId: widget.post.id,        // ✅ أضف postId
+                          comment: comment,              // ✅ أضف comment
+                          isLiked: comment.likeCount > 0, // ✅ أضف isLiked
                         ),
                         onEdit: (newText) {
                           final updated = comment.copyWith(
                             content: newText,
                             updatedAt: DateTime.now(),
                           );
-                          _cubit.updateComment(post.id, updated);
+                          _cubit.updateComment(widget.post.id, updated);
                         },
-                        // no deleteComment method in cubit — not calling
+                        onDelete: () => _cubit.deleteComment(widget.post.id, comment.id),
                       );
                     },
                   );
@@ -122,21 +112,17 @@ class _CommentsScreenState extends State<CommentsScreen> {
             ),
           ),
 
-          // add comment
           AddCommentField(
             onSubmit: (text) {
               if (text.trim().isEmpty) return;
               final newComment = CommentModel(
                 id: DateTime.now().millisecondsSinceEpoch.toString(),
-                postId: post.id,
+                postId: widget.post.id,
                 authorId: currentUserId,
                 content: text.trim(),
                 createdAt: DateTime.now(),
-                updatedAt: null,
-                likeCount: 0,
-                parentCommentId: null,
               );
-              _cubit.addComment(post.id, newComment);
+              _cubit.addComment(widget.post.id, newComment);
             },
           ),
         ],

@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:uuid/uuid.dart';
 import 'package:linkedin/core/theme/app_colors.dart';
 import 'success_screen.dart';
+import 'package:linkedin/features/jobs/data/job_model.dart'; // ← مسار الموديل
 
 class ApplyScreen extends StatefulWidget {
-  const ApplyScreen({super.key});
+  final String jobId;   // 👈 مهم جدًا علشان نعرف المستخدم بيقدم على وظيفة إيه
+
+  const ApplyScreen({super.key, required this.jobId});
 
   @override
   State<ApplyScreen> createState() => _ApplyScreenState();
@@ -21,21 +26,52 @@ class _ApplyScreenState extends State<ApplyScreen> {
 
   bool _isLoading = false;
 
-  void _submitForm() async {
+  Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
-    await Future.delayed(const Duration(seconds: 1)); // محاكاة إرسال البيانات
+    try {
+      /// 1) إنشاء ID للـ Application
+      final id = const Uuid().v4();
 
-    setState(() => _isLoading = false);
+      /// 2) بناء Model
+      final application = JobApplication(
+        id: id,
+        jobId: widget.jobId,
+        fullName: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        phone: _phoneController.text.trim(),
+        yearsExperience: _experienceController.text.trim(),
+        cvLink: _cvLinkController.text.trim(),
+        notes: _notesController.text.trim().isEmpty
+            ? null
+            : _notesController.text.trim(),
+        appliedAt: Timestamp.now(),
+      );
 
-    if (mounted) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const SuccessScreen()),
+      /// 3) إرسال البيانات إلى Firestore
+      await FirebaseFirestore.instance
+          .collection("jobApplications")
+          .doc(id)
+          .set(application.toJson());
+
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const SuccessScreen()),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error submitting jobApplications: $e"),
+          backgroundColor: Colors.red,
+        ),
       );
     }
+
+    setState(() => _isLoading = false);
   }
 
   @override
