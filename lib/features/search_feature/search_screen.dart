@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:linkedin/features/profile/presentation/screens/profile_screen.dart'; 
+// 🎯 استيراد صفحة العرض فقط (ViewProfileScreen) للأشخاص من البحث
+import 'package:linkedin/features/profile/presentation/screens/view_profile_screen.dart'; 
 import 'package:linkedin/features/search_feature/logic/cubit/search_cubit.dart';
 import 'package:linkedin/features/search_feature/logic/cubit/search_state.dart';
 import 'package:linkedin/features/search_feature/model/search_model.dart'; 
@@ -69,17 +70,17 @@ class SearchPage extends StatelessWidget {
             ],
           ),
         ),
-        // 💡 استخدام BlocConsumer للاستماع لحالة التنقل وتنفيذ Navigator.push
+        // 🎯 استخدام BlocConsumer للاستماع لحالة التنقل
         body: BlocConsumer<SearchCubit, SearchState>(
           listener: (context, state) {
             if (state is SearchNavigateToProfile) {
-              // 🎯 التنقل الفعلي باستخدام Navigator.push
+              // ✅ التنقل إلى ViewProfileScreen مع تمرير UID و Name
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ProfileScreen(
-                    uid: state.uid, // تمرير UID الصديق
-                    name: state.name, // تمرير اسمه
+                  builder: (context) => ViewProfileScreen(
+                    uid: state.uid,
+                    name: state.name,
                   ),
                 ),
               );
@@ -92,10 +93,10 @@ class SearchPage extends StatelessWidget {
               final query = _searchController.text.toLowerCase();
               return TabBarView(
                 children: [
-                  // 💡 دالة عرض قائمة الأشخاص الجديدة
-                  _buildListPeople(context, state.people, query),
-                  // استخدام الدالة القديمة للوظائف
-                  _buildList(state.jobs.map((j) => j.title).toList(), query, Icons.work),
+                  // 👥 قائمة الأشخاص
+                  _buildListPeople(context, state.people, query), 
+                  // 💼 قائمة الوظائف
+                  _buildListJobs(state.jobs.map((j) => j.title).toList(), query, Icons.work),
                 ],
               );
             } else if (state is SearchError) {
@@ -118,9 +119,8 @@ class SearchPage extends StatelessWidget {
     );
   }
   
-  // 💡 الدالة الجديدة: تصل إلى UserModel لتمرير الـ UID والـ Name
+  // 👥 دالة عرض قائمة الأشخاص
   Widget _buildListPeople(BuildContext context, List<UserModel> users, String query) {
-    // تصفية بناءً على الاسم
     final filtered = users
         .where((user) => user.name.toLowerCase().contains(query))
         .toList();
@@ -151,12 +151,13 @@ class SearchPage extends StatelessWidget {
           ),
           // 💡 عرض الـ ID في الـ Subtitle للتأكيد فقط.
           subtitle: Text(
-            "Tap on the person to view profile", 
+            "View Profile", 
             style: const TextStyle(color: Colors.grey),
           ),
           trailing: const Icon(Icons.arrow_forward_ios, size: 16),
           onTap: () {
-            // 🎯 استدعاء الكيوبيت لإصدار إشارة التنقل بالـ UID و Name
+            // 🎯 استدعاء الكيوبيت لإصدار حالة التنقل
+            // سيتم التقاطها في BlocConsumer listener أعلاه
             context.read<SearchCubit>().selectProfile(user.id, user.name);
           },
         );
@@ -164,8 +165,8 @@ class SearchPage extends StatelessWidget {
     );
   }
 
-  // 💡 دالة عرض قائمة الوظائف القديمة (محتفظ بها)
-  Widget _buildList(List<String> items, String query, IconData icon) {
+  // 💼 دالة عرض قائمة الوظائف
+  Widget _buildListJobs(List<String> items, String query, IconData icon) {
     final filtered = items
         .where((item) => item.toLowerCase().contains(query))
         .toList();

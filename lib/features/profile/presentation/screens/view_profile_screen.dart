@@ -1,35 +1,35 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:linkedin/core/routes/route.dart';
 import 'package:linkedin/core/theme/app_colors.dart';
 import 'package:linkedin/features/profile/data/repo/profile_repo.dart';
 import 'package:linkedin/features/profile/data/services/profile_firebase_service.dart';
 import 'package:linkedin/features/profile/logic/profile_cubit/profile_cubit.dart';
-import 'package:linkedin/features/profile/presentation/widgets/about_me_section.dart';
-import 'package:linkedin/features/profile/presentation/widgets/education_section.dart';
-import 'package:linkedin/features/profile/presentation/widgets/languages_section.dart';
-import 'package:linkedin/features/profile/presentation/widgets/profile_header.dart';
-import 'package:linkedin/features/profile/presentation/widgets/skills_section.dart';
-import 'package:linkedin/features/profile/presentation/widgets/work_experience_section.dart';
+import 'package:linkedin/features/profile/presentation/widgets/about_me_section_view.dart';
+import 'package:linkedin/features/profile/presentation/widgets/education_section_view.dart';
+import 'package:linkedin/features/profile/presentation/widgets/languages_section_view.dart';
+import 'package:linkedin/features/profile/presentation/widgets/profile_header_view.dart';
+import 'package:linkedin/features/profile/presentation/widgets/skills_section_view.dart';
+import 'package:linkedin/features/profile/presentation/widgets/work_experience_section_view.dart';
 
-/// 📝 صفحة البروفايل الشخصي (My Profile)
-/// تستخدم لعرض وتعديل بيانات المستخدم الحالي فقط
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+
+class ViewProfileScreen extends StatelessWidget {
+  final String uid;
+  final String? name;
+
+  const ViewProfileScreen({
+    super.key,
+    required this.uid,
+    this.name,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final currentAuthUid = FirebaseAuth.instance.currentUser?.uid;
-
     return BlocProvider(
       create: (context) {
         final cubit = ProfileCubit(ProfileRepo(ProfileFirebaseService()));
-        if (currentAuthUid != null) {
-          // 🎯 تحميل بيانات المستخدم الحالي فقط
-          cubit.loadProfile(currentAuthUid);
-        }
+        // 🎯 تحميل بيانات الشخص المحدد فقط
+        cubit.loadProfile(uid);
         return cubit;
       },
       child: BlocConsumer<ProfileCubit, ProfileState>(
@@ -44,8 +44,8 @@ class ProfileScreen extends StatelessWidget {
           }
         },
         builder: (context, state) {
-          // تحديد عنوان AppBar
-          String appBarTitle = 'My Profile';
+          // تحديد العنوان
+          String appBarTitle = name ?? 'Profile';
           if (state is ProfileLoaded) {
             appBarTitle = state.user.name;
           }
@@ -67,21 +67,17 @@ class ProfileScreen extends StatelessWidget {
                 icon: const Icon(Icons.arrow_back, color: AppColors.primary),
                 onPressed: () => Navigator.pop(context),
               ),
+              // 🚫 لا توجد أزرار إعدادات أو تعديل
             ),
-            body: _buildBody(context, state, currentAuthUid),
+            body: _buildBody(context, state),
           );
         },
       ),
     );
   }
 
-  Widget _buildBody(
-    BuildContext context,
-    ProfileState state,
-    String? currentAuthUid,
-  ) {
-    // ✅ إضافة معالجة للحالة الأولية
-    if (state is ProfileInitial || state is ProfileLoading) {
+  Widget _buildBody(BuildContext context, ProfileState state) {
+    if (state is ProfileLoading) {
       return const Center(
         child: CircularProgressIndicator(color: AppColors.primary),
       );
@@ -102,9 +98,7 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                if (currentAuthUid != null) {
-                  context.read<ProfileCubit>().loadProfile(currentAuthUid);
-                }
+                context.read<ProfileCubit>().loadProfile(uid);
               },
               child: const Text('Retry'),
             ),
@@ -113,39 +107,32 @@ class ProfileScreen extends StatelessWidget {
       );
     }
 
-    // 📊 عرض بيانات المستخدم الحالي
+    // 📊 عرض البيانات فقط - بدون إمكانية التعديل
     return RefreshIndicator(
       onRefresh: () async {
-        if (currentAuthUid != null) {
-          await context.read<ProfileCubit>().loadProfile(currentAuthUid);
-        }
+        await context.read<ProfileCubit>().loadProfile(uid);
       },
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         child: Column(
           children: [
-            // 📝 عرض بيانات المستخدم الحالي
-            ProfileHeader(),
+            // 👀 جميع الـ Widgets للعرض فقط
+            ProfileHeaderView(),
             const SizedBox(height: 20),
-            AboutMeSection(),
+            AboutMeSectionView(),
             const SizedBox(height: 16),
-            SkillsSection(),
+            SkillsSectionView(),
             const SizedBox(height: 16),
-            EducationSection(),
+            EducationSectionView(),
             const SizedBox(height: 16),
-            LanguagesSection(),
+            LanguagesSectionView(),
             const SizedBox(height: 16),
-            WorkExperienceSection(),
+            WorkExperienceSectionView(),
             const SizedBox(height: 30),
           ],
         ),
-      );
-    }
-
-    // Fallback للدول الأخرى
-    return const Center(
-      child: CircularProgressIndicator(color: AppColors.primary),
+      ),
     );
   }
 }

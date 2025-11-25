@@ -88,6 +88,7 @@ class AppRoute {
         path: Routes.profile, // /profile
         name: 'my_profile',
         builder: (context, state) {
+
           final name = state.extra as String?;
           return ProfileScreen(uid: null, name: name);
         },
