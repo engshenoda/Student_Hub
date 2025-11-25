@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:linkedin/core/routes/route.dart';
 import 'package:linkedin/core/theme/app_colors.dart';
 import 'package:linkedin/features/profile/data/repo/profile_repo.dart';
 import 'package:linkedin/features/profile/data/services/profile_firebase_service.dart';
@@ -61,6 +63,14 @@ class ViewProfileScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+               actions: [
+                IconButton(
+                  icon: const Icon(Icons.settings, color: AppColors.primary),
+                  onPressed: () {
+                    GoRouter.of(context).push(Routes.settings);
+                  },
+                ),
+              ],
               elevation: 0,
               backgroundColor: Colors.white,
               leading: IconButton(

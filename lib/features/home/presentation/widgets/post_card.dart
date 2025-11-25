@@ -1,4 +1,3 @@
-// features/home/presentation/widgets/post_card.dart
 import 'package:flutter/material.dart';
 import 'package:linkedin/core/widgets/user_info_row.dart';
 import 'package:linkedin/features/home/data/models/post_model.dart';

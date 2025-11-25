@@ -30,7 +30,7 @@ class Settings extends StatelessWidget {
                   icon: Icons.person,
                   title: 'Edit profile',
                   onTap: () {
-                    // navigate to edit profile
+                    GoRouter.of(context).push(Routes.profile);
                   },
                 ),
                 SettingsTile(

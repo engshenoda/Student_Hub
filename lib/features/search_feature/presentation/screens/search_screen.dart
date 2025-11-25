@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:linkedin/core/routes/route.dart';
 // 🎯 استيراد صفحة العرض فقط (ViewProfileScreen) للأشخاص من البحث
-import 'package:linkedin/features/profile/presentation/screens/view_profile_screen.dart'; 
+import 'package:linkedin/features/profile/presentation/screens/view_profile_screen.dart';
 import 'package:linkedin/features/search_feature/logic/cubit/search_cubit.dart';
 import 'package:linkedin/features/search_feature/logic/cubit/search_state.dart';
-import 'package:linkedin/features/search_feature/model/search_model.dart'; 
+import 'package:linkedin/features/search_feature/model/search_model.dart';
 
 class SearchPage extends StatelessWidget {
   SearchPage({super.key});
@@ -56,7 +58,9 @@ class SearchPage extends StatelessWidget {
                   ),
                 ),
                 onChanged: (value) {
-                  context.read<SearchCubit>().searchAll(value.trim().toLowerCase());
+                  context.read<SearchCubit>().searchAll(
+                    value.trim().toLowerCase(),
+                  );
                 },
               ),
             ),
@@ -74,18 +78,13 @@ class SearchPage extends StatelessWidget {
         body: BlocConsumer<SearchCubit, SearchState>(
           listener: (context, state) {
             if (state is SearchNavigateToProfile) {
-              // ✅ التنقل إلى ViewProfileScreen مع تمرير UID و Name
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ViewProfileScreen(
-                    uid: state.uid,
-                    name: state.name,
-                  ),
-                ),
+              GoRouter.of(context).push(
+                Routes.viewprofile,
+                extra: {'uid': state.uid, 'name': state.name},
               );
             }
           },
+
           builder: (context, state) {
             if (state is SearchLoading) {
               return const Center(child: CircularProgressIndicator());
@@ -94,9 +93,13 @@ class SearchPage extends StatelessWidget {
               return TabBarView(
                 children: [
                   // 👥 قائمة الأشخاص
-                  _buildListPeople(context, state.people, query), 
+                  _buildListPeople(context, state.people, query),
                   // 💼 قائمة الوظائف
-                  _buildListJobs(state.jobs.map((j) => j.title).toList(), query, Icons.work),
+                  _buildListJobs(
+                    state.jobs.map((j) => j.title).toList(),
+                    query,
+                    Icons.work,
+                  ),
                 ],
               );
             } else if (state is SearchError) {
@@ -118,9 +121,13 @@ class SearchPage extends StatelessWidget {
       ),
     );
   }
-  
+
   // 👥 دالة عرض قائمة الأشخاص
-  Widget _buildListPeople(BuildContext context, List<UserModel> users, String query) {
+  Widget _buildListPeople(
+    BuildContext context,
+    List<UserModel> users,
+    String query,
+  ) {
     final filtered = users
         .where((user) => user.name.toLowerCase().contains(query))
         .toList();
@@ -146,11 +153,11 @@ class SearchPage extends StatelessWidget {
             child: Icon(Icons.person, color: Colors.white),
           ),
           title: Text(
-            user.name, 
+            user.name,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
           subtitle: Text(
-            "View Profile", 
+            "View Profile",
             style: const TextStyle(color: Colors.grey),
           ),
           trailing: const Icon(Icons.arrow_forward_ios, size: 16),

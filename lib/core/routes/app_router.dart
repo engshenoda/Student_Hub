@@ -1,3 +1,4 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:linkedin/core/routes/route.dart';
 import 'package:linkedin/features/auth/presentation/screens/create_account/create_account_screen.dart';
@@ -17,7 +18,10 @@ import 'package:linkedin/features/notifications/presentation/screens/notificatio
 import 'package:linkedin/features/onbording/onboarding_pages.dart';
 import 'package:linkedin/features/onbording/splash_screen.dart';
 import 'package:linkedin/features/profile/presentation/screens/profile_screen.dart';
+import 'package:linkedin/features/profile/presentation/screens/view_profile_screen.dart';
 import 'package:linkedin/features/questions/presentation/user_question_screen.dart';
+import 'package:linkedin/features/search_feature/logic/cubit/search_cubit.dart';
+import 'package:linkedin/features/search_feature/repository/search_repo.dart';
 import 'package:linkedin/features/search_feature/search_screen.dart';
 import 'package:linkedin/features/settings/screens/about_us.dart';
 import 'package:linkedin/features/settings/screens/settings.dart';
@@ -88,25 +92,34 @@ class AppRoute {
         path: Routes.profile, // /profile
         name: 'my_profile',
         builder: (context, state) {
-
-          final name = state.extra as String?;
-          return ProfileScreen(uid: null, name: name);
+          return ProfileScreen();
         },
       ),
       GoRoute(
-        path: '${Routes.profile}/:uid', // /profile/123
-        name: 'user_profile',
+        path: Routes.viewprofile,
+        name: 'view_profile',
         builder: (context, state) {
-          final uid = state.pathParameters['uid']!;
-          final name = state.extra as String?;
-          return ProfileScreen(uid: uid, name: name);
+          final extra = state.extra as Map<String, dynamic>?;
+
+          return ViewProfileScreen(uid: extra?['uid'], name: extra?['name']);
         },
       ),
+
       GoRoute(
         path: Routes.settings,
         builder: (context, state) => const Settings(),
       ),
-      GoRoute(path: Routes.search, builder: (context, state) => SearchPage()),
+
+      GoRoute(
+        path: Routes.search,
+        builder: (context, state) {
+          return BlocProvider(
+            create: (_) => SearchCubit(SearchRepository()),
+            child: SearchPage(),
+          );
+        },
+      ),
+
       GoRoute(
         path: Routes.aboutUs,
         builder: (context, state) => const AboutUs(),

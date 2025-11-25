@@ -24,4 +24,5 @@ class Routes {
   static const chatscreen = '/chatscreen';
   static const comments = '/comments';
   static const repost = '/repost';
+  static const viewprofile = '/viewprofile';
 }

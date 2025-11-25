@@ -63,8 +63,8 @@ class HomeHeader extends StatelessWidget {
                 onTap: () {
                   // الانتقال إلى البروفايل الشخصي بدون uid
                   GoRouter.of(context).push(
-                    Routes.profile, // استخدام Route الأساسي
-                    extra: fullName, // إرسال الاسم كـ extra
+                    Routes.viewprofile,
+                    extra: {'uid': userId, 'name': fullName},
                   );
                 },
                 child: CircleAvatar(

@@ -61,6 +61,14 @@ class ProfileScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.settings, color: AppColors.primary),
+                  onPressed: () {
+                    GoRouter.of(context).push(Routes.settings);
+                  },
+                ),
+              ],
               elevation: 0,
               backgroundColor: Colors.white,
               leading: IconButton(
@@ -126,7 +134,7 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           children: [
             // 📝 عرض بيانات المستخدم الحالي
-            ProfileHeader(),
+            ProfileHeader(isCurrentUserProfile: true),
             const SizedBox(height: 20),
             AboutMeSection(),
             const SizedBox(height: 16),
@@ -140,12 +148,11 @@ class ProfileScreen extends StatelessWidget {
             const SizedBox(height: 30),
           ],
         ),
-      );
-    }
-
-    // Fallback للدول الأخرى
-    return const Center(
-      child: CircularProgressIndicator(color: AppColors.primary),
+      ),
     );
   }
+
+  // return const Center(
+  //   child: CircularProgressIndicator(color: AppColors.primary),
+  // );
 }
