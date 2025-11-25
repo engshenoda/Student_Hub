@@ -95,9 +95,7 @@ abstract class AppRoute {
         path: Routes.profile, 
         name: 'profile',
         builder: (context, state) {
-          final uid = state.pathParameters['uid']; 
-          final name = state.extra as String?; 
-          return ProfileScreen(uid: uid, name: name); 
+          return ProfileScreen(); 
         },
       ),
 
