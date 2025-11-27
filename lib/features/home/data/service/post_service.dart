@@ -6,24 +6,25 @@ import 'package:linkedin/features/home/data/models/comment_model.dart';
 class PostServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-Future<void> addPost(PostModel post) async {
-  try {
-    final docRef = post.id.isEmpty
-        ? _firestore.collection('posts').doc()
-        : _firestore.collection('posts').doc(post.id);
+  Future<void> addPost(PostModel post) async {
+    try {
+      final docRef = post.id.isEmpty
+          ? _firestore.collection('posts').doc()
+          : _firestore.collection('posts').doc(post.id);
 
-    final postWithId = post.id.isEmpty ? post.copyWith(id: docRef.id) : post;
-    
-    // تأكد أن الـ Post يحفظ authorName و authorImage
-    print('🎯 Saving post with author: ${postWithId.authorName}');
-    print('🎯 Author image: ${postWithId.authorImage}');
-    
-    await docRef.set(postWithId.toJson());
-    print('✅ Post saved successfully with author data');
-  } catch (e) {
-    throw Exception('❌ Failed to add post: $e');
+      final postWithId = post.id.isEmpty ? post.copyWith(id: docRef.id) : post;
+
+      // تأكد أن الـ Post يحفظ authorName و authorImage
+      print('🎯 Saving post with author: ${postWithId.authorName}');
+      print('🎯 Author image: ${postWithId.authorImage}');
+
+      await docRef.set(postWithId.toJson());
+      print('✅ Post saved successfully with author data');
+    } catch (e) {
+      throw Exception('❌ Failed to add post: $e');
+    }
   }
-}
+
   Future<void> updatePost(PostModel post) async {
     try {
       await _firestore.collection('posts').doc(post.id).update(post.toJson());
@@ -73,8 +74,17 @@ Future<void> addPost(PostModel post) async {
       final commentWithId = comment.id.isEmpty
           ? comment.copyWith(id: commentRef.id)
           : comment;
-
-      await commentRef.set(commentWithId.toJson());
+      final postRef = _firestore.collection('posts').doc(postId);
+      try {
+        await _firestore.runTransaction((txn) async {
+          // set comment document
+          txn.set(commentRef, commentWithId.toJson());
+          // increment post comment count
+          txn.update(postRef, {'commentCount': FieldValue.increment(1)});
+        });
+      } catch (e) {
+        throw Exception('❌ Failed to add comment: $e');
+      }
     } catch (e) {
       throw Exception('❌ Failed to add comment: $e');
     }
@@ -94,13 +104,17 @@ Future<void> addPost(PostModel post) async {
   }
 
   Future<void> deleteComment(String postId, String commentId) async {
+    final commentRef = _firestore
+        .collection('posts')
+        .doc(postId)
+        .collection('comments')
+        .doc(commentId);
+    final postRef = _firestore.collection('posts').doc(postId);
     try {
-      await _firestore
-          .collection('posts')
-          .doc(postId)
-          .collection('comments')
-          .doc(commentId)
-          .delete();
+      await _firestore.runTransaction((txn) async {
+        txn.delete(commentRef);
+        txn.update(postRef, {'commentCount': FieldValue.increment(-1)});
+      });
     } catch (e) {
       throw Exception('❌ Failed to delete comment: $e');
     }
@@ -128,12 +142,35 @@ Future<void> addPost(PostModel post) async {
     try {
       await _firestore.collection('posts').doc(postId).update({
         'likeCount': FieldValue.increment(isLiked ? -1 : 1),
-        'likes': isLiked 
+        'likes': isLiked
             ? FieldValue.arrayRemove([userId])
             : FieldValue.arrayUnion([userId]),
       });
     } catch (e) {
       throw Exception('Failed to update like: $e');
+    }
+  }
+
+  Future<void> toggleCommentLike(
+    String postId,
+    String commentId,
+    String userId,
+    bool isLiked,
+  ) async {
+    try {
+      final commentRef = _firestore
+          .collection('posts')
+          .doc(postId)
+          .collection('comments')
+          .doc(commentId);
+      await commentRef.update({
+        'likeCount': FieldValue.increment(isLiked ? -1 : 1),
+        'likes': isLiked
+            ? FieldValue.arrayRemove([userId])
+            : FieldValue.arrayUnion([userId]),
+      });
+    } catch (e) {
+      throw Exception('Failed to toggle comment like: $e');
     }
   }
 

@@ -54,13 +54,17 @@ class PostRepository {
 
   Future<void> toggleCommentLike({
     required String postId,
-    required CommentModel comment,
+    required String commentId,
+    required String userId,
     required bool isLiked,
   }) async {
     try {
-      final updatedLikes = isLiked ? comment.likeCount - 1 : comment.likeCount + 1;
-      final updatedComment = comment.copyWith(likeCount: updatedLikes);
-      await _firestoreService.updateComment(postId, updatedComment);
+      await _firestoreService.toggleCommentLike(
+        postId,
+        commentId,
+        userId,
+        isLiked,
+      );
     } catch (e) {
       throw Exception('❌ Failed to toggle comment like: $e');
     }

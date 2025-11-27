@@ -1,4 +1,5 @@
 // features/home/logic/post_cubit/post_cubit.dart
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:linkedin/features/home/data/models/post_model.dart';
 import 'package:linkedin/features/home/data/models/comment_model.dart';
@@ -7,6 +8,8 @@ import 'post_state.dart';
 
 class PostCubit extends Cubit<PostState> {
   final PostRepository _repository;
+  StreamSubscription<List<PostModel>>? _postsSub;
+  StreamSubscription<List<CommentModel>>? _commentsSub;
 
   PostCubit(this._repository) : super(PostInitial());
 
@@ -42,12 +45,10 @@ class PostCubit extends Cubit<PostState> {
 
   void watchPosts() {
     emit(PostLoading());
-    _repository.watchPosts().listen(
-      (posts) {
-        emit(PostsLoaded(posts));
-      },
-      onError: (e) => emit(PostError('Error loading posts: $e')),
-    );
+    _postsSub?.cancel();
+    _postsSub = _repository.watchPosts().listen((posts) {
+      emit(PostsLoaded(posts));
+    }, onError: (e) => emit(PostError('Error loading posts: $e')));
   }
 
   Future<void> addComment(String postId, CommentModel comment) async {
@@ -78,15 +79,20 @@ class PostCubit extends Cubit<PostState> {
   }
 
   void watchComments(String postId) {
-    _repository.watchComments(postId).listen(
-      (comments) {
-        emit(CommentsLoaded(comments));
-      },
-      onError: (e) => emit(PostError('Error loading comments: $e')),
-    );
+    _commentsSub?.cancel();
+    _commentsSub = _repository.watchComments(postId).listen((comments) {
+      emit(CommentsLoaded(comments));
+    }, onError: (e) => emit(PostError('Error loading comments: $e')));
   }
 
-  Future<void> toggleLike({
+  @override
+  Future<void> close() {
+    _postsSub?.cancel();
+    _commentsSub?.cancel();
+    return super.close();
+  }
+
+  Future<bool> toggleLike({
     required String postId,
     required String userId,
     required bool isLiked,
@@ -97,24 +103,30 @@ class PostCubit extends Cubit<PostState> {
         userId: userId,
         isLiked: isLiked,
       );
+      return true;
     } catch (e) {
       emit(PostError('Failed to toggle like: $e'));
+      return false;
     }
   }
 
-  Future<void> toggleCommentLike({
+  Future<bool> toggleCommentLike({
     required String postId,
     required CommentModel comment,
+    required String userId,
     required bool isLiked,
   }) async {
     try {
       await _repository.toggleCommentLike(
         postId: postId,
-        comment: comment,
+        commentId: comment.id,
+        userId: userId,
         isLiked: isLiked,
       );
+      return true;
     } catch (e) {
       emit(PostError('Failed to toggle comment like: $e'));
+      return false;
     }
   }
 }

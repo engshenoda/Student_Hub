@@ -9,6 +9,7 @@ class CommentModel {
   final DateTime createdAt;
   final DateTime? updatedAt;
   final int likeCount;
+  final List<String> likes; // list of user ids who liked the comment
   final String? parentCommentId;
 
   CommentModel({
@@ -19,6 +20,7 @@ class CommentModel {
     required this.createdAt,
     this.updatedAt,
     this.likeCount = 0,
+    this.likes = const [],
     this.parentCommentId,
   });
 
@@ -34,9 +36,10 @@ class CommentModel {
       updatedAt: json['updatedAt'] == null
           ? null
           : (json['updatedAt'] is Timestamp)
-              ? (json['updatedAt'] as Timestamp).toDate()
-              : DateTime.parse(json['updatedAt'] as String),
+          ? (json['updatedAt'] as Timestamp).toDate()
+          : DateTime.parse(json['updatedAt'] as String),
       likeCount: json['likeCount'] as int? ?? 0,
+      likes: List<String>.from(json['likes'] ?? []),
       parentCommentId: json['parentCommentId'] as String?,
     );
   }
@@ -47,21 +50,23 @@ class CommentModel {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'postId': postId,
-        'authorId': authorId,
-        'content': content,
-        'createdAt': Timestamp.fromDate(createdAt),
-        if (updatedAt != null) 'updatedAt': Timestamp.fromDate(updatedAt!),
-        'likeCount': likeCount,
-        if (parentCommentId != null) 'parentCommentId': parentCommentId,
-      };
+    'id': id,
+    'postId': postId,
+    'authorId': authorId,
+    'content': content,
+    'createdAt': Timestamp.fromDate(createdAt),
+    if (updatedAt != null) 'updatedAt': Timestamp.fromDate(updatedAt!),
+    'likeCount': likeCount,
+    'likes': likes,
+    if (parentCommentId != null) 'parentCommentId': parentCommentId,
+  };
 
   CommentModel copyWith({
     String? id,
     String? content,
     DateTime? updatedAt,
     int? likeCount,
+    List<String>? likes,
   }) {
     return CommentModel(
       id: id ?? this.id,
@@ -71,6 +76,7 @@ class CommentModel {
       createdAt: createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       likeCount: likeCount ?? this.likeCount,
+      likes: likes ?? List<String>.from(this.likes),
       parentCommentId: parentCommentId,
     );
   }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:linkedin/core/widgets/user_info_row.dart';
 import 'package:linkedin/features/home/data/models/post_model.dart';
 
-typedef LikeCallback = void Function(bool currentIsLiked);
+typedef LikeCallback = Future<bool> Function(bool currentIsLiked);
 typedef QuickCommentCallback = void Function(String text);
 
 class PostCard extends StatefulWidget {
@@ -41,12 +41,40 @@ class _PostCardState extends State<PostCard> {
     _localLikeCount = widget.post.likeCount;
   }
 
-  void _toggleLike() {
+  @override
+  void didUpdateWidget(covariant PostCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.post.likeCount != oldWidget.post.likeCount) {
+      setState(() {
+        _localLikeCount = widget.post.likeCount;
+      });
+    }
+    if (widget.isLiked != oldWidget.isLiked) {
+      setState(() {
+        _localLiked = widget.isLiked;
+      });
+    }
+  }
+
+  void _toggleLike() async {
     setState(() {
       _localLiked = !_localLiked;
       _localLikeCount += _localLiked ? 1 : -1;
     });
-    widget.onLike(_localLiked);
+    final success = await widget.onLike(_localLiked);
+    if (!success) {
+      // rollback
+      setState(() {
+        _localLiked = !_localLiked;
+        _localLikeCount += _localLiked ? 1 : -1;
+      });
+      // show message
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Failed to update like')));
+      }
+    }
   }
 
   void _submitQuickComment() {
@@ -59,7 +87,7 @@ class _PostCardState extends State<PostCard> {
 
   Widget _buildLinkPreview() {
     if (widget.post.links.isEmpty) return const SizedBox.shrink();
-    
+
     return Column(
       children: widget.post.links.map((link) {
         return Card(
@@ -105,10 +133,10 @@ class _PostCardState extends State<PostCard> {
             ),
             const SizedBox(height: 10),
             if (post.content.isNotEmpty) Text(post.content),
-            
+
             // عرض الروابط
             _buildLinkPreview(),
-            
+
             const SizedBox(height: 10),
             Row(
               children: [

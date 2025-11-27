@@ -6,7 +6,9 @@ import 'package:linkedin/features/home/data/models/comment_model.dart';
 class CommentItem extends StatelessWidget {
   final CommentModel comment;
   final bool isOwner;
+  final bool isLiked;
   final VoidCallback onLike;
+  final int? displayedLikeCount;
   final void Function(String newText) onEdit;
   final VoidCallback? onDelete;
 
@@ -14,7 +16,9 @@ class CommentItem extends StatelessWidget {
     super.key,
     required this.comment,
     required this.isOwner,
+    required this.isLiked,
     required this.onLike,
+    this.displayedLikeCount,
     required this.onEdit,
     this.onDelete,
   });
@@ -33,7 +37,9 @@ class CommentItem extends StatelessWidget {
                 ? PopupMenuButton<String>(
                     onSelected: (v) {
                       if (v == 'edit') {
-                        final ctrl = TextEditingController(text: comment.content);
+                        final ctrl = TextEditingController(
+                          text: comment.content,
+                        );
                         showDialog(
                           context: context,
                           builder: (_) => AlertDialog(
@@ -59,7 +65,9 @@ class CommentItem extends StatelessWidget {
                           context: context,
                           builder: (_) => AlertDialog(
                             title: const Text('Delete Comment'),
-                            content: const Text('Are you sure you want to delete this comment?'),
+                            content: const Text(
+                              'Are you sure you want to delete this comment?',
+                            ),
                             actions: [
                               TextButton(
                                 onPressed: () => Navigator.pop(context),
@@ -70,7 +78,10 @@ class CommentItem extends StatelessWidget {
                                   onDelete?.call();
                                   Navigator.pop(context);
                                 },
-                                child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                                child: const Text(
+                                  'Delete',
+                                  style: TextStyle(color: Colors.red),
+                                ),
                               ),
                             ],
                           ),
@@ -79,7 +90,10 @@ class CommentItem extends StatelessWidget {
                     },
                     itemBuilder: (_) => [
                       const PopupMenuItem(value: 'edit', child: Text('Edit')),
-                      const PopupMenuItem(value: 'delete', child: Text('Delete')),
+                      const PopupMenuItem(
+                        value: 'delete',
+                        child: Text('Delete'),
+                      ),
                     ],
                   )
                 : null,
@@ -93,10 +107,14 @@ class CommentItem extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               IconButton(
-                icon: const Icon(Icons.thumb_up_alt_outlined, size: 18),
+                icon: Icon(
+                  isLiked ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined,
+                  size: 18,
+                  color: isLiked ? Colors.blue : null,
+                ),
                 onPressed: onLike,
               ),
-              Text('${comment.likeCount}'),
+              Text('${displayedLikeCount ?? comment.likeCount}'),
             ],
           ),
         ],

@@ -41,49 +41,108 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
 
     return Scaffold(
       body: widget.child,
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        currentIndex: currentIndex,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: selectedColor,
-        unselectedItemColor: unselectedColor,
-        selectedIconTheme: const IconThemeData(size: 24, color: selectedColor),
-        unselectedIconTheme: const IconThemeData(
-          size: 22,
-          color: unselectedColor,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.push(Routes.addPostScreen),
+        backgroundColor: selectedColor,
+        elevation: 4,
+        shape: const CircleBorder(),
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8.0,
+        color: Colors.white,
+        elevation: 10,
+        child: SizedBox(
+          height: 60,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(
+                context,
+                index: 0,
+                currentIndex: currentIndex,
+                icon: Icons.home_rounded,
+                label: 'Home',
+                route: Routes.home,
+                selectedColor: selectedColor,
+                unselectedColor: unselectedColor,
+              ),
+              _buildNavItem(
+                context,
+                index: 1,
+                currentIndex: currentIndex,
+                icon: Icons.chat_bubble_outline_rounded,
+                label: 'Chat',
+                route: Routes.messahes,
+                selectedColor: selectedColor,
+                unselectedColor: unselectedColor,
+              ),
+              const SizedBox(width: 48), // Space for FAB
+              _buildNavItem(
+                context,
+                index: 3,
+                currentIndex: currentIndex,
+                icon: Icons.work_outline_rounded,
+                label: 'Jobs',
+                route: Routes.jobs,
+                selectedColor: selectedColor,
+                unselectedColor: unselectedColor,
+              ),
+              _buildNavItem(
+                context,
+                index: 4,
+                currentIndex: currentIndex,
+                icon: Icons.search_rounded,
+                label: 'Search',
+                route: Routes.search,
+                selectedColor: selectedColor,
+                unselectedColor: unselectedColor,
+              ),
+            ],
+          ),
         ),
-        showUnselectedLabels: true,
-        onTap: (index) {
-          setState(() {
-            currentIndex = index;
-          });
-          if (index == 0) {
-            GoRouter.of(context).push(Routes.home);
-          } else if (index == 1) {
-            GoRouter.of(context).push(Routes.messahes);
-          } else if (index == 2) {
-            GoRouter.of(context).push(Routes.addPostScreen);
-          } else if (index == 3) {
-            GoRouter.of(context).push(Routes.jobs);
-          } else if (index == 4) {
-            GoRouter.of(context).push(Routes.search);
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat_bubble_outline),
-            label: 'Chat',
+      ),
+    );
+  }
+
+  Widget _buildNavItem(
+    BuildContext context, {
+    required int index,
+    required int currentIndex,
+    required IconData icon,
+    required String label,
+    required String route,
+    required Color selectedColor,
+    required Color unselectedColor,
+  }) {
+    final isSelected = currentIndex == index;
+    return InkWell(
+      onTap: () {
+        if (currentIndex != index) {
+          context.go(route);
+        }
+      },
+      customBorder: const CircleBorder(),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            color: isSelected ? selectedColor : unselectedColor,
+            size: 26,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_box_outlined),
-            label: 'Add',
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? selectedColor : unselectedColor,
+              fontSize: 12,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.work_outline),
-            label: 'Jobs',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
         ],
       ),
     );

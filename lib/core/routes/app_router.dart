@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:linkedin/core/widgets/custom_bottom_navigation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:linkedin/core/routes/route.dart';
 import 'package:linkedin/features/auth/presentation/screens/create_account/create_account_screen.dart';
@@ -29,6 +30,7 @@ import 'package:linkedin/features/settings/screens/terms_and_conditions.dart';
 
 class AppRoute {
   static final GoRouter router = GoRouter(
+    initialLocation: Routes.splash,
     routes: [
       GoRoute(
         path: Routes.splash,
@@ -66,13 +68,34 @@ class AppRoute {
         path: Routes.profileqscreen,
         builder: (context, state) => const ProfileQScreen(),
       ),
-      GoRoute(
-        path: Routes.home,
-        builder: (context, state) => const HomeScreen(),
-      ),
-      GoRoute(
-        path: Routes.messahes,
-        builder: (context, state) => const ChatsListScreen(),
+      // ShellRoute for Bottom Navigation
+      ShellRoute(
+        builder: (context, state, child) {
+          return CustomBottomNavigationBar(child: child);
+        },
+        routes: [
+          GoRoute(
+            path: Routes.home,
+            builder: (context, state) => const HomeScreen(),
+          ),
+          GoRoute(
+            path: Routes.messahes,
+            builder: (context, state) => const ChatsListScreen(),
+          ),
+          GoRoute(
+            path: Routes.jobs,
+            builder: (context, state) => const JobsScreen(),
+          ),
+          GoRoute(
+            path: Routes.search,
+            builder: (context, state) {
+              return BlocProvider(
+                create: (_) => SearchCubit(SearchRepository()),
+                child: SearchPage(),
+              );
+            },
+          ),
+        ],
       ),
       GoRoute(
         path: Routes.chatscreen,
@@ -111,26 +134,12 @@ class AppRoute {
       ),
 
       GoRoute(
-        path: Routes.search,
-        builder: (context, state) {
-          return BlocProvider(
-            create: (_) => SearchCubit(SearchRepository()),
-            child: SearchPage(),
-          );
-        },
-      ),
-
-      GoRoute(
         path: Routes.aboutUs,
         builder: (context, state) => const AboutUs(),
       ),
       GoRoute(
         path: Routes.termsandconditions,
         builder: (context, state) => const Termsandconditions(),
-      ),
-      GoRoute(
-        path: Routes.jobs,
-        builder: (context, state) => const JobsScreen(),
       ),
       GoRoute(
         path: Routes.addPostScreen,
