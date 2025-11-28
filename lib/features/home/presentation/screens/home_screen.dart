@@ -9,6 +9,7 @@ import 'package:linkedin/features/home/logic/post_cubit/post_cubit.dart';
 import 'package:linkedin/features/home/logic/post_cubit/post_state.dart';
 import 'package:linkedin/features/home/presentation/widgets/home_header.dart';
 import 'package:linkedin/features/home/presentation/widgets/post_card.dart';
+import 'package:linkedin/features/home/presentation/widgets/post_card_comment.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -43,8 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ? state.posts
                       : cubit.latestPosts;
 
-                  // If we don't have any posts yet, prefer showing a loader during loading,
-                  // otherwise show an empty placeholder message.
+
                   if (posts.isEmpty) {
                     if (state is PostLoading || state is PostInitial) {
                       return const Center(child: CircularProgressIndicator());

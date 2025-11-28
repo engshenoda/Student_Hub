@@ -11,7 +11,7 @@ import 'package:linkedin/features/home/data/models/post_model.dart';
 import 'package:linkedin/features/home/data/models/comment_model.dart';
 import 'package:linkedin/features/home/presentation/widgets/comment_item.dart';
 import 'package:linkedin/features/home/presentation/widgets/add_comment_field.dart';
-import 'package:linkedin/features/home/presentation/widgets/post_card.dart';
+import 'package:linkedin/features/home/presentation/widgets/post_card_comment.dart';
 
 class CommentsScreen extends StatefulWidget {
   final PostModel post;
@@ -60,7 +60,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                   child: Builder(
                     builder: (context) {
                       final isOwner = widget.post.authorId == currentUserId;
-                      return PostCard(
+                      return PostCardComment(
                         post: widget.post,
                         isLiked: widget.post.likes.contains(currentUserId),
                         onLike: (isLiked) async {

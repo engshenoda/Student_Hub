@@ -30,9 +30,8 @@ class CommentItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // استخدم UserInfoRowWithFetch لجلب بيانات كاتب التعليق
           UserInfoRowWithFetch(
-            userId: comment.authorId, // ✅ هذا هو الحل الصحيح
+            userId: comment.authorId,
             trailing: isOwner
                 ? PopupMenuButton<String>(
                     onSelected: (v) {

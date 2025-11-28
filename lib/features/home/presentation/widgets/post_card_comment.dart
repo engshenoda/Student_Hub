@@ -6,7 +6,7 @@ import 'package:linkedin/features/home/data/models/post_model.dart';
 typedef LikeCallback = Future<bool> Function(bool currentIsLiked);
 typedef QuickCommentCallback = void Function(String text);
 
-class PostCard extends StatefulWidget {
+class PostCardComment extends StatefulWidget {
   final PostModel post;
   final bool isLiked;
   final LikeCallback onLike;
@@ -15,7 +15,7 @@ class PostCard extends StatefulWidget {
   final VoidCallback? onDelete;
   final VoidCallback? onEdit;
 
-  const PostCard({
+  const PostCardComment({
     super.key,
     required this.post,
     required this.isLiked,
@@ -27,10 +27,10 @@ class PostCard extends StatefulWidget {
   });
 
   @override
-  State<PostCard> createState() => _PostCardState();
+  State<PostCardComment> createState() => _PostCardState();
 }
 
-class _PostCardState extends State<PostCard> {
+class _PostCardState extends State<PostCardComment> {
   late bool _localLiked;
   late int _localLikeCount;
   final _quickCtrl = TextEditingController();
@@ -43,7 +43,7 @@ class _PostCardState extends State<PostCard> {
   }
 
   @override
-  void didUpdateWidget(covariant PostCard oldWidget) {
+  void didUpdateWidget(covariant PostCardComment oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.post.likeCount != oldWidget.post.likeCount) {
       setState(() {
@@ -199,22 +199,22 @@ class _PostCardState extends State<PostCard> {
             if (widget.onAddQuickComment != null) ...[
               Row(
                 children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _quickCtrl,
-                      decoration: const InputDecoration(
-                        hintText: 'Write a comment...',
-                        isDense: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.zero,
-                        ),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: _submitQuickComment,
-                    icon: const Icon(Icons.send, color: Colors.teal),
-                  ),
+                  // Expanded(
+                  //   child: TextField(
+                  //     controller: _quickCtrl,
+                  //     decoration: const InputDecoration(
+                  //       hintText: 'Write a comment...',
+                  //       isDense: true,
+                  //       border: OutlineInputBorder(
+                  //         borderRadius: BorderRadius.zero,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  // IconButton(
+                  //   onPressed: _submitQuickComment,
+                  //   icon: const Icon(Icons.send, color: Colors.teal),
+                  // ),
                 ],
               ),
             ],
