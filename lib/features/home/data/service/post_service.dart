@@ -139,12 +139,25 @@ class PostServices {
   }
 
   Future<void> toggleLike(String postId, String userId, bool isLiked) async {
+    final postRef = _firestore.collection('posts').doc(postId);
     try {
-      await _firestore.collection('posts').doc(postId).update({
-        'likeCount': FieldValue.increment(isLiked ? -1 : 1),
-        'likes': isLiked
-            ? FieldValue.arrayRemove([userId])
-            : FieldValue.arrayUnion([userId]),
+      await _firestore.runTransaction((txn) async {
+        final snapshot = await txn.get(postRef);
+        if (!snapshot.exists) throw Exception('Post not found');
+        final current = (snapshot.data()?['likeCount'] as int?) ?? 0;
+        final delta = isLiked
+            ? 1
+            : -1; // `isLiked` represents the new state (true == user now likes the post).
+        final newCount = (current + delta) < 0
+            ? 0
+            : (current + delta); // Never allow negative counts.
+
+        txn.update(postRef, {
+          'likeCount': newCount,
+          'likes': isLiked
+              ? FieldValue.arrayUnion([userId])
+              : FieldValue.arrayRemove([userId]),
+        });
       });
     } catch (e) {
       throw Exception('Failed to update like: $e');
@@ -157,17 +170,28 @@ class PostServices {
     String userId,
     bool isLiked,
   ) async {
+    final commentRef = _firestore
+        .collection('posts')
+        .doc(postId)
+        .collection('comments')
+        .doc(commentId);
     try {
-      final commentRef = _firestore
-          .collection('posts')
-          .doc(postId)
-          .collection('comments')
-          .doc(commentId);
-      await commentRef.update({
-        'likeCount': FieldValue.increment(isLiked ? -1 : 1),
-        'likes': isLiked
-            ? FieldValue.arrayRemove([userId])
-            : FieldValue.arrayUnion([userId]),
+      await _firestore.runTransaction((txn) async {
+        final snap = await txn.get(commentRef);
+        if (!snap.exists) throw Exception('Comment not found');
+        final current = (snap.data()?['likeCount'] as int?) ?? 0;
+        // `isLiked` represents the new state (true == user now likes the comment).
+        final delta = isLiked ? 1 : -1;
+        final newCount = (current + delta) < 0
+            ? 0
+            : (current + delta); // Never allow negative counts.
+
+        txn.update(commentRef, {
+          'likeCount': newCount,
+          'likes': isLiked
+              ? FieldValue.arrayUnion([userId])
+              : FieldValue.arrayRemove([userId]),
+        });
       });
     } catch (e) {
       throw Exception('Failed to toggle comment like: $e');

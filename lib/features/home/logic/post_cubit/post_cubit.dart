@@ -10,6 +10,7 @@ class PostCubit extends Cubit<PostState> {
   final PostRepository _repository;
   StreamSubscription<List<PostModel>>? _postsSub;
   StreamSubscription<List<CommentModel>>? _commentsSub;
+  List<PostModel> _latestPosts = [];
 
   PostCubit(this._repository) : super(PostInitial());
 
@@ -47,9 +48,15 @@ class PostCubit extends Cubit<PostState> {
     emit(PostLoading());
     _postsSub?.cancel();
     _postsSub = _repository.watchPosts().listen((posts) {
+      _latestPosts = posts;
       emit(PostsLoaded(posts));
     }, onError: (e) => emit(PostError('Error loading posts: $e')));
   }
+
+  /// Returns the most recently received posts from the posts stream.
+  /// This lets UI components show cached posts when the cubit emits
+  /// transient states like [PostSuccess] or [PostLoading].
+  List<PostModel> get latestPosts => List.unmodifiable(_latestPosts);
 
   Future<void> addComment(String postId, CommentModel comment) async {
     try {

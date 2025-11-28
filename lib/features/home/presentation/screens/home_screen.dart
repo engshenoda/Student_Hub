@@ -38,88 +38,89 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: BlocBuilder<PostCubit, PostState>(
                 builder: (context, state) {
-                  if (state is PostInitial || state is PostLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is PostError) {
-                    return Center(child: Text('Error: ${state.message}'));
-                  } else if (state is PostsLoaded) {
-                    final posts = state.posts;
+                  final cubit = context.read<PostCubit>();
+                  final posts = state is PostsLoaded
+                      ? state.posts
+                      : cubit.latestPosts;
 
-                    if (posts.isEmpty) {
-                      return const Center(
-                        child: Text('No posts yet — be the first!'),
-                      );
+                  // If we don't have any posts yet, prefer showing a loader during loading,
+                  // otherwise show an empty placeholder message.
+                  if (posts.isEmpty) {
+                    if (state is PostLoading || state is PostInitial) {
+                      return const Center(child: CircularProgressIndicator());
                     }
+                    if (state is PostError)
+                      return Center(child: Text('Error: ${state.message}'));
+                    return const Center(
+                      child: Text('No posts yet — be the first!'),
+                    );
+                  }
 
-                    return RefreshIndicator(
-                      onRefresh: () async {
-                        context.read<PostCubit>().watchPosts();
-                      },
-                      child: ListView.separated(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 8,
-                          horizontal: 12,
-                        ),
-                        itemCount: posts.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 8),
-                        itemBuilder: (context, idx) {
-                          final post = posts[idx];
-                          final isLiked = post.likes.contains(currentUserId);
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      cubit.watchPosts();
+                    },
+                    child: ListView.separated(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 12,
+                      ),
+                      itemCount: posts.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 8),
+                      itemBuilder: (context, idx) {
+                        final post = posts[idx];
+                        final isLiked = post.likes.contains(currentUserId);
 
-                          return PostCard(
-                            post: post,
-                            isLiked: isLiked,
-                            onLike: (liked) async {
-                              final success = await context
-                                  .read<PostCubit>()
-                                  .toggleLike(
-                                    postId: post.id,
-                                    userId: currentUserId,
-                                    isLiked: liked,
-                                  );
-                              if (!success && context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Failed to update like'),
-                                  ),
+                        return PostCard(
+                          post: post,
+                          isLiked: isLiked,
+                          onLike: (liked) async {
+                            final success = await context
+                                .read<PostCubit>()
+                                .toggleLike(
+                                  postId: post.id,
+                                  userId: currentUserId,
+                                  isLiked: liked,
                                 );
-                              }
-                              return success;
-                            },
-                            onTapComments: () =>
-                                context.push(Routes.comments, extra: post),
-                            onAddQuickComment: (text) {
-                              if (text.trim().isEmpty) return;
-                              final newComment = CommentModel(
-                                id: DateTime.now().millisecondsSinceEpoch
-                                    .toString(),
-                                postId: post.id,
-                                authorId: currentUserId,
-                                content: text.trim(),
-                                createdAt: DateTime.now(),
+                            if (!success && context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Failed to update like'),
+                                ),
                               );
-                              context.read<PostCubit>().addComment(
-                                post.id,
-                                newComment,
-                              );
-                            },
-                            onDelete: () async {
-                              await context.read<PostCubit>().deletePost(
-                                post.id,
-                              );
+                            }
+                            return success;
+                          },
+                          onTapComments: () =>
+                              context.push(Routes.comments, extra: post),
+                          onAddQuickComment: (text) {
+                            if (text.trim().isEmpty) return;
+                            final newComment = CommentModel(
+                              id: DateTime.now().millisecondsSinceEpoch
+                                  .toString(),
+                              postId: post.id,
+                              authorId: currentUserId,
+                              content: text.trim(),
+                              createdAt: DateTime.now(),
+                            );
+                            context.read<PostCubit>().addComment(
+                              post.id,
+                              newComment,
+                            );
+                          },
+                          onDelete: () async {
+                            await context.read<PostCubit>().deletePost(post.id);
+                            if (context.mounted)
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Post deleted')),
                               );
-                            },
-                            onEdit: () =>
-                                context.push(Routes.addPostScreen, extra: post),
-                          );
-                        },
-                      ),
-                    );
-                  } else {
-                    return const SizedBox.shrink();
-                  }
+                          },
+                          onEdit: () =>
+                              context.push(Routes.addPostScreen, extra: post),
+                        );
+                      },
+                    ),
+                  );
                 },
               ),
             ),
