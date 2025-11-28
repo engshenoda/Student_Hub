@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:go_router/go_router.dart';
+import 'package:linkedin/core/routes/route.dart';
 import 'package:linkedin/features/home/logic/post_cubit/post_cubit.dart';
 import 'package:linkedin/features/home/data/repo/post_repository.dart';
 import 'package:linkedin/features/home/logic/post_cubit/post_state.dart';
@@ -55,28 +57,48 @@ class _CommentsScreenState extends State<CommentsScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: PostCard(
-                    post: widget.post,
-                    isLiked: widget.post.likes.contains(currentUserId),
-                    onLike: (isLiked) async {
-                      final success = await cubit.toggleLike(
-                        postId: widget.post.id,
-                        userId: currentUserId,
-                        isLiked: isLiked,
+                  child: Builder(
+                    builder: (context) {
+                      final isOwner = widget.post.authorId == currentUserId;
+                      return PostCard(
+                        post: widget.post,
+                        isLiked: widget.post.likes.contains(currentUserId),
+                        onLike: (isLiked) async {
+                          final success = await cubit.toggleLike(
+                            postId: widget.post.id,
+                            userId: currentUserId,
+                            isLiked: isLiked,
+                          );
+                          if (!success && mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Failed to update like'),
+                              ),
+                            );
+                          }
+                          return success;
+                        },
+                        onTapComments: () {},
+                        onAddQuickComment: (_) {},
+                        onEdit: isOwner
+                            ? () => context.push(
+                                Routes.addPostScreen,
+                                extra: widget.post,
+                              )
+                            : null,
+                        onDelete: isOwner
+                            ? () async {
+                                await cubit.deletePost(widget.post.id);
+                                if (context.mounted)
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Post deleted'),
+                                    ),
+                                  );
+                              }
+                            : null,
                       );
-                      if (!success && mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Failed to update like'),
-                          ),
-                        );
-                      }
-                      return success;
                     },
-                    onTapComments: () {},
-                    onAddQuickComment: (_) {},
-                    onEdit: () {},
-                    onDelete: () {},
                   ),
                 ),
                 const Divider(height: 1),

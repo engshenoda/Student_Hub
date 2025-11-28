@@ -71,6 +71,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         final post = posts[idx];
                         final isLiked = post.likes.contains(currentUserId);
 
+                        final isOwner = post.authorId == currentUserId;
+
                         return PostCard(
                           post: post,
                           isLiked: isLiked,
@@ -108,15 +110,25 @@ class _HomeScreenState extends State<HomeScreen> {
                               newComment,
                             );
                           },
-                          onDelete: () async {
-                            await context.read<PostCubit>().deletePost(post.id);
-                            if (context.mounted)
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Post deleted')),
-                              );
-                          },
-                          onEdit: () =>
-                              context.push(Routes.addPostScreen, extra: post),
+                          onDelete: isOwner
+                              ? () async {
+                                  await context.read<PostCubit>().deletePost(
+                                    post.id,
+                                  );
+                                  if (context.mounted)
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Post deleted'),
+                                      ),
+                                    );
+                                }
+                              : null,
+                          onEdit: isOwner
+                              ? () => context.push(
+                                  Routes.addPostScreen,
+                                  extra: post,
+                                )
+                              : null,
                         );
                       },
                     ),

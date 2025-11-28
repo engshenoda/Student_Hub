@@ -67,7 +67,7 @@ class ProfileModel extends Equatable {
 
     return ProfileModel(
       name: map['name'] ?? '',
-      jobTitle: map['jobTitle'] ?? map['title'] ?? '',
+      jobTitle: map['title'] ?? map['title'] ?? '',
       aboutMe: map['aboutMe'] ?? map['about'] ?? '',
       skills: _safeList(map['skills']),
       education: Education.fromMap(

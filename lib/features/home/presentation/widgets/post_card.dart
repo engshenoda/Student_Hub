@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:linkedin/core/widgets/user_info_row.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:linkedin/features/home/data/models/post_model.dart';
 
 typedef LikeCallback = Future<bool> Function(bool currentIsLiked);
@@ -87,16 +88,46 @@ class _PostCardState extends State<PostCard> {
 
   Widget _buildLinkPreview() {
     if (widget.post.links.isEmpty) return const SizedBox.shrink();
-
     return Column(
       children: widget.post.links.map((link) {
         return Card(
           margin: const EdgeInsets.only(top: 8),
           child: ListTile(
             leading: const Icon(Icons.link, color: Colors.teal),
-            title: Text(link, overflow: TextOverflow.ellipsis),
-            onTap: () {
-              // يمكن فتح الرابط في متصفح
+            title: InkWell(
+              onTap: () async {
+                try {
+                  final uri = Uri.tryParse(link);
+                  if (uri == null) throw Exception('Invalid URL');
+                  if (!await launchUrl(
+                    uri,
+                    mode: LaunchMode.externalApplication,
+                  )) {
+                    throw Exception('Could not launch');
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Unable to open link')),
+                    );
+                  }
+                }
+              },
+              child: Text(
+                link,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  decoration: TextDecoration.underline,
+                  color: Colors.teal,
+                ),
+              ),
+            ),
+            onTap: () async {
+              // also handle tapping the whole tile
+              final uri = Uri.tryParse(link);
+              if (uri != null) {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              }
             },
           ),
         );

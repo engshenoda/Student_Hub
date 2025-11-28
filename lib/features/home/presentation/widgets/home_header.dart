@@ -43,7 +43,7 @@ class HomeHeader extends StatelessWidget {
 
         final userData = snapshot.data!.data() as Map<String, dynamic>;
         final fullName = userData['name'] ?? 'User';
-        final jobTitle = userData['jobTitle'] ?? 'No jobTitle';
+        final jobTitle = userData['title'] ?? 'No jobTitle';
         final photo = userData['photoUrl'];
 
         return Container(
@@ -58,10 +58,8 @@ class HomeHeader extends StatelessWidget {
           ),
           child: Row(
             children: [
-              /// 🧍‍♂️ صورة المستخدم
               GestureDetector(
                 onTap: () {
-                  // الانتقال إلى البروفايل الشخصي بدون uid
                   GoRouter.of(context).push(
                     Routes.viewprofile,
                     extra: {'uid': userId, 'name': fullName},
